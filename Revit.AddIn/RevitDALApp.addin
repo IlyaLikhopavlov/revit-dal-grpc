@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>RevitDALApp</Name>
+    <Assembly>C:\Users\Ilya Likhopavlov\source\repos\Revit.AddIn\Revit.AddIn\bin\Debug\net48\Revit.AddIn.dll</Assembly>
+    <AddInId>340D160E-AA41-479C-91BD-D8DE87B52CC9</AddInId>
+    <FullClassName>Revit.AddIn.RevitDalApp</FullClassName>
+    <VendorId>Bimdance.io</VendorId>
+    <VendorDescription>BIMDance, support@bimdance.io</VendorDescription>
+  </AddIn>
+</RevitAddIns>

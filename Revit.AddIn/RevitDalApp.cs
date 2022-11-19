@@ -14,6 +14,16 @@ using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.AddIn.Commands;
 using Revit.AddIn.RibbonPanels;
+using Revit.DAL.Converters;
+using Revit.DAL.Storage.Infrastructure.Model;
+using Revit.DAL.Storage.Infrastructure;
+using Revit.DAL.Storage;
+using Revit.DAL.Storage.Schemas;
+using Revit.DAL.Converters.Common;
+using Revit.DAL.DataContext;
+using Revit.DAL.DataContext.RevitSets;
+using Revit.DML;
+using Element = Autodesk.Revit.DB.Element;
 
 namespace Revit.AddIn
 {
@@ -29,7 +39,22 @@ namespace Revit.AddIn
             var serviceCollection = new ServiceCollection();
 
             serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
-            //serviceCollection.AddScoped<DocDependentEntity>();
+            serviceCollection.AddSingleton<IExtensibleStorageSchemaService, ExtensibleStorageSchemaService>();
+            serviceCollection.AddTransient<ExtensibleStorageSchemaDescriptor>();
+
+            serviceCollection.AddScoped<ExtensibleStorage<FooSchema>, FooExtensibleStorage>();
+            serviceCollection.AddScoped<ExtensibleStorage<BarSchema>, BarExtensibleStorage>();
+            serviceCollection.AddScoped<SettingsExtensibleStorage>();
+            serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
+
+            serviceCollection.AddScoped<IRevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
+            serviceCollection.AddScoped<IRevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
+
+            serviceCollection.AddScoped<BarSet>();
+            serviceCollection.AddScoped<FooSet>();
+
+            serviceCollection.AddScoped<IDataContext, DataContext>();
+
             serviceCollection.AddFactoryFacility();
 
             ServiceProvider = serviceCollection.BuildServiceProvider();

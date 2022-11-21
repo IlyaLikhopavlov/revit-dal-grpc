@@ -9,8 +9,7 @@ namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private readonly ConcurrentDictionary<Document, DocumentScope> _scopeDictionary =
-            new ConcurrentDictionary<Document, DocumentScope>();
+        private readonly ConcurrentDictionary<Document, DocumentScope> _scopeDictionary = new();
 
         private bool _disposed;
 

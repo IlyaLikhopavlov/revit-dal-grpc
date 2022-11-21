@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.DML", "Revit.DML\Revi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revit.Families", "Revit.Families\Revit.Families.csproj", "{A42DFE46-DD0C-41FB-A145-3FF04EEC6A1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Revit.Services", "Revit.Services\Revit.Services.csproj", "{4CCA5356-AD14-4D0E-AC99-9FC27CCD699C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{A42DFE46-DD0C-41FB-A145-3FF04EEC6A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A42DFE46-DD0C-41FB-A145-3FF04EEC6A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A42DFE46-DD0C-41FB-A145-3FF04EEC6A1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CCA5356-AD14-4D0E-AC99-9FC27CCD699C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CCA5356-AD14-4D0E-AC99-9FC27CCD699C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CCA5356-AD14-4D0E-AC99-9FC27CCD699C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CCA5356-AD14-4D0E-AC99-9FC27CCD699C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,6 +24,10 @@ using Revit.DAL.DataContext;
 using Revit.DAL.DataContext.RevitSets;
 using Revit.DML;
 using Element = Autodesk.Revit.DB.Element;
+using Revit.DAL.Processing;
+using Revit.Families.Rendering;
+using Revit.Services.Allocation;
+using Revit.Services.Allocation.Common;
 
 namespace Revit.AddIn
 {
@@ -32,15 +36,19 @@ namespace Revit.AddIn
     {
         private readonly MainRibbonPanel _mainPanel = new();
 
-        public static IServiceProvider? ServiceProvider;
+        public static IServiceProvider ServiceProvider { get; set; }
 
         public Result OnStartup(UIControlledApplication application)
         {
             var serviceCollection = new ServiceCollection();
-
             serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
             serviceCollection.AddSingleton<IExtensibleStorageSchemaService, ExtensibleStorageSchemaService>();
             serviceCollection.AddTransient<ExtensibleStorageSchemaDescriptor>();
+
+            serviceCollection.AddSingleton(new ApplicationProcessing(application));
+            serviceCollection.AddSingleton<FamilyInstanceAllocationService>();
+            serviceCollection.AddScoped<ModelItemsAllocationService>();
+            serviceCollection.AddScoped<Sample>();
 
             serviceCollection.AddScoped<ExtensibleStorage<FooSchema>, FooExtensibleStorage>();
             serviceCollection.AddScoped<ExtensibleStorage<BarSchema>, BarExtensibleStorage>();

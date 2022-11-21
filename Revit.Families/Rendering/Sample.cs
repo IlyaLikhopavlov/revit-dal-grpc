@@ -4,7 +4,6 @@ using System.Linq;
 using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
-using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit.DAL.Utils;
@@ -30,12 +29,10 @@ namespace Revit.Families.Rendering
         }
 
         private readonly Document _document;
-        private readonly Application _application;
 
-        public Sample(UIApplication uiApplication)
+        public Sample(Document document)
         {
-            _application = uiApplication.Application;
-            _document = uiApplication.ActiveUIDocument.Document;
+            _document = document;
         }
 
         public FamilySymbol Render(FamilyTypeEnum familyType)
@@ -63,7 +60,6 @@ namespace Revit.Families.Rendering
                 family.Name = name.Family;
             }, "Rename family");
             File.Delete(tempFileName);
-
 
             return _document.GetFamilySymbols(name.Family).First();
         }

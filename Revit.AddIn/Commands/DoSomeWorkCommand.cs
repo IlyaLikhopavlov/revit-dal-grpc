@@ -1,6 +1,10 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
+using Microsoft.Extensions.DependencyInjection;
+using Revit.Services.Allocation;
 
 namespace Revit.AddIn.Commands
 {
@@ -11,14 +15,14 @@ namespace Revit.AddIn.Commands
         {
             var document = commandData.Application.ActiveUIDocument.Document;
 
-            //var scopeFactory = RevitAndMdiApp.ServiceProvider.GetService<IDocumentServiceScopeFactory>();
-            //var documentScope = scopeFactory?.CreateDocumentScope(document);
-            //var docDependentEntity = documentScope?
-            //    .ServiceProvider
-            //    .GetService<IFactory<Document, DocDependentEntity>>()
-            //    ?.New(document);
+            using var scopeFactory = RevitDalApp.ServiceProvider.GetService<IDocumentServiceScopeFactory>();
+            var documentScope = scopeFactory?.CreateDocumentScope(document);
+            var allocationService = documentScope?
+                .ServiceProvider
+                .GetService<IFactory<Document, ModelItemsAllocationService>>()
+                ?.New(document);
 
-            //docDependentEntity?.ShowIdentityInRevit();
+            allocationService?.AllocateFoo();
 
             return Result.Succeeded;
         }

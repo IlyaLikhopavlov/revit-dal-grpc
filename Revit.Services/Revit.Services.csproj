@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -8,9 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
     <ProjectReference Include="..\Revit.DAL\Revit.DAL.csproj" />
-    <ProjectReference Include="..\Revit.Services\Revit.Services.csproj" />
+    <ProjectReference Include="..\Revit.Families\Revit.Families.csproj" />
   </ItemGroup>
 
   <ItemGroup>

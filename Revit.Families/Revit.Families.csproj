@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Families.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

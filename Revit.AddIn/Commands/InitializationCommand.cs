@@ -1,9 +1,11 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Microsoft.Extensions.DependencyInjection;
+using Revit.DAL.Processing;
 
 namespace Revit.AddIn.Commands
 {
-    public class InitializationCommand
+    public class InitializationCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
@@ -14,10 +16,14 @@ namespace Revit.AddIn.Commands
         {
             try
             {
+                var applicationProcessing = RevitDalApp.ServiceProvider.GetService<ApplicationProcessing>();
+                applicationProcessing!.UiApplication = uiApplication;
+
                 return Result.Succeeded;
             }
             catch (Exception ex)
             {
+                TaskDialog.Show("Error", $"{ex}");
                 return Result.Failed;
             }
         }

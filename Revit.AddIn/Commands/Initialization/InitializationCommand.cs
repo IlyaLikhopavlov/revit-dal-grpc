@@ -3,7 +3,7 @@ using Autodesk.Revit.UI;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.DAL.Processing;
 
-namespace Revit.AddIn.Commands
+namespace Revit.AddIn.Commands.Initialization
 {
     public class InitializationCommand : IExternalCommand
     {

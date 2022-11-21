@@ -38,7 +38,7 @@ namespace Revit.Services.Allocation
 
             try
             {
-                var familySymbol = _sample?.Render(FamilyTypeEnum.Foo) 
+                var familySymbol = _sample?.Render(typeof(Foo)) 
                                    ?? throw new InvalidOperationException(@"Family symbol didn't get.");
 
                 allocatedItems = _familyInstanceAllocationService
@@ -71,5 +71,43 @@ namespace Revit.Services.Allocation
             return allocatedItems.Length;
         }
 
+        public int AllocateBar()
+        {
+            var allocatedItems = Array.Empty<int>();
+
+            try
+            {
+                var familySymbol = _sample?.Render(typeof(Bar))
+                                   ?? throw new InvalidOperationException(@"Family symbol didn't get.");
+
+                allocatedItems = _familyInstanceAllocationService
+                    .PlaceInstances(familySymbol, int.MaxValue)
+                    .ToArray();
+
+                if (allocatedItems.Length > 0)
+                {
+                    var allocatedEntities = allocatedItems.Select(x =>
+                        new Bar
+                        {
+                            Id = x,
+                            Name = $"Bar{x}",
+                            Description = @"What ever you want"
+                        });
+
+                    foreach (var allocatedEntity in allocatedEntities)
+                    {
+                        _dataContext.Bar.Attach(allocatedEntity);
+                    }
+
+                    _dataContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Error", $"{ex}");
+            }
+
+            return allocatedItems.Length;
+        }
     }
 }

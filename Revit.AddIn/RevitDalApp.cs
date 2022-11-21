@@ -13,6 +13,7 @@ using Bimdance.Framework.DependencyInjection;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.AddIn.Commands;
+using Revit.AddIn.Commands.Initialization;
 using Revit.AddIn.RibbonPanels;
 using Revit.DAL.Converters;
 using Revit.DAL.Storage.Infrastructure.Model;
@@ -80,7 +81,7 @@ namespace Revit.AddIn
             return Result.Succeeded;
         }
 
-        private static bool DocumentWasChanged(Element? currentActiveView, Element? previousActiveView)
+        private static bool DocumentWasChanged(Element currentActiveView, Element previousActiveView)
         {
             return !Equals(currentActiveView?.Document, previousActiveView?.Document);
         }
@@ -119,7 +120,7 @@ namespace Revit.AddIn
             OnViewActivatedInternal(e.Document, e.CurrentActiveView, e.PreviousActiveView);
         }
 
-        private static void OnViewActivatedInternal(Document? document, Element? currentActiveView, Element previousActiveView)
+        private static void OnViewActivatedInternal(Document document, Element currentActiveView, Element previousActiveView)
         {
             if (document == null || currentActiveView == null)
             {

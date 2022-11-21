@@ -9,7 +9,7 @@ using Revit.Services.Allocation;
 namespace Revit.AddIn.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    public class DoSomeWorkCommand : IExternalCommand
+    public class PlaceFooCommand : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.DB;
 using Revit.DAL.Utils;
+using Revit.DML;
 using Revit.Families.Common;
-using Revit.Families.Rendering.Enums;
 
 namespace Revit.Families.Rendering
 {
@@ -35,14 +28,21 @@ namespace Revit.Families.Rendering
             _document = document;
         }
 
-        public FamilySymbol Render(FamilyTypeEnum familyType)
+        public FamilySymbol Render(Type type)
         {
-            var name = familyType switch
+            (string Family, string Resource) name;
+            if (type == typeof(Foo))
             {
-                FamilyTypeEnum.Foo => (FooNames.Family, FooNames.Resource),
-                FamilyTypeEnum.Bar => (BarNames.Family, BarNames.Resource),
-                _ => throw new ArgumentOutOfRangeException(nameof(familyType), familyType, null)
-            };
+                name = (FooNames.Family, FooNames.Resource);
+            }
+            else if (type == typeof(Bar))
+            {
+                name = (BarNames.Family, BarNames.Resource);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Family doesn't exist for the type {type.Name}");
+            }
 
             var sampleSymbol = _document.GetFamilySymbols(name.Family).FirstOrDefault();
             if (sampleSymbol != null)
@@ -61,7 +61,7 @@ namespace Revit.Families.Rendering
             }, "Rename family");
             File.Delete(tempFileName);
 
-            return _document.GetFamilySymbols(name.Family).First();
+            return _document.GetFamilySymbols(name.Family).FirstOrDefault();
         }
     }
 }

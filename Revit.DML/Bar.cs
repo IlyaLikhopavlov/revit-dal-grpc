@@ -18,7 +18,5 @@ namespace Revit.DML
         }
 
         public string? Description { get; set; }
-
-        public string TypeName => typeof(Foo).FullName;
     }
 }

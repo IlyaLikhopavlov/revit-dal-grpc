@@ -23,10 +23,14 @@ namespace Revit.AddIn.RibbonPanels
 
             var path = Assembly.GetExecutingAssembly().Location;
 
-            var pushButtonCommon =
-                new PushButtonData(@"DoWork", @"Do Work", path, typeof(DoSomeWorkCommand).FullName);
+            var fooButtonCommon =
+                new PushButtonData(@"Foo", @"Foo", path, typeof(PlaceFooCommand).FullName);
 
-            revitPanel.AddItem(pushButtonCommon);
+            var barButtonCommand =
+                new PushButtonData(@"Bar", @"Bar", path, typeof(PlaceBarCommand).FullName);
+
+            revitPanel.AddItem(fooButtonCommon);
+            revitPanel.AddItem(barButtonCommand);
         }
     }
 }

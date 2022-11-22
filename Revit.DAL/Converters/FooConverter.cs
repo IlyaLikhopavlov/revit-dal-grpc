@@ -10,53 +10,19 @@ namespace Revit.DAL.Converters
 {
     public class FooConverter : RevitInstanceConverter<Foo, FamilyInstance>
     {
-        private readonly ExtensibleStorage<DataSchema> _extensibleStorage;
-
         public FooConverter(
             IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
-            Document document)
+            Document document) : base(extensibleStorageFactory, document)
         {
-            _extensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
         }
 
-        public override void PushToRevit(FamilyInstance revitElement, Foo modelElement)
+
+        protected override void SendParametersToRevit(FamilyInstance revitElement, Foo modelElement)
         {
-            if (!string.IsNullOrEmpty(modelElement.Name) && revitElement.Name != modelElement.Name)
-            {
-                revitElement.Name = modelElement.Name;
-            }
-
-            //How to send data to family instance parameters?
-            //var param1 = revitElement.LookupParameter(ParametersNames.Param1);
-            //param1.SetValueString("Parameter Value");
-
-            var schema = new DataSchema
-            {
-                Data = JsonSerializer.Serialize(modelElement)
-            };
-
-            _extensibleStorage.UpdateEntity(revitElement, schema);
         }
 
-        public override Foo PullFromRevit(FamilyInstance revitElement)
+        protected override void ReceiveParametersFromRevit(FamilyInstance revitElement, ref Foo modelElement)
         {
-            var fooEntity = _extensibleStorage.GetEntity(revitElement);
-
-            if (fooEntity.Data == null)
-            {
-                return null;
-            }
-
-            var foo = JsonSerializer.Deserialize<Foo>(fooEntity.Data);
-
-            if (foo is null)
-            {
-                return null;
-            }
-            
-            foo.Id = revitElement.Id.IntegerValue;
-
-            return foo;
         }
     }
 }

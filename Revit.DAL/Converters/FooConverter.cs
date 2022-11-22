@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Autodesk.Revit.DB;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.DAL.Converters.Common;
 using Revit.DAL.Storage.Infrastructure;
 using Revit.DAL.Storage.Schemas;
@@ -7,18 +8,18 @@ using Revit.DML;
 
 namespace Revit.DAL.Converters
 {
-    public class FooConverter : IRevitInstanceConverter<Foo, FamilyInstance>
+    public class FooConverter : RevitInstanceConverter<Foo, FamilyInstance>
     {
-        private readonly ExtensibleStorage<FooSchema> _extensibleStorage;
+        private readonly ExtensibleStorage<DataSchema> _extensibleStorage;
 
         public FooConverter(
-            ExtensibleStorage<FooSchema> extensibleStorage,
+            IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
             Document document)
         {
-            _extensibleStorage = extensibleStorage;
+            _extensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
         }
 
-        public void PushToRevit(FamilyInstance revitElement, Foo modelElement)
+        public override void PushToRevit(FamilyInstance revitElement, Foo modelElement)
         {
             if (!string.IsNullOrEmpty(modelElement.Name) && revitElement.Name != modelElement.Name)
             {
@@ -29,7 +30,7 @@ namespace Revit.DAL.Converters
             //var param1 = revitElement.LookupParameter(ParametersNames.Param1);
             //param1.SetValueString("Parameter Value");
 
-            var schema = new FooSchema
+            var schema = new DataSchema
             {
                 Data = JsonSerializer.Serialize(modelElement)
             };
@@ -37,7 +38,7 @@ namespace Revit.DAL.Converters
             _extensibleStorage.UpdateEntity(revitElement, schema);
         }
 
-        public Foo PullFromRevit(FamilyInstance revitElement)
+        public override Foo PullFromRevit(FamilyInstance revitElement)
         {
             var fooEntity = _extensibleStorage.GetEntity(revitElement);
 

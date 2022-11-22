@@ -9,12 +9,12 @@ namespace Revit.DAL.DataContext.RevitSets
 {
     public class BarSet : RevitSet<Bar, FamilyInstance>
     {
-        private readonly IRevitInstanceConverter<Bar, FamilyInstance> _converter;
+        private readonly RevitInstanceConverter<Bar, FamilyInstance> _converter;
 
-        public BarSet(IFactory<Document, IRevitInstanceConverter<Bar, FamilyInstance>> converter, Document document) :
+        public BarSet(IFactory<Document, RevitInstanceConverter<Bar, FamilyInstance>> converterFactory, Document document) :
             base(document)
         {
-            _converter = converter.New(document);
+            _converter = converterFactory.New(document);
         }
 
         protected override void PullEntities()

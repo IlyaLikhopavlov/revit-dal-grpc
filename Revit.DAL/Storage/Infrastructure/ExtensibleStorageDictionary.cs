@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
+using Revit.DAL.Storage.Infrastructure.Model;
 
 namespace Revit.DAL.Storage.Infrastructure
 {
@@ -8,10 +9,12 @@ namespace Revit.DAL.Storage.Infrastructure
     {
         protected JsonSerializerOptions JsonSerializerOptions = new();
 
-        public string GuidString => Guid.ToString();
-
-        protected ExtensibleStorageDictionary(string guid, string name, string fieldName, Element element)
-            : base(guid, name, fieldName, element)
+        public ExtensibleStorageDictionary(SchemaDescriptor schemaDescriptor)
+            : base(
+                schemaDescriptor.Guid.ToString(), 
+                schemaDescriptor.Name,
+                schemaDescriptor.FieldName,
+                schemaDescriptor.TargetElement)
         {
         }
 
@@ -27,7 +30,7 @@ namespace Revit.DAL.Storage.Infrastructure
                     : default;
         }
 
-        public void SetEntity<T>(string key, T entity)
+        public void AddEntity<T>(string key, T entity)
         {
             if (Storage == null)
             {
@@ -55,7 +58,7 @@ namespace Revit.DAL.Storage.Infrastructure
             Storage[key] = JsonSerializer.Serialize(entity, JsonSerializerOptions);
         }
 
-        public bool DeleteEntity(string key)
+        public bool RemoveEntity(string key)
         {
             if (Storage == null)
             {
@@ -65,6 +68,7 @@ namespace Revit.DAL.Storage.Infrastructure
             return Storage.Remove(key);
         }
 
+        //todo is it really require?
         public string GetEntityJson(string key)
         {
             if (Storage == null)
@@ -77,7 +81,8 @@ namespace Revit.DAL.Storage.Infrastructure
                 : default;
         }
 
-        public void SetEntityJson(string key, string entityJson)
+        
+        public void AddEntityJson(string key, string entityJson)
         {
             if (Storage == null)
             {
@@ -108,6 +113,7 @@ namespace Revit.DAL.Storage.Infrastructure
             });
         }
 
+        //todo that logic has to belong to derived class. Why here?
         public int GetNextId(string prefix)
         {
             if (string.IsNullOrEmpty(prefix))
@@ -124,6 +130,7 @@ namespace Revit.DAL.Storage.Infrastructure
 
         public static int GetId(string keyId, string prefix) => int.Parse(keyId.Replace(prefix + "|", string.Empty));
 
+        //todo also strange place for that logic
         public IEnumerable<T> GetAll<T>(string prefix)
         {
             if (string.IsNullOrEmpty(prefix))

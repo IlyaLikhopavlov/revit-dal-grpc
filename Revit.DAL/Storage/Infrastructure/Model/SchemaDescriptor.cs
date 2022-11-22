@@ -1,23 +1,32 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
+using Revit.DAL.Storage.Infrastructure.Model.Enums;
 using Revit.DAL.Storage.Schemas;
 
 namespace Revit.DAL.Storage.Infrastructure.Model
 {
-    public class ExtensibleStorageSchemaDescriptor
+    public class SchemaDescriptor
     {
-        public ExtensibleStorageSchemaDescriptor(Guid guid, Type schemaType, Type targetType, string fieldName)
+        private readonly SchemaInfo _schemaInfo;
+        
+        public SchemaDescriptor(SchemaInfo schemaInfo)
         {
-            Guid = guid;
-            SchemaType = schemaType;
-            TargetType = targetType;
-            FieldName = fieldName;
-            Kind = ConvertKind(TargetType);
 
+            _schemaInfo = schemaInfo;
+            Kind = ConvertKind(TargetType);
         }
 
-        public ExtensibleStorageSchemaDescriptor(ExtensibleStorageSchemaDescriptor descriptor) 
-            : this(descriptor.Guid, descriptor.SchemaType, descriptor.TargetType, descriptor.FieldName)
+        public SchemaDescriptor(SchemaDescriptor descriptor) 
+            : this(
+                new SchemaInfo
+                {
+                    Guid = descriptor.Guid,
+                    Name = descriptor.Name,
+                    SchemaType = descriptor.SchemaType, 
+                    TargetType = descriptor.TargetType,
+                    TargetElement = descriptor.TargetElement,
+                    FieldName = descriptor.FieldName
+                })
         {
         }
 
@@ -40,13 +49,17 @@ namespace Revit.DAL.Storage.Infrastructure.Model
 
         public TargetObjectKindEnum Kind { get; }
 
-        public Guid Guid { get; }
+        public Guid Guid => _schemaInfo.Guid;
 
-        public Type SchemaType { get; }
+        public string Name => _schemaInfo.Name;
 
-        public Type TargetType { get; }
+        public Type SchemaType => _schemaInfo.SchemaType;
 
-        public string FieldName { get; }
+        public Type TargetType => _schemaInfo.TargetType;
+
+        public Element TargetElement => _schemaInfo.TargetElement;
+
+        public string FieldName => _schemaInfo.FieldName;
 
         public Func<object, string> Converter { get; set; }
 
@@ -65,7 +78,6 @@ namespace Revit.DAL.Storage.Infrastructure.Model
 
         public string GetData(Entity entity)
         {
-            
             var getMethod = typeof(Entity).GetMethod(nameof(Entity.Get), new[] { typeof(string) });
             var getGeneric = getMethod?.MakeGenericMethod(FieldType);
             var result = getGeneric?.Invoke(entity, new object[] { FieldName });
@@ -75,8 +87,7 @@ namespace Revit.DAL.Storage.Infrastructure.Model
                 return (string)result;
             }
 
-            var ggg = Converter?.Invoke(result);
-            return ggg;
+            return Converter?.Invoke(result);
         }
     }
 }

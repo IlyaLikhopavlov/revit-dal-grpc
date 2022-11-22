@@ -1,6 +1,6 @@
 ﻿namespace Revit.DAL.Storage.Infrastructure;
 
-public interface IIntIdGenerator
+public interface IIntIdGenerator : IExtensibleStorage
 {
     int GetNewId();
 

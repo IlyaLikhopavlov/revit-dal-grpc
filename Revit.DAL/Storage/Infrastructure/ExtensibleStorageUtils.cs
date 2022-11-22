@@ -3,6 +3,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Revit.DAL.Exceptions;
 using Revit.DAL.Storage.Infrastructure.Model;
+using Revit.DAL.Storage.Infrastructure.Model.Enums;
 using Revit.DAL.Storage.Schemas;
 
 namespace Revit.DAL.Storage.Infrastructure
@@ -68,11 +69,12 @@ namespace Revit.DAL.Storage.Infrastructure
             return entity.IsValid();
         }
 
-        public static IEnumerable<(string data, ExtensibleStorageSchemaDescriptor descriptor)> GetProjectData(
+        //todo move to extensible storage service
+        public static IEnumerable<(string data, SchemaDescriptor descriptor)> GetProjectData(
             this Document document,
-            IExtensibleStorageSchemaService extensibleStorageSchemaService)
+            IExtensibleStorageService extensibleStorageService)
         {
-            var schemas = extensibleStorageSchemaService
+            var schemas = extensibleStorageService
                 .Where(x => x.Kind == TargetObjectKindEnum.ProjectInfo)
                 .Select(x => Schema.Lookup(x.Guid));
             
@@ -88,7 +90,7 @@ namespace Revit.DAL.Storage.Infrastructure
                             return (null, null);
                         }
 
-                        var descriptor = extensibleStorageSchemaService[x.GUID];
+                        var descriptor = extensibleStorageService[x.GUID];
 
                         var result = descriptor.GetData(entity);
                         using var jDoc = JsonDocument.Parse(result);
@@ -98,12 +100,12 @@ namespace Revit.DAL.Storage.Infrastructure
                     .Where(x => x.Item1 is not null);
         }
 
-        public static (string data, ExtensibleStorageSchemaDescriptor descriptor) GetDataFromElement(
+        public static (string data, SchemaDescriptor descriptor) GetDataFromElement(
             this Element element,
-            IExtensibleStorageSchemaService extensibleStorageSchemaService)
+            IExtensibleStorageService extensibleStorageService)
         {
             var schemas = Schema.ListSchemas()
-                .Where(x => extensibleStorageSchemaService.IsSchemaExists(x.GUID));
+                .Where(x => extensibleStorageService.IsSchemaExists(x.GUID));
 
             foreach (var schema in schemas)
             {
@@ -119,7 +121,7 @@ namespace Revit.DAL.Storage.Infrastructure
 
                 return 
                     (JsonSerializer.Serialize(jDoc, new JsonSerializerOptions { WriteIndented = true }),
-                    extensibleStorageSchemaService[entity.SchemaGUID]);
+                    extensibleStorageService[entity.SchemaGUID]);
             }
 
             return (null, null);

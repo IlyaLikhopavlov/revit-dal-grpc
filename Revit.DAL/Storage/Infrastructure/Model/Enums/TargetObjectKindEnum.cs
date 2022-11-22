@@ -1,4 +1,4 @@
-﻿namespace Revit.DAL.Storage.Infrastructure.Model
+﻿namespace Revit.DAL.Storage.Infrastructure.Model.Enums
 {
     public enum TargetObjectKindEnum
     {

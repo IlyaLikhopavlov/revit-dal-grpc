@@ -9,9 +9,9 @@ namespace Revit.DAL.DataContext.RevitSets
 {
     public class FooSet : RevitSet<Foo, FamilyInstance>
     {
-        private readonly IRevitInstanceConverter<Foo, FamilyInstance> _converter;
+        private readonly RevitInstanceConverter<Foo, FamilyInstance> _converter;
 
-        public FooSet(IFactory<Document, IRevitInstanceConverter<Foo, FamilyInstance>> converter, Document document) : 
+        public FooSet(IFactory<Document, RevitInstanceConverter<Foo, FamilyInstance>> converter, Document document) : 
             base(document)
         {
             _converter = converter.New(document);

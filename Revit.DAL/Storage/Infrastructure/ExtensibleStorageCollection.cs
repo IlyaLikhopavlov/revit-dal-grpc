@@ -4,16 +4,16 @@ using Revit.DAL.Utils;
 
 namespace Revit.DAL.Storage.Infrastructure
 {
-    public abstract class ExtensibleStorageCollection<TTarget, TBase>
+    public abstract class ExtensibleStorageCollection<TTarget, TBase> : IExtensibleStorage
         where TTarget : class, TBase, new()
     {
-        public const string TransactionNamePrefix = @"Save dictionary";
+        public const string TransactionNamePrefix = @"Save collection";
 
         protected readonly Guid SchemaGuid;
 
         protected readonly Schema Schema;
 
-        protected readonly string Name;
+        protected readonly string SchemaName;
 
         protected readonly string FieldName;
 
@@ -23,15 +23,15 @@ namespace Revit.DAL.Storage.Infrastructure
 
         protected readonly Guid Guid;
 
-        protected ExtensibleStorageCollection(string guid, string name, string fieldName, Element element)
+        protected ExtensibleStorageCollection(string guid, string schemaName, string fieldName, Element element)
         {
             SchemaGuid = new Guid(guid);
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(schemaName))
             {
-                throw new ArgumentException($@"Schema name {name} or field name {fieldName} isn't applicable.");
+                throw new ArgumentException($@"Schema name {schemaName} or field name {fieldName} isn't applicable.");
             }
 
-            Name = name;
+            SchemaName = schemaName;
             FieldName = fieldName;
             Element = element ?? throw new ArgumentNullException();
             Schema = GetSchema();
@@ -53,7 +53,7 @@ namespace Revit.DAL.Storage.Infrastructure
 
             schemaBuilder.SetReadAccessLevel(AccessLevel.Public);
             AddField(schemaBuilder);
-            schemaBuilder.SetSchemaName(Name);
+            schemaBuilder.SetSchemaName(SchemaName);
 
             return schemaBuilder.Finish();
         }
@@ -70,7 +70,7 @@ namespace Revit.DAL.Storage.Infrastructure
                 }
 
                 Storage = entity.Get<TBase>(Schema.GetField(FieldName)) ?? new TTarget();
-            }, $"{TransactionNamePrefix} {Name}");
+            }, $"{TransactionNamePrefix} {SchemaName}");
         }
 
         public virtual void Save()
@@ -86,7 +86,9 @@ namespace Revit.DAL.Storage.Infrastructure
 
                 entity.Set(Schema.GetField(FieldName), Storage ?? new TTarget());
                 Element.SetEntity(entity);
-            }, $"{TransactionNamePrefix} {Name}");
+            }, $"{TransactionNamePrefix} {SchemaName}");
         }
+
+        public Type Type => GetType();
     }
 }

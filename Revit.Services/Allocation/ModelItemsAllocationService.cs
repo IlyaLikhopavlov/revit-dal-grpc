@@ -19,16 +19,16 @@ namespace Revit.Services.Allocation
         private readonly IDataContext _dataContext;
         
         private readonly FamilyInstanceAllocationService _familyInstanceAllocationService;
-        private readonly Sample _sample;
+        private readonly SampleRendering _sampleRendering;
 
         public ModelItemsAllocationService(
             IFactory<Document, IDataContext> dataContextFactory,
-            IFactory<Document, Sample> sampleFactory,
+            IFactory<Document, SampleRendering> sampleFactory,
             FamilyInstanceAllocationService familyInstanceAllocationService,
             Document document)
         {
             _familyInstanceAllocationService = familyInstanceAllocationService;
-            _sample = sampleFactory.New(document);
+            _sampleRendering = sampleFactory.New(document);
             _dataContext = dataContextFactory.New(document);
         }
 
@@ -38,7 +38,7 @@ namespace Revit.Services.Allocation
 
             try
             {
-                var familySymbol = _sample?.Render(typeof(Foo)) 
+                var familySymbol = _sampleRendering?.Render(typeof(Foo)) 
                                    ?? throw new InvalidOperationException(@"Family symbol didn't get.");
 
                 allocatedItems = _familyInstanceAllocationService
@@ -77,7 +77,7 @@ namespace Revit.Services.Allocation
 
             try
             {
-                var familySymbol = _sample?.Render(typeof(Bar))
+                var familySymbol = _sampleRendering?.Render(typeof(Bar))
                                    ?? throw new InvalidOperationException(@"Family symbol didn't get.");
 
                 allocatedItems = _familyInstanceAllocationService

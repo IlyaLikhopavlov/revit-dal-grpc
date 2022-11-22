@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 using Revit.DAL.Constants;
+using Revit.DAL.Storage.Infrastructure.Model;
 
 namespace Revit.DAL.Storage.Infrastructure
 {
@@ -11,12 +12,8 @@ namespace Revit.DAL.Storage.Infrastructure
         private const int MinRangeBound = 10000;
         private const int MaxRangeBound = 10000000;
 
-        public IntIdGenerator(Document currentDocument) 
-            : base(
-                RevitStorage.IdStorageSchemaGuid, 
-                @"IdGenerator", 
-                @"IdList", 
-                currentDocument.ProjectInformation)
+        public IntIdGenerator(SchemaDescriptor schemaDescriptor) 
+            : base(schemaDescriptor)
         {
             _random = new Random();
             Create();

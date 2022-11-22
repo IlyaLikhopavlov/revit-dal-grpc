@@ -43,21 +43,21 @@ namespace Revit.AddIn
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
-            serviceCollection.AddSingleton<IExtensibleStorageSchemaService, ExtensibleStorageSchemaService>();
-            serviceCollection.AddTransient<ExtensibleStorageSchemaDescriptor>();
+            serviceCollection.AddTransient<SchemaDescriptor>();
 
             serviceCollection.AddSingleton(new ApplicationProcessing(application));
             serviceCollection.AddSingleton<FamilyInstanceAllocationService>();
             serviceCollection.AddScoped<ModelItemsAllocationService>();
-            serviceCollection.AddScoped<Sample>();
+            serviceCollection.AddScoped<SampleRendering>();
 
-            serviceCollection.AddScoped<ExtensibleStorage<FooSchema>, FooExtensibleStorage>();
-            serviceCollection.AddScoped<ExtensibleStorage<BarSchema>, BarExtensibleStorage>();
-            serviceCollection.AddScoped<SettingsExtensibleStorage>();
+            serviceCollection.AddScoped<ExtensibleStorage<DataSchema>>();
+            serviceCollection.AddScoped<ExtensibleStorageDictionary>();
             serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
+            serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
+            serviceCollection.AddScoped<SchemaDescriptorsRepository>();
 
-            serviceCollection.AddScoped<IRevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
-            serviceCollection.AddScoped<IRevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
+            serviceCollection.AddScoped<RevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
+            serviceCollection.AddScoped<RevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
 
             serviceCollection.AddScoped<BarSet>();
             serviceCollection.AddScoped<FooSet>();

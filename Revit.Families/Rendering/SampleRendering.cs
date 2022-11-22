@@ -5,7 +5,7 @@ using Revit.Families.Common;
 
 namespace Revit.Families.Rendering
 {
-    public class Sample
+    public class SampleRendering
     {
         private const string FamilyExtension = @".rfa";
         
@@ -23,7 +23,7 @@ namespace Revit.Families.Rendering
 
         private readonly Document _document;
 
-        public Sample(Document document)
+        public SampleRendering(Document document)
         {
             _document = document;
         }

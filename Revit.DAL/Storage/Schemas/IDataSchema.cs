@@ -2,6 +2,6 @@
 {
     internal interface IDataSchema
     {
-        string? Data { get; set; }
+        string Data { get; set; }
     }
 }

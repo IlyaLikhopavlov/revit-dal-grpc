@@ -2,18 +2,21 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Revit.DAL.Exceptions;
+using Revit.DAL.Storage.Infrastructure.Model;
 
 namespace Revit.DAL.Storage.Infrastructure
 {
-    public class ExtensibleStorage<T> where T : class, new()
+    public class ExtensibleStorage<T> : IExtensibleStorage where T : class, new()
     {
         private readonly Guid _schemaGuid;
+        private readonly string _schemaName;
 
         private readonly Schema _schema;
 
-        public ExtensibleStorage(string guid)
+        public ExtensibleStorage(SchemaDescriptor schemaDescriptor)
         {
-            _schemaGuid = new Guid(guid);
+            _schemaGuid = schemaDescriptor.Guid;
+            _schemaName = schemaDescriptor.Name;
             _schema = GetSchema();
         }
 
@@ -36,7 +39,7 @@ namespace Revit.DAL.Storage.Infrastructure
                 schemaBuilder.AddSimpleField(propertyInfo.Name, propertyInfo.PropertyType);
             }
 
-            schemaBuilder.SetSchemaName(typeof(T).Name);
+            schemaBuilder.SetSchemaName(_schemaName);
             return schemaBuilder.Finish();
         }
 
@@ -109,5 +112,7 @@ namespace Revit.DAL.Storage.Infrastructure
 
             UpdateEntity(element, entity, value);
         }
+
+        public Type Type => GetType();
     }
 }

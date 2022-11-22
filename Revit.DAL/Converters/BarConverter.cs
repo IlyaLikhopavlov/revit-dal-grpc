@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.DAL.Converters.Common;
 using Revit.DAL.Storage.Infrastructure;
 using Revit.DAL.Storage.Schemas;
@@ -12,18 +13,18 @@ using Revit.DML;
 
 namespace Revit.DAL.Converters
 {
-    public class BarConverter : IRevitInstanceConverter<Bar, FamilyInstance>
+    public class BarConverter : RevitInstanceConverter<Bar, FamilyInstance>
     {
-        private readonly ExtensibleStorage<BarSchema> _extensibleStorage;
+        private readonly ExtensibleStorage<DataSchema> _extensibleStorage;
 
         public BarConverter(
-            ExtensibleStorage<BarSchema> extensibleStorage,
+            IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
             Document document)
         {
-            _extensibleStorage = extensibleStorage;
+            _extensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
         }
 
-        public void PushToRevit(FamilyInstance revitElement, Bar modelElement)
+        public override void PushToRevit(FamilyInstance revitElement, Bar modelElement)
         {
             if (!string.IsNullOrEmpty(modelElement.Name) && revitElement.Name != modelElement.Name)
             {
@@ -34,7 +35,7 @@ namespace Revit.DAL.Converters
             //var param1 = revitElement.LookupParameter(ParametersNames.Param1);
             //param1.SetValueString("Parameter Value");
 
-            var schema = new BarSchema
+            var schema = new DataSchema
             {
                 Data = JsonSerializer.Serialize(modelElement)
             };
@@ -42,7 +43,7 @@ namespace Revit.DAL.Converters
             _extensibleStorage.UpdateEntity(revitElement, schema);
         }
 
-        public Bar PullFromRevit(FamilyInstance revitElement)
+        public override Bar PullFromRevit(FamilyInstance revitElement)
         {
             var barEntity = _extensibleStorage.GetEntity(revitElement);
 

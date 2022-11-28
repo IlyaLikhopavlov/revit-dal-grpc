@@ -28,14 +28,14 @@ namespace Revit.DAL.DataContext.DataInfrastructure
 
         protected abstract void ResolveForeignRelations();
 
-        public void SaveChanges(bool isInSubtransaction = false)
+        public void SaveChanges(bool isInSubTransaction = false)
         {
             if (Document.IsReadOnly)
             {
                 throw new InvalidOperationException($"Document {Document.Title} is read only. Changes can't be saved.");
             }
 
-            if (!Document.IsModifiable && !isInSubtransaction)
+            if (!Document.IsModifiable && !isInSubTransaction)
             {
                 using var transaction = new Transaction(Document, RevitStorage.SaveChangesTransactionName);
                 try

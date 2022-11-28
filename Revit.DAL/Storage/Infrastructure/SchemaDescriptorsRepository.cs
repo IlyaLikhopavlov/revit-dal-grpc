@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,40 +14,40 @@ using Revit.DML;
 
 namespace Revit.DAL.Storage.Infrastructure
 {
-    public class SchemaDescriptorsRepository
+    public class SchemaDescriptorsRepository : IEnumerable<SchemaDescriptor>
     {
-        private readonly IEnumerable<SchemaDescriptor> _descriptors;
+        private readonly ConcurrentDictionary<Guid, SchemaDescriptor> _descriptorsDictionary;
 
         public SchemaDescriptorsRepository(IFactory<SchemaInfo, SchemaDescriptor> descriptorsFactory, Document document)
         {
-            _descriptors = new []
+            var descriptors = new []
             {
                 descriptorsFactory.New(
                         new SchemaInfo {
                             Guid = new Guid(RevitStorage.FooSchemaGuid),
-                            Name = nameof(Foo),
+                            SchemaName = nameof(Foo),
                             SchemaType = typeof(DataSchema),
                             TargetType = typeof(FamilyInstance),
-                            FieldName = nameof(IDataSchema.Data)
+                            FieldName = nameof(DataSchema.Data)
                         }),
 
                     descriptorsFactory.New(
                         new SchemaInfo {
                             Guid = new Guid(RevitStorage.BarSchemaGuid),
-                            Name = nameof(Bar),
+                            SchemaName = nameof(Bar),
                             SchemaType = typeof(DataSchema),
                             TargetType = typeof(FamilyInstance),
-                            FieldName = nameof(IDataSchema.Data)
+                            FieldName = nameof(DataSchema.Data)
                         }),
 
                     descriptorsFactory.New(
                         new SchemaInfo
                         {
                             Guid = new Guid(RevitStorage.SettingsExtensibleStorageSchemaGuid),
-                            Name = @"SettingsSchema",
+                            SchemaName = RevitStorage.Settings.SchemaName,
                             SchemaType = typeof(IDictionary<string, string>),
                             TargetType = typeof(ProjectInfo),
-                            FieldName = "SettingsDictionary",
+                            FieldName = RevitStorage.Settings.FieldName,
                             TargetElement = document.ProjectInformation
                         }),
 
@@ -53,16 +55,53 @@ namespace Revit.DAL.Storage.Infrastructure
                         new SchemaInfo
                         {
                             Guid = new Guid(RevitStorage.IdStorageSchemaGuid),
-                            Name = @"IdListSchema",
+                            SchemaName = RevitStorage.IdList.SchemaName,
                             SchemaType = typeof(IList<int>),
                             TargetType = typeof(ProjectInfo),
-                            FieldName = "IdList",
+                            FieldName = RevitStorage.IdList.FieldName,
                             TargetElement = document.ProjectInformation
                         }),
             };
+
+            if (descriptors.GroupBy(x => x.Name).Any(x => x.Count() > 1) || 
+                descriptors.Any(x => string.IsNullOrWhiteSpace(x.Name)))
+            {
+                throw new InvalidOperationException("Schema name must be unique");
+            }
+
+            _descriptorsDictionary = new ConcurrentDictionary<Guid, SchemaDescriptor>(
+                descriptors.ToDictionary(x => x.Guid, y => y));
         }
 
-        public IReadOnlyList<SchemaDescriptor> Descriptors => new List<SchemaDescriptor>(_descriptors);
-    
+        public SchemaDescriptor this[Guid guid]
+        {
+            get
+            {
+                if (_descriptorsDictionary.TryGetValue(guid, out var schemaDescriptor))
+                {
+                    return new SchemaDescriptor(schemaDescriptor);
+                }
+
+                throw new ArgumentException($"Schema descriptor hasn't found by GUID {guid}.");
+            }
+        }
+
+        public bool IsSchemaExists(Guid guid)
+        {
+            return _descriptorsDictionary.ContainsKey(guid);
+        }
+
+        public IEnumerator<SchemaDescriptor> GetEnumerator()
+        {
+            return
+                _descriptorsDictionary.Values
+                    .Select(x => new SchemaDescriptor(x))
+                    .GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

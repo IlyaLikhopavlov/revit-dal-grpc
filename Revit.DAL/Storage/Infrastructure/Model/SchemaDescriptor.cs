@@ -14,6 +14,18 @@ namespace Revit.DAL.Storage.Infrastructure.Model
 
             _schemaInfo = schemaInfo;
             Kind = ConvertKind(TargetType);
+
+            if (typeof(SchemaInfo)
+                .GetProperties()
+                .Where(x => x.Name != nameof(SchemaInfo.TargetElement))
+                .Select(p => 
+                    p.GetValue(schemaInfo))
+                .Any(v => v is null))
+            {
+                throw new ArgumentException($"One or several property values of {nameof(schemaInfo)} are null");
+            }
+
+            AssignConverter();
         }
 
         public SchemaDescriptor(SchemaDescriptor descriptor) 
@@ -21,7 +33,7 @@ namespace Revit.DAL.Storage.Infrastructure.Model
                 new SchemaInfo
                 {
                     Guid = descriptor.Guid,
-                    Name = descriptor.Name,
+                    SchemaName = descriptor.Name,
                     SchemaType = descriptor.SchemaType, 
                     TargetType = descriptor.TargetType,
                     TargetElement = descriptor.TargetElement,
@@ -29,6 +41,36 @@ namespace Revit.DAL.Storage.Infrastructure.Model
                 })
         {
         }
+
+        private Func<object, string> _converter;
+
+        private void AssignConverter()
+        {
+            var switcher = new Dictionary<Type, Func<object, string>>
+            {
+                {
+                    typeof(IDictionary<string, string>), 
+                        o =>
+                        {
+                            var dictionary = (IDictionary<string, string>)o;
+                            return "[" + string.Join(",",
+                                dictionary.Select(kv => "{\"" + kv.Key + "\"" + ": " + kv.Value + "}").ToArray()) + "]";
+                        }
+                },
+                {
+                    typeof(IList<string>),
+                        o =>
+                        {
+                            var list = (IList<int>)o;
+                            return "[" + string.Join(",", list) + "]";
+                        }
+                }
+            };
+
+            _converter = switcher.TryGetValue(SchemaType, out var converter) ? converter : o => o.ToString();
+        }
+
+        public string FormatData(object data) => _converter?.Invoke(data);
 
         private static TargetObjectKindEnum ConvertKind(Type targetType)
         {
@@ -51,7 +93,7 @@ namespace Revit.DAL.Storage.Infrastructure.Model
 
         public Guid Guid => _schemaInfo.Guid;
 
-        public string Name => _schemaInfo.Name;
+        public string Name => _schemaInfo.SchemaName;
 
         public Type SchemaType => _schemaInfo.SchemaType;
 
@@ -61,33 +103,17 @@ namespace Revit.DAL.Storage.Infrastructure.Model
 
         public string FieldName => _schemaInfo.FieldName;
 
-        public Func<object, string> Converter { get; set; }
-
         public Type FieldType
         {
             get
             {
-                if (typeof(IDataSchema).IsAssignableFrom(SchemaType))
+                if (typeof(DataSchema).IsAssignableFrom(SchemaType))
                 {
-                    return SchemaType.GetProperty(nameof(IDataSchema.Data))?.PropertyType ?? SchemaType;
+                    return SchemaType.GetProperty(nameof(DataSchema.Data))?.PropertyType ?? SchemaType;
                 }
 
                 return SchemaType;
             }
-        }
-
-        public string GetData(Entity entity)
-        {
-            var getMethod = typeof(Entity).GetMethod(nameof(Entity.Get), new[] { typeof(string) });
-            var getGeneric = getMethod?.MakeGenericMethod(FieldType);
-            var result = getGeneric?.Invoke(entity, new object[] { FieldName });
-            
-            if (FieldType == typeof(string))
-            {
-                return (string)result;
-            }
-
-            return Converter?.Invoke(result);
         }
     }
 }

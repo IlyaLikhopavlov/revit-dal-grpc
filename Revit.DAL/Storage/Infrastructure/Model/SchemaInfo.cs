@@ -11,7 +11,7 @@ namespace Revit.DAL.Storage.Infrastructure.Model
     {
         public Guid Guid { get; set; }
 
-        public string Name { get; set; }
+        public string SchemaName { get; set; }
 
         public Type SchemaType { get; set; }
 

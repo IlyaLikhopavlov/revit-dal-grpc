@@ -69,62 +69,6 @@ namespace Revit.DAL.Storage.Infrastructure
             return entity.IsValid();
         }
 
-        //todo move to extensible storage service
-        public static IEnumerable<(string data, SchemaDescriptor descriptor)> GetProjectData(
-            this Document document,
-            IExtensibleStorageService extensibleStorageService)
-        {
-            var schemas = extensibleStorageService
-                .Where(x => x.Kind == TargetObjectKindEnum.ProjectInfo)
-                .Select(x => Schema.Lookup(x.Guid));
-            
-            return 
-                schemas
-                    .Where(x => x is not null)
-                    .Select(x =>
-                    {
-                        var entity = document.ProjectInformation.GetEntity(x);
-
-                        if (!entity.IsValid())
-                        {
-                            return (null, null);
-                        }
-
-                        var descriptor = extensibleStorageService[x.GUID];
-
-                        var result = descriptor.GetData(entity);
-                        using var jDoc = JsonDocument.Parse(result);
-
-                        return (JsonSerializer.Serialize(jDoc, new JsonSerializerOptions { WriteIndented = true }), descriptor);
-                    })
-                    .Where(x => x.Item1 is not null);
-        }
-
-        public static (string data, SchemaDescriptor descriptor) GetDataFromElement(
-            this Element element,
-            IExtensibleStorageService extensibleStorageService)
-        {
-            var schemas = Schema.ListSchemas()
-                .Where(x => extensibleStorageService.IsSchemaExists(x.GUID));
-
-            foreach (var schema in schemas)
-            {
-                var entity = element.GetEntity(schema);
-
-                if (!entity.IsValid())
-                {
-                    continue;
-                }
-
-                var result = (string)GetEntityFieldValue(entity, typeof(string), nameof(IDataSchema.Data));
-                using var jDoc = JsonDocument.Parse(result);
-
-                return 
-                    (JsonSerializer.Serialize(jDoc, new JsonSerializerOptions { WriteIndented = true }),
-                    extensibleStorageService[entity.SchemaGUID]);
-            }
-
-            return (null, null);
-        }
+        
     }
 }

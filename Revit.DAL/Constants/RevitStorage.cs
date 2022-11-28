@@ -11,5 +11,19 @@
         public const string IdStorageSchemaGuid = @"6D90F8EE-1752-4BAE-BD34-215CDB31DA06";
 
         public const string SaveChangesTransactionName = @"Save Changes";
+
+        public static class Settings
+        {
+            public const string SchemaName = @"SettingsSchema";
+
+            public const string FieldName = @"SettingsDictionary";
+        }
+
+        public static class IdList
+        {
+            public const string SchemaName = @"IdListSchema";
+
+            public const string FieldName = @"IdList";
+        }
     }
 }

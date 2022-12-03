@@ -16,7 +16,7 @@ namespace Revit.AddIn.Commands
             var document = commandData.Application.ActiveUIDocument.Document;
 
             using var scopeFactory = RevitDalApp.ServiceProvider.GetService<IDocumentServiceScopeFactory>();
-            using var documentScope = scopeFactory?.CreateDocumentScope(document);
+            var documentScope = scopeFactory?.CreateDocumentScope(document);
             var allocationService = documentScope?
                 .ServiceProvider
                 .GetService<IFactory<Document, ModelItemsAllocationService>>()

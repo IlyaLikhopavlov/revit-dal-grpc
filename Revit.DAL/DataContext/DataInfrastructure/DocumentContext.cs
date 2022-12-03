@@ -5,7 +5,7 @@ using Element = Revit.DML.Element;
 
 namespace Revit.DAL.DataContext.DataInfrastructure
 {
-    public abstract class DocumentContext
+    public abstract class DocumentContext : IDisposable
     {
         protected readonly Document Document;
 
@@ -121,6 +121,10 @@ namespace Revit.DAL.DataContext.DataInfrastructure
             {
                 syncSet.Sync();
             }
+        }
+
+        public virtual void Dispose()
+        {
         }
     }
 }

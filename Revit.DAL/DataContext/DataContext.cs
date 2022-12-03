@@ -10,7 +10,8 @@ namespace Revit.DAL.DataContext
         public DataContext(
             IFactory<Document, FooSet> foos,
             IFactory<Document, BarSet> bars,
-            Document document) : base(document)
+            Document document) : 
+            base(document)
         {
             Foo = foos.New(document);
             Bar = bars.New(document);
@@ -29,7 +30,7 @@ namespace Revit.DAL.DataContext
         {
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
         }
     }

@@ -10,7 +10,8 @@ namespace Revit.DAL.Converters
     {
         public FooConverter(
             IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
-            Document document) : base(extensibleStorageFactory, document)
+            Document document) : 
+            base(extensibleStorageFactory, document)
         {
         }
 

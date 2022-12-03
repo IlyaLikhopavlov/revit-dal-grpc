@@ -2,12 +2,12 @@
 
 namespace Revit.DAL.DataContext
 {
-    public interface IDataContext : IDisposable
+    public interface IDataContext
     {
         FooSet Foo { get; }
 
         BarSet Bar { get; }
 
-        void SaveChanges(bool isInSubtransaction = false);
+        void SaveChanges(bool isInSubTransaction = false);
     }
 }

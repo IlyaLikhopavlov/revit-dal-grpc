@@ -25,9 +25,9 @@ namespace Revit.DAL.Converters.Common
 
         protected IList<JsonConverter> Converters => _jsonSerializerOptions.Converters;
 
-        protected abstract void SendParametersToRevit(TRevitElement revitElement, TModelElement modelElement);
+        protected abstract void PushParametersToRevit(TRevitElement revitElement, TModelElement modelElement);
 
-        protected abstract void ReceiveParametersFromRevit(TRevitElement revitElement, ref TModelElement modelElement);
+        protected abstract void PullParametersFromRevit(TRevitElement revitElement, ref TModelElement modelElement);
 
         public virtual void PushToRevit(TRevitElement revitElement, TModelElement modelElement)
         {
@@ -36,7 +36,7 @@ namespace Revit.DAL.Converters.Common
                 revitElement.Name = modelElement.Name;
             }
 
-            SendParametersToRevit(revitElement, modelElement);
+            PushParametersToRevit(revitElement, modelElement);
 
             var schema = new DataSchema
             {
@@ -57,7 +57,7 @@ namespace Revit.DAL.Converters.Common
 
             var modelElement = JsonSerializer.Deserialize<TModelElement>(entity.Data, _jsonSerializerOptions);
 
-            ReceiveParametersFromRevit(revitElement, ref modelElement);
+            PullParametersFromRevit(revitElement, ref modelElement);
 
             if (modelElement is null)
             {

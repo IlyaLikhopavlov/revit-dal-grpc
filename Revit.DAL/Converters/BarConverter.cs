@@ -10,15 +10,16 @@ namespace Revit.DAL.Converters
     {
         public BarConverter(
             IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
-            Document document) : base(extensibleStorageFactory, document)
+            Document document) : 
+            base(extensibleStorageFactory, document)
         {
         }
 
-        protected override void SendParametersToRevit(FamilyInstance revitElement, Bar modelElement)
+        protected override void PushParametersToRevit(FamilyInstance revitElement, Bar modelElement)
         {
         }
 
-        protected override void ReceiveParametersFromRevit(FamilyInstance revitElement, ref Bar modelElement)
+        protected override void PullParametersFromRevit(FamilyInstance revitElement, ref Bar modelElement)
         {
         }
     }

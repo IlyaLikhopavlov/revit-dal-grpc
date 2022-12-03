@@ -2,7 +2,6 @@
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.DAL.Converters.Common;
 using Revit.DAL.DataContext.DataInfrastructure;
-using Revit.DAL.DataContext.RevitItems;
 using Revit.DAL.Storage.Infrastructure;
 using Revit.DML;
 

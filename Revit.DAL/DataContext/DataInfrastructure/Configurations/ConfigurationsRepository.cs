@@ -9,9 +9,7 @@
         {
             _configurations.Add(configuration);
         }
-
-        //public IReadOnlyCollection<IConfiguration> Configurations => _configurations;
-
+        
         public IEnumerable<IPropertyRelation> GetPropertyRelations(Type entityType) =>
             _configurations.Where(x => x.Type == entityType).SelectMany(x => x.PropertyRelations);
 

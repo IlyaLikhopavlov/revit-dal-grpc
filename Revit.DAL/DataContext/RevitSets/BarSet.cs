@@ -5,7 +5,6 @@ using Revit.DAL.Constants;
 using Revit.DAL.Converters.Common;
 using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DML;
-using Revit.DAL.DataContext.RevitItems;
 using Revit.DAL.Storage.Infrastructure;
 
 namespace Revit.DAL.DataContext.RevitSets

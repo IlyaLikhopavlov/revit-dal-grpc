@@ -14,12 +14,11 @@ namespace Revit.DAL.Converters
         {
         }
 
-
-        protected override void SendParametersToRevit(FamilyInstance revitElement, Foo modelElement)
+        protected override void PushParametersToRevit(FamilyInstance revitElement, Foo modelElement)
         {
         }
 
-        protected override void ReceiveParametersFromRevit(FamilyInstance revitElement, ref Foo modelElement)
+        protected override void PullParametersFromRevit(FamilyInstance revitElement, ref Foo modelElement)
         {
         }
     }

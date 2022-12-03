@@ -12,7 +12,7 @@ namespace Revit.DAL.DataContext.DataInfrastructure
             _revitSets = revitSets;
         }
 
-        public ConfigurationsRepository ConfigurationsRepository { get; } = new ConfigurationsRepository();
+        public ConfigurationsRepository ConfigurationsRepository { get; } = new();
 
         private void PullEntities() => _revitSets.ForEach(revitSet => revitSet.PullRevitEntities());
 

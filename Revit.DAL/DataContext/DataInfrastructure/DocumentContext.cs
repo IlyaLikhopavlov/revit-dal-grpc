@@ -18,12 +18,23 @@ namespace Revit.DAL.DataContext.DataInfrastructure
             Document = document ?? throw new ArgumentException($"{nameof(document)} isn't initialized.");
         }
 
-        protected virtual void Initialize()
+        protected void Initialize()
         {
+            SetSets();
             var modelBuilder = new ModelBuilder(RevitSets);
             OnModelCreating(modelBuilder);
             modelBuilder.Build();
             ResolveForeignRelations();
+        }
+
+        protected void SetSets()
+        {
+            RevitSets = GetType()
+                .GetProperties()
+                .Where(p => p.PropertyType.GetInterfaces().Contains(typeof(IRevitSet)))
+                .Select(p => p.GetValue(this, null) as IRevitSet)
+                .Where(x => x != null)
+                .ToList();
         }
 
         protected abstract void ResolveForeignRelations();

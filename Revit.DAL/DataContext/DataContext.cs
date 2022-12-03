@@ -10,10 +10,8 @@ namespace Revit.DAL.DataContext
         public DataContext(
             IFactory<Document, FooSet> foos,
             IFactory<Document, BarSet> bars,
-            Document document)
-            : base(document)
+            Document document) : base(document)
         {
-            
             Foo = foos.New(document);
             Bar = bars.New(document);
             Initialize();
@@ -22,38 +20,17 @@ namespace Revit.DAL.DataContext
         public FooSet Foo { get; }
 
         public BarSet Bar { get; }
-
-        protected sealed override void Initialize()
-        {
-            SetSets();
-            base.Initialize();
-        }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
         }
 
-        protected void SetSets()
-        {
-            RevitSets = typeof(DataContext)
-                .GetProperties()
-                .Where(p => p.PropertyType.GetInterfaces().Contains(typeof(IRevitSet)))
-                .Select(p => p.GetValue(this, null) as IRevitSet)
-                .Where(x => x != null)
-                .ToList();
-        }
-
         protected override void ResolveForeignRelations()
         {
-            
         }
 
         public void Dispose()
         {
-            //if (AutomationNetworks.Entries.First().EntityState == EntityState.Modified)
-            //{
-            //    SaveChanges();
-            //}
         }
     }
 }

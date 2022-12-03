@@ -10,6 +10,7 @@ using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.DAL.DataContext;
+using Revit.DAL.DataContext.DataInfrastructure.Enums;
 using Revit.DAL.Utils;
 
 namespace Revit.AddIn.Commands
@@ -36,11 +37,23 @@ namespace Revit.AddIn.Commands
                 $"{string.Join(", ", entities.Select(x => $"[{x.BaseEntity.Id},{x.BaseEntity.Name}]"))}");
 
             //Getting Foos
-            var foos = dataContext?.Foo.Entries.Select(x => x.Entity);
+            var foos = dataContext?.Foo.Entries.ToArray();
 
             TaskDialog.Show(
                 "Info",
-                $"{string.Join(", ", foos?.Select(x => $"[{x.Id},{x.Name}]") ?? new[] {string.Empty})}");
+                $"{string.Join(", ", foos?.Select(x => $"[{x.Id},{x.Entity.Name}]") ?? new[] {string.Empty})}");
+
+            var foo = foos?.FirstOrDefault();
+
+            if (foo is null)
+            {
+                return Result.Failed;
+            }
+
+            //Updating foo's data
+            foo.Entity.Description = @$"Foo new description {DateTime.Now}";
+            foo.EntityState = EntityState.Modified;
+            dataContext.SaveChanges();
 
             return Result.Succeeded;
         }

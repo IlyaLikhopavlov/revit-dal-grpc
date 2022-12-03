@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autodesk.Revit.ApplicationServices;
+﻿using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.DB;
@@ -12,7 +7,6 @@ using Autodesk.Revit.UI.Events;
 using Bimdance.Framework.DependencyInjection;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Microsoft.Extensions.DependencyInjection;
-using Revit.AddIn.Commands;
 using Revit.AddIn.Commands.Initialization;
 using Revit.AddIn.RibbonPanels;
 using Revit.DAL.Converters;
@@ -54,7 +48,7 @@ namespace Revit.AddIn
             serviceCollection.AddScoped<ExtensibleStorageDictionary>();
             serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
             serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
-            serviceCollection.AddScoped<SchemaDescriptorsRepository>();
+            serviceCollection.AddScoped<ISchemaDescriptorsRepository, SchemaDescriptorsRepository>();
 
             serviceCollection.AddScoped<RevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
             serviceCollection.AddScoped<RevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();

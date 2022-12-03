@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
@@ -11,6 +10,8 @@ using Revit.DAL.Storage.Schemas;
 
 namespace Revit.DAL.Storage
 {
+
+    //todo dispose dependencies
     public class ExtensibleStorageService : IExtensibleStorageService
     {
         private readonly ConcurrentDictionary<string, IExtensibleStorage> _extensibleStorages = new();
@@ -23,7 +24,7 @@ namespace Revit.DAL.Storage
 
         private readonly IFactory<SchemaDescriptor, IIntIdGenerator> _idGeneratorFactory;
 
-        private readonly SchemaDescriptorsRepository _schemaDescriptorsRepository;
+        private readonly ISchemaDescriptorsRepository _schemaDescriptorsRepository;
 
         private readonly Document _document;
 
@@ -31,7 +32,7 @@ namespace Revit.DAL.Storage
             IFactory<SchemaDescriptor, ExtensibleStorage<DataSchema>> dataExtensibleStorageFactory,
             IFactory<SchemaDescriptor, ExtensibleStorageDictionary> dictionaryExtensibleStorageFactory,
             IFactory<SchemaDescriptor, IIntIdGenerator> idGeneratorFactory,
-            IFactory<Document, SchemaDescriptorsRepository> repositoryFactory,
+            IFactory<Document, ISchemaDescriptorsRepository> repositoryFactory,
             Document document)
         {
             _dataExtensibleStorageFactory = dataExtensibleStorageFactory;
@@ -50,19 +51,19 @@ namespace Revit.DAL.Storage
         {
             if (descriptor.SchemaType == typeof(DataSchema))
             {
-                _extensibleStorages.TryAdd(descriptor.Name, _dataExtensibleStorageFactory.New(descriptor));
+                _extensibleStorages.TryAdd(descriptor.EntityName, _dataExtensibleStorageFactory.New(descriptor));
                 return;
             }
 
             if (descriptor.SchemaType == typeof(IDictionary<string, string>))
             {
-                _extensibleStorages.TryAdd(descriptor.Name, _dictionaryExtensibleStorageFactory.New(descriptor));
+                _extensibleStorages.TryAdd(descriptor.EntityName, _dictionaryExtensibleStorageFactory.New(descriptor));
                 return;
             }
 
             if (descriptor.SchemaType == typeof(IList<int>))
             {
-                _extensibleStorages.TryAdd(descriptor.Name, _idGeneratorFactory.New(descriptor));
+                _extensibleStorages.TryAdd(descriptor.EntityName, _idGeneratorFactory.New(descriptor));
             }
         }
 

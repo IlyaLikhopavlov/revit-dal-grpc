@@ -1,5 +1,4 @@
-﻿using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.ExtensibleStorage;
+﻿using Autodesk.Revit.DB.ExtensibleStorage;
 using Revit.DAL.Storage.Infrastructure.Model;
 
 namespace Revit.DAL.Storage.Infrastructure
@@ -9,7 +8,7 @@ namespace Revit.DAL.Storage.Infrastructure
         public ExtensibleStorageArray(SchemaDescriptor schemaDescriptor)
             : base(
                 schemaDescriptor.Guid.ToString(),
-                schemaDescriptor.Name,
+                schemaDescriptor.EntityName,
                 schemaDescriptor.FieldName,
                 schemaDescriptor.TargetElement)
         {

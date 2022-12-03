@@ -16,7 +16,7 @@ namespace Revit.DAL.Storage.Infrastructure
         public ExtensibleStorage(SchemaDescriptor schemaDescriptor)
         {
             _schemaGuid = schemaDescriptor.Guid;
-            _schemaName = schemaDescriptor.Name;
+            _schemaName = schemaDescriptor.EntityName;
             _schema = GetSchema();
         }
 

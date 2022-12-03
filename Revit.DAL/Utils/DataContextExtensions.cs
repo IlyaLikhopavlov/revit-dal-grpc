@@ -6,7 +6,7 @@ namespace Revit.DAL.Utils
 {
     public static class DataContextExtensions
     {
-        public static AutomationItemProxy GetAutomationItemProxyById(this IDataContext dataContext, int automationItemId)
+        public static BaseEntityProxy GetAutomationItemProxyById(this IDataContext dataContext, int automationItemId)
         {
             var automationItemProxies = GetAutomationItemProxies(dataContext);
 
@@ -14,7 +14,7 @@ namespace Revit.DAL.Utils
                 .FirstOrDefault(e => e.Id == automationItemId);
         }
 
-        public static IEnumerable<AutomationItemProxy> GetAutomationItemProxies(
+        public static IEnumerable<BaseEntityProxy> GetAutomationItemProxies(
             this IDataContext dataContext,
             Func<BaseEntity, bool> predicate = null)
         {
@@ -24,7 +24,7 @@ namespace Revit.DAL.Utils
                 .Concat(dataContext.Foo.Entries.Where(x => predicate?.Invoke(x.Entity) ?? true))
                 .Concat(dataContext.Bar.Entries.Where(x => predicate?.Invoke(x.Entity) ?? true));
 
-            return automationItemEntries.Select(x => new AutomationItemProxy(x));
+            return automationItemEntries.Select(x => new BaseEntityProxy(x));
         }
     }
 }

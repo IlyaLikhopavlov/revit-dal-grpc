@@ -1,15 +1,10 @@
 ﻿
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.DAL.DataContext;
-using Revit.DAL.DataContext.DataInfrastructure.Enums;
-using Revit.DAL.Processing;
-using System;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Revit.Families.Rendering;
-using Microsoft.Extensions.DependencyInjection;
 using Revit.DML;
-using Revit.Families.Rendering.Enums;
 using Revit.Services.Allocation.Common;
 
 namespace Revit.Services.Allocation

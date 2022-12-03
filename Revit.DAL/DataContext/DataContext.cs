@@ -1,9 +1,7 @@
 ﻿using Autodesk.Revit.DB;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.Constants;
 using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DAL.DataContext.RevitSets;
-using Revit.DAL.Utils;
 
 namespace Revit.DAL.DataContext
 {

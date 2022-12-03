@@ -1,5 +1,4 @@
 ﻿using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.ExtensibleStorage;
 using Revit.DAL.Storage.Infrastructure.Model.Enums;
 using Revit.DAL.Storage.Schemas;
 
@@ -33,7 +32,7 @@ namespace Revit.DAL.Storage.Infrastructure.Model
                 new SchemaInfo
                 {
                     Guid = descriptor.Guid,
-                    SchemaName = descriptor.Name,
+                    EntityName = descriptor.EntityName,
                     SchemaType = descriptor.SchemaType, 
                     TargetType = descriptor.TargetType,
                     TargetElement = descriptor.TargetElement,
@@ -93,7 +92,7 @@ namespace Revit.DAL.Storage.Infrastructure.Model
 
         public Guid Guid => _schemaInfo.Guid;
 
-        public string Name => _schemaInfo.SchemaName;
+        public string EntityName => _schemaInfo.EntityName;
 
         public Type SchemaType => _schemaInfo.SchemaType;
 

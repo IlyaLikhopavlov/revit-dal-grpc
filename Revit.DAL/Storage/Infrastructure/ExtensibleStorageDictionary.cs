@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Revit.DAL.Storage.Infrastructure.Model;
 
@@ -12,7 +11,7 @@ namespace Revit.DAL.Storage.Infrastructure
         public ExtensibleStorageDictionary(SchemaDescriptor schemaDescriptor)
             : base(
                 schemaDescriptor.Guid.ToString(), 
-                schemaDescriptor.Name,
+                schemaDescriptor.EntityName,
                 schemaDescriptor.FieldName,
                 schemaDescriptor.TargetElement)
         {

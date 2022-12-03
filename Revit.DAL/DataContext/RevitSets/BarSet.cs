@@ -1,42 +1,28 @@
 ﻿using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.ExtensibleStorage;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Revit.DAL.Constants;
 using Revit.DAL.Converters.Common;
 using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DML;
 using Revit.DAL.DataContext.RevitItems;
+using Revit.DAL.Storage.Infrastructure;
 
 namespace Revit.DAL.DataContext.RevitSets
 {
     public class BarSet : RevitSet<Bar, FamilyInstance>
     {
-        private readonly RevitInstanceConverter<Bar, FamilyInstance> _converter;
-
-        public BarSet(IFactory<Document, RevitInstanceConverter<Bar, FamilyInstance>> converterFactory, Document document) :
-            base(document)
+        public BarSet(
+            IFactory<Document, RevitInstanceConverter<Bar, FamilyInstance>> converterFactory, 
+            IFactory<Document, ISchemaDescriptorsRepository> schemaDescriptorsRepository,
+            Document document) :
+            base(document, schemaDescriptorsRepository, converterFactory)
         {
-            _converter = converterFactory.New(document);
-        }
-
-        protected override void PullEntities()
-        {
-            SourcesDictionary = Document
-                ?.GetBarInstances()
-                .ToDictionary(x => x.Id.IntegerValue, x => x);
-
-            EntityProxiesDictionary = SourcesDictionary
-                ?.ToDictionary(
-                    x => x.Key,
-                    x => new EntityProxy<Bar>(_converter.PullFromRevit(x.Value), x.Value.Id.IntegerValue));
         }
 
         protected override FamilyInstance CreateRevitElement(Bar modelElement)
         {
             throw new NotImplementedException();
-        }
-
-        protected override void SetToRevit(FamilyInstance revitElement, Bar modelElement)
-        {
-            _converter?.PushToRevit(revitElement, modelElement);
         }
     }
 }

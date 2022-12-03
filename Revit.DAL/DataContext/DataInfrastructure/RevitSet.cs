@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.ExtensibleStorage;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Revit.DAL.Converters.Common;
 using Revit.DAL.DataContext.DataInfrastructure.Enums;
 using Revit.DAL.Exceptions;
+using Revit.DAL.Storage.Infrastructure;
+using Revit.DML;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace Revit.DAL.DataContext.DataInfrastructure
 {
     public abstract class RevitSet<TModelElement, TRevitElement> : IEnumerable<TModelElement>, ISynchronizable, IRevitSet
         where TModelElement : DML.Element
-        where TRevitElement : Element
+        where TRevitElement : Autodesk.Revit.DB.Element
     {
         private readonly Queue<EntityProxy<TModelElement>> _addBuffer = new();
 
@@ -15,7 +21,21 @@ namespace Revit.DAL.DataContext.DataInfrastructure
 
         protected IDictionary<int, TRevitElement> SourcesDictionary = new Dictionary<int, TRevitElement>();
 
+        private readonly ISchemaDescriptorsRepository _schemaDescriptorsRepository;
+
+        private readonly RevitInstanceConverter<TModelElement, TRevitElement> _converter;
+
         protected Document Document;
+
+        protected RevitSet(
+            Document document, 
+            IFactory<Document, ISchemaDescriptorsRepository> schemaDescriptorsRepositoryFactory,
+            IFactory<Document, RevitInstanceConverter<TModelElement, TRevitElement>> converterFactory)
+        {
+            Document = document;
+            _schemaDescriptorsRepository = schemaDescriptorsRepositoryFactory.New(Document);
+            _converter = converterFactory.New(Document);
+        }
 
         public IReadOnlyCollection<TRevitElement> Sources => new List<TRevitElement>(SourcesDictionary.Values);
 
@@ -35,12 +55,34 @@ namespace Revit.DAL.DataContext.DataInfrastructure
 
         public IEnumerable<EntityProxy<TModelElement>> Entries => EntityProxiesDictionary.Values.Concat(_addBuffer);
 
-        protected RevitSet(Document document)
+        public virtual void PullRevitEntities()
         {
-            Document = document;
+            SourcesDictionary = GetInstances()
+                .ToDictionary(x => x.Id.IntegerValue, x => x);
+
+            EntityProxiesDictionary = SourcesDictionary
+                ?.ToDictionary(
+                    x => x.Key,
+                    x => new EntityProxy<TModelElement>(_converter.PullFromRevit(x.Value), x.Value.Id.IntegerValue));
         }
 
-        protected abstract void PullEntities();
+        protected virtual List<TRevitElement> GetInstances()
+        {
+            using var collector = new FilteredElementCollector(Document);
+
+            var descriptor = _schemaDescriptorsRepository[typeof(TModelElement).Name];
+
+            if (descriptor.TargetType != typeof(TRevitElement))
+            {
+                throw new InvalidOperationException("");
+            }
+            
+            return collector
+                .OfClass(typeof(FamilyInstance))
+                .WherePasses(new ExtensibleStorageFilter(descriptor.Guid))
+                .OfType<TRevitElement>()
+                .ToList();
+        }
 
         public (TModelElement, TRevitElement) Find(int keyValue)
         {
@@ -133,7 +175,10 @@ namespace Revit.DAL.DataContext.DataInfrastructure
 
         protected abstract TRevitElement CreateRevitElement(TModelElement modelElement);
 
-        protected abstract void SetToRevit(TRevitElement revitElement, TModelElement modelElement);
+        protected virtual void PushToRevit(TRevitElement revitElement, TModelElement modelElement)
+        {
+            _converter?.PushToRevit(revitElement, modelElement);
+        }
 
         private void SyncAdded(EntityProxy<TModelElement> entityProxy)
         {
@@ -155,7 +200,7 @@ namespace Revit.DAL.DataContext.DataInfrastructure
             entityProxy.Id = revitElement.Id.IntegerValue;
             entityProxy.EntityState = EntityState.Unchanged;
 
-            SetToRevit(revitElement, entityProxy.Entity);
+            PushToRevit(revitElement, entityProxy.Entity);
 
             EntityProxiesDictionary.Add(entityProxy.Entity.Id, entityProxy);
         }
@@ -192,7 +237,7 @@ namespace Revit.DAL.DataContext.DataInfrastructure
                 return;
             }
 
-            SetToRevit(elementToModification, entityProxy.Entity);
+            PushToRevit(elementToModification, entityProxy.Entity);
         }
 
         public object GetEntity(int id)
@@ -203,11 +248,6 @@ namespace Revit.DAL.DataContext.DataInfrastructure
         public object GetEntry(int id)
         {
             return Entries.FirstOrDefault(x => x.Entity.Id == id)!;
-        }
-
-        public void PullRevitEntities()
-        {
-            PullEntities();
         }
     }
 }

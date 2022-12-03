@@ -4,11 +4,11 @@ using Revit.DML;
 
 namespace Revit.DAL.DataContext
 {
-    public class AutomationItemProxy
+    public class BaseEntityProxy
     {
         private readonly IEntityProxy _entityProxy;
 
-        public AutomationItemProxy(IEntityProxy entityProxy)
+        public BaseEntityProxy(IEntityProxy entityProxy)
         {
             _entityProxy = entityProxy;
         }

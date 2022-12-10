@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option csharp_namespace = "Revit.Services.Grpc.Services";
+
+import "CommonMessages.proto";
+
+service RevitDataExchange {
+	rpc PushDataToRevitInstance (.PushDataToRevitInstanceRequest) returns (.BasicResponse);
+	rpc PullDataFromRevitInstance (.PullDataFromRevitInstanceRequest) returns (.PullDataFromRevitInstanceResponse);
+}
+
+message PushDataToRevitInstanceRequest {
+	string DocumentId = 1;
+	int32 InstanceId = 2;
+	string Data = 3;
+}
+
+message PullDataFromRevitInstanceRequest {
+	string DocumentId = 1;
+	int32 InstanceId = 2;
+}
+
+message PullDataFromRevitInstanceResponse {
+	ErrorInfo ErrorInfo = 1;
+	string Data = 2;
+}

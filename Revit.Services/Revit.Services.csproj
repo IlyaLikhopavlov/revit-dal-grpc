@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -8,12 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Revit.DAL\Revit.DAL.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
     <ProjectReference Include="..\Revit.Families\Revit.Families.csproj" />
+    <ProjectReference Include="..\Revit.GrpcServer\Revit.Grpc.Bundle.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Net.Http" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
 
 </Project>

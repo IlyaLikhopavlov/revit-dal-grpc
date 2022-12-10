@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
-    <ProjectReference Include="..\Revit.DML\Revit.DML.csproj" />
+    <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
   </ItemGroup>
 
   <ItemGroup>

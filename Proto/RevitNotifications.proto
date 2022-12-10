@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "Revit.Services.Grpc.Services";
+
+import "CommonMessages.proto";
+
+service RevitActiveDocumentNotification {
+	rpc OnDocumentChanged (EmptyRequest) returns (stream .OnDocumentChangedResponse);
+}
+
+message DocumentDescriptor {
+	string Title = 1;
+	string Id = 2;
+}
+
+message OnDocumentChangedResponse {
+	DocumentDescriptor ActiveDocument = 1;
+}

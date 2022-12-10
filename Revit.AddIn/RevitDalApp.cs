@@ -1,4 +1,5 @@
-﻿using Autodesk.Revit.ApplicationServices;
+﻿using System.Runtime.CompilerServices;
+using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.DB;
@@ -19,10 +20,13 @@ using Revit.DAL.DataContext;
 using Revit.DAL.DataContext.RevitSets;
 using Revit.DML;
 using Element = Autodesk.Revit.DB.Element;
-using Revit.DAL.Processing;
 using Revit.Families.Rendering;
 using Revit.Services.Allocation;
 using Revit.Services.Allocation.Common;
+using Revit.Services.Grpc;
+using Revit.Services.Grpc.Services;
+using Revit.Services.Processing;
+using DocumentChangedEventArgs = Revit.Services.Processing.EventArgs.DocumentChangedEventArgs;
 
 namespace Revit.AddIn
 {
@@ -50,6 +54,10 @@ namespace Revit.AddIn
             serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
             serviceCollection.AddScoped<ISchemaDescriptorsRepository, SchemaDescriptorsRepository>();
 
+            //grpc
+            serviceCollection.AddSingleton<RevitActiveDocumentNotificationService>();
+            serviceCollection.AddSingleton<GrpcServerBootstrapper>();
+
             serviceCollection.AddScoped<RevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
             serviceCollection.AddScoped<RevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
 
@@ -65,22 +73,21 @@ namespace Revit.AddIn
             _mainPanel.Create(application);
 
             application.ControlledApplication.ApplicationInitialized += ControlledApplication_ApplicationInitialized;
+
+            ServiceProvider.GetService<GrpcServerBootstrapper>()?.StartServer("127.0.0.1", 5005);
+
             return Result.Succeeded;
         }
 
         public Result OnShutdown(UIControlledApplication application)
         {
+            ServiceProvider?.GetService<GrpcServerBootstrapper>()?.StopServer();
             ServiceProvider?.GetService<IDocumentServiceScopeFactory>()?.Dispose();
 
             return Result.Succeeded;
         }
 
-        private static bool DocumentWasChanged(Element currentActiveView, Element previousActiveView)
-        {
-            return !Equals(currentActiveView?.Document, previousActiveView?.Document);
-        }
-
-        private static void ControlledApplication_ApplicationInitialized(object sender, ApplicationInitializedEventArgs e)
+        private void ControlledApplication_ApplicationInitialized(object sender, ApplicationInitializedEventArgs e)
         {
             var initCommand = new InitializationCommand();
 
@@ -109,22 +116,30 @@ namespace Revit.AddIn
             }
         }
 
-        private static void UiControlledApplicationOnViewActivated(object sender, ViewActivatedEventArgs e)
+        private void UiControlledApplicationOnViewActivated(object sender, ViewActivatedEventArgs e)
         {
             OnViewActivatedInternal(e.Document, e.CurrentActiveView, e.PreviousActiveView);
         }
 
-        private static void OnViewActivatedInternal(Document document, Element currentActiveView, Element previousActiveView)
+        private void OnViewActivatedInternal(Document document, Element currentActiveView, Element previousActiveView)
         {
             if (document == null || currentActiveView == null)
             {
                 return;
             }
 
-            if (DocumentWasChanged(currentActiveView, previousActiveView))
+            if (!DocumentChanged(currentActiveView, previousActiveView))
             {
-
+                return;
             }
+
+            var appProcessing = ServiceProvider.GetService<ApplicationProcessing>();
+            appProcessing?.DocumentChanged?.Invoke(this, new DocumentChangedEventArgs { ActiveDocument = currentActiveView.Document });
+        }
+
+        private static bool DocumentChanged(Element currentActiveView, Element previousActiveView)
+        {
+            return !Equals(currentActiveView?.Document, previousActiveView?.Document);
         }
     }
 }

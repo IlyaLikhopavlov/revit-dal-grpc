@@ -23,7 +23,7 @@ namespace Revit.DAL.Converters.Common
             ExtensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
         }
 
-        protected IList<JsonConverter> Converters => _jsonSerializerOptions.Converters;
+        protected IList<JsonConverter> JsonConverters => _jsonSerializerOptions.Converters;
 
         protected abstract void PushParametersToRevit(TRevitElement revitElement, TModelElement modelElement);
 

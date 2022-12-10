@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Revit.DAL\Revit.DAL.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

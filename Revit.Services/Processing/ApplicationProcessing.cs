@@ -1,7 +1,7 @@
 ﻿using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.UI;
 
-namespace Revit.DAL.Processing
+namespace Revit.Services.Processing
 {
     public class ApplicationProcessing
     {
@@ -39,5 +39,7 @@ namespace Revit.DAL.Processing
         public UIControlledApplication UiControlledApplication { get; }
 
         public ControlledApplication ControlledApplication { get; set; }
+
+        public EventHandler<EventArgs.DocumentChangedEventArgs> DocumentChanged { get; set; }
     }
 }

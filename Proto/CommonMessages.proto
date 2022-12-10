@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+enum ExceptionCodeEnum {
+	Success = 0;
+	Unknown = 1;
+
+	IncorrectName = 101;
+	IncorrectNumber = 102;
+	NameAlreadyExists = 103;
+	NumberAlreadyExists = 104;
+	RequestedIdDidNotFound = 105; 
+	RequestedPartNumberDidNotFound = 106; 
+
+	Exception = 201;
+	DeadlineExceeded = 202;
+}
+
+message ErrorInfo {
+	ExceptionCodeEnum Code = 1;
+	string Message = 2;
+}
+
+message BasicResponse {
+	ErrorInfo ErrorInfo = 1;
+}
+
+message EmptyRequest {
+}

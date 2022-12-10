@@ -2,8 +2,8 @@
 <RevitAddIns>
   <AddIn Type="Application">
     <Name>RevitDALApp</Name>
-    <Assembly>C:\Users\Ilya Likhopavlov\source\repos\Revit.AddIn\Revit.AddIn\bin\Debug\net48\Revit.AddIn.dll</Assembly>
-    <AddInId>340D160E-AA41-479C-91BD-D8DE87B52CC9</AddInId>
+    <Assembly>C:\Users\Ilya Likhopavlov\source\repos\revit-dal-grpc\Revit.AddIn\bin\Debug\net48\Revit.AddIn.dll</Assembly>
+    <AddInId>42FB670E-A693-414A-B59F-5EFB2F4E9D3B</AddInId>
     <FullClassName>Revit.AddIn.RevitDalApp</FullClassName>
     <VendorId>Bimdance.io</VendorId>
     <VendorDescription>BIMDance, support@bimdance.io</VendorDescription>

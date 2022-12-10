@@ -6,6 +6,7 @@ using Autodesk.Revit.UI;
 using Revit.Families.Rendering;
 using Revit.DML;
 using Revit.Services.Allocation.Common;
+using Element = Revit.DML.Element;
 
 namespace Revit.Services.Allocation
 {
@@ -27,13 +28,13 @@ namespace Revit.Services.Allocation
             _dataContext = dataContextFactory.New(document);
         }
 
-        public int AllocateFoo()
+        private int AllocateInstance<T>() where T : Element, new()
         {
             var allocatedItems = Array.Empty<int>();
 
             try
             {
-                var familySymbol = _sampleRendering?.Render(typeof(Foo)) 
+                var familySymbol = _sampleRendering?.Render(typeof(T))
                                    ?? throw new InvalidOperationException(@"Family symbol didn't get.");
 
                 allocatedItems = _familyInstanceAllocationService
@@ -43,16 +44,24 @@ namespace Revit.Services.Allocation
                 if (allocatedItems.Length > 0)
                 {
                     var allocatedEntities = allocatedItems.Select(x =>
-                        new Foo
+                        new T
                         {
-                            Id = x, 
-                            Name = $"Foo{x}", 
-                            Description = @"What ever you want"
+                            Id = x,
+                            Name = $"{typeof(T).Name}{x}",
                         });
 
                     foreach (var allocatedEntity in allocatedEntities)
                     {
-                        _dataContext.Foo.Attach(allocatedEntity);
+                        var switcher = new Dictionary<Type, Action<Element>>
+                        {
+                            { typeof(Foo), x => _dataContext.Foo.Attach((Foo)x) },
+                            { typeof(Bar), x => _dataContext.Bar.Attach((Bar)x) }
+                        };
+
+                        if (switcher.TryGetValue(allocatedEntity.GetType(), out var attachAction))
+                        {
+                            attachAction.Invoke(allocatedEntity);
+                        }
                     }
 
                     _dataContext.SaveChanges();
@@ -66,43 +75,14 @@ namespace Revit.Services.Allocation
             return allocatedItems.Length;
         }
 
+        public int AllocateFoo()
+        {
+            return AllocateInstance<Foo>();
+        }
+
         public int AllocateBar()
         {
-            var allocatedItems = Array.Empty<int>();
-
-            try
-            {
-                var familySymbol = _sampleRendering?.Render(typeof(Bar))
-                                   ?? throw new InvalidOperationException(@"Family symbol didn't get.");
-
-                allocatedItems = _familyInstanceAllocationService
-                    .PlaceInstances(familySymbol, int.MaxValue)
-                    .ToArray();
-
-                if (allocatedItems.Length > 0)
-                {
-                    var allocatedEntities = allocatedItems.Select(x =>
-                        new Bar
-                        {
-                            Id = x,
-                            Name = $"Bar{x}",
-                            Description = @"What ever you want"
-                        });
-
-                    foreach (var allocatedEntity in allocatedEntities)
-                    {
-                        _dataContext.Bar.Attach(allocatedEntity);
-                    }
-
-                    _dataContext.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                TaskDialog.Show("Error", $"{ex}");
-            }
-
-            return allocatedItems.Length;
+            return AllocateInstance<Bar>();
         }
     }
 }

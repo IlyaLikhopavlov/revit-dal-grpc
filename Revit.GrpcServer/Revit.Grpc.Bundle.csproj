@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+	  <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.21.10" />
+    <PackageReference Include="Grpc.Core" Version="2.46.5" />
+    <PackageReference Include="Grpc.Tools" Version="2.50.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Proto\CommonMessages.proto">
+      <Link>CommonMessages.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\Proto\RevitNotifications.proto" GrpcService="Server">
+      <Link>RevitNotifications.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\Proto\RevitExtraDataExchange.proto" GrpcServices="Server">
+      <Link>RevitExtraDataExchange.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+
+</Project>

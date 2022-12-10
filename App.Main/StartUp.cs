@@ -26,7 +26,7 @@ namespace App.Main
             ConfigureServices(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            ServiceProvider.GetService<Services.Grpc.RevitActiveDocumentNotificationClient>()?.GetRevitNotification();
+            ServiceProvider.GetService<Services.Grpc.RevitActiveDocumentNotificationClient>()?.RunGettingRevitNotification();
         }
 
         public void ShutDown()

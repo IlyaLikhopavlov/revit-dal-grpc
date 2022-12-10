@@ -26,7 +26,7 @@ namespace App.Services.Grpc
             _client = new RevitActiveDocumentNotification.RevitActiveDocumentNotificationClient(channel);
         }
 
-        public async Task GetRevitNotification()
+        public async Task RunGettingRevitNotification()
         {
             try
             {

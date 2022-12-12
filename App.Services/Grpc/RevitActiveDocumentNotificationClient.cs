@@ -34,6 +34,11 @@ namespace App.Services.Grpc
                 while (await call.ResponseStream.MoveNext())
                 {
                     _revitApplication.ActiveDocument = call.ResponseStream.Current.ActiveDocument;
+                    if (string.IsNullOrWhiteSpace(_revitApplication.ActiveDocument.Title))
+                    {
+                        Console.WriteLine("- no data");
+                        continue;
+                    }
                     Console.WriteLine(_revitApplication.ActiveDocument.Title);
                 }
 

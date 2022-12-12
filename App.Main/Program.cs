@@ -1,15 +1,12 @@
 ﻿using App.Main;
+using App.Main.UiFixtures;
+using Microsoft.Extensions.DependencyInjection;
 
 var startUp = new StartUp();
 startUp.Build();
 
-var prompt = string.Empty;
+await StartUp.ServiceProvider.GetService<App.Services.Grpc.RevitActiveDocumentNotificationClient>()?.RunGettingRevitNotification()!;
 
-while (prompt?.ToLower() != "exit")
-{
-    Console.Clear();
-    Console.Write(@"Type ""Exit"" for program termination: ");
-    prompt = Console.ReadLine();
-}
+await StartUp.ServiceProvider.GetService<CommandProcessor>()?.Run()!;
 
 startUp.ShutDown();

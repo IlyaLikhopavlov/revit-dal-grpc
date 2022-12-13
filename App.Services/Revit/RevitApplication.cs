@@ -10,5 +10,7 @@ namespace App.Services.Revit
     public class RevitApplication
     {
         public DocumentDescriptor ActiveDocument { get; set; }
+
+        public CurrentDocumentStatusEnum Status { get; set; }
     }
 }

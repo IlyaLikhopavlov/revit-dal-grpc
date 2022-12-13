@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UiFixtures\" />
+  </ItemGroup>
+
 </Project>

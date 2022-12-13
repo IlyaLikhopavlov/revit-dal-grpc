@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using App.Main.UiFixtures;
 using App.Services.Revit;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.Services.Grpc.Services;
@@ -19,10 +18,6 @@ namespace App.Main
         {
             serviceCollection.AddSingleton<RevitApplication>();
             serviceCollection.AddSingleton<Services.Grpc.RevitActiveDocumentNotificationClient>();
-
-            serviceCollection.AddSingleton<ClearCommand>();
-            serviceCollection.AddSingleton<ReconnectCommand>();
-            serviceCollection.AddSingleton<CommandProcessor>();
         }
 
         public void Build()

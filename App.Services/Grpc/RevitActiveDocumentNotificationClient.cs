@@ -34,19 +34,21 @@ namespace App.Services.Grpc
                 while (await call.ResponseStream.MoveNext())
                 {
                     _revitApplication.ActiveDocument = call.ResponseStream.Current.ActiveDocument;
-                    if (string.IsNullOrWhiteSpace(_revitApplication.ActiveDocument.Title))
+                    _revitApplication.Status = CurrentDocumentStatusEnum.Reliable;
+                    if (string.IsNullOrWhiteSpace(_revitApplication.ActiveDocument.Id))
                     {
                         Console.WriteLine("- no data");
                         continue;
                     }
+
                     Console.WriteLine(_revitApplication.ActiveDocument.Title);
                 }
 
             }
-            catch (RpcException e) when (e.StatusCode == StatusCode.Cancelled)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
-                throw;
+                _revitApplication.Status = CurrentDocumentStatusEnum.Untrusted;
+                Console.WriteLine($"Revit communication failed - {ex}");
             }
         }
 

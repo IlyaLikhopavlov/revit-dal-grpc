@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App.Main.UiFixtures
+namespace App.Services.Revit
 {
-    public interface ICommand
+    public enum CurrentDocumentStatusEnum
     {
-        Task Execute();
+        Untrusted = 0,
+        Reliable = 1
     }
 }

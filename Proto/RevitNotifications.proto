@@ -8,11 +8,17 @@ service RevitActiveDocumentNotification {
 	rpc OnDocumentChanged (EmptyRequest) returns (stream .OnDocumentChangedResponse);
 }
 
+enum DocumentActionEnum {
+	Activated = 0;
+	Closed = 1;
+}
+
 message DocumentDescriptor {
 	string Title = 1;
 	string Id = 2;
+	DocumentActionEnum DocumentAction = 3;
 }
 
 message OnDocumentChangedResponse {
-	DocumentDescriptor ActiveDocument = 1;
+	DocumentDescriptor DocumentDescriptor = 1;
 }

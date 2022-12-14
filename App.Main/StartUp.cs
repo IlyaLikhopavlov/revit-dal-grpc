@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using App.Grpc.Bundle.ScopedServicesFunctionality;
 using App.Services.Revit;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.Services.Grpc.Services;
@@ -17,6 +18,7 @@ namespace App.Main
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<RevitApplication>();
+            serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
             serviceCollection.AddSingleton<Services.Grpc.RevitActiveDocumentNotificationClient>();
         }
 

@@ -1,33 +1,48 @@
 ﻿using System.Collections.Concurrent;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Events;
+using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Grpc.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Revit.Services.Processing;
+using DocumentClosingEventArgs = Revit.Services.Processing.EventArgs.DocumentClosingEventArgs;
 
 namespace Revit.Services.Grpc.Services
 {
     public class RevitActiveDocumentNotificationService : RevitActiveDocumentNotification.RevitActiveDocumentNotificationBase
     {
-        private readonly BlockingCollection<Document> _documents = new();
+        private readonly BlockingCollection<(Document source, DocumentDescriptor descriptor)> _documents = new();
 
         private readonly ApplicationProcessing _applicationProcessing;
 
         public RevitActiveDocumentNotificationService(ApplicationProcessing applicationProcessing)
         {
             _applicationProcessing = applicationProcessing;
-            _applicationProcessing.DocumentChanged += DocumentChanged;
+            _applicationProcessing.DocumentChanged += OnDocumentChanged;
+            _applicationProcessing.DocumentClosing += OnDocumentClosing;
         }
 
-        private void DocumentChanged(object sender, Processing.EventArgs.DocumentChangedEventArgs e)
+        private void OnDocumentClosing(object sender, DocumentClosingEventArgs e)
+        {
+            if (e.ClosingDocument is null)
+            {
+                return;
+            }
+
+            _documents.Add((e.ClosingDocument, Convert(e.ClosingDocument, DocumentActionEnum.Closed)));
+        }
+
+        private void OnDocumentChanged(object sender, Processing.EventArgs.DocumentChangedEventArgs e)
         {
             if (e.ActiveDocument is null)
             {
                 return;
             }
-            
-            _documents.Add(e.ActiveDocument);
+
+            _documents.Add((e.ActiveDocument, Convert(e.ActiveDocument)));
         }
 
-        private static DocumentDescriptor Convert(Document document)
+        private static DocumentDescriptor Convert(Document document, DocumentActionEnum documentAction = DocumentActionEnum.Activated)
         {
              return 
                 document.IsFamilyDocument
@@ -35,13 +50,15 @@ namespace Revit.Services.Grpc.Services
                     new DocumentDescriptor
                     {
                         Id = string.Empty,
-                        Title = string.Empty
+                        Title = string.Empty,
+                        DocumentAction = documentAction
                     }
                 :
                     new DocumentDescriptor
                     {
                         Id = document.ProjectInformation?.UniqueId ?? string.Empty,
-                        Title = document.Title ?? string.Empty
+                        Title = document.Title ?? string.Empty,
+                        DocumentAction = documentAction
                     };
         }
 
@@ -54,12 +71,12 @@ namespace Revit.Services.Grpc.Services
 
             if (currentDocument is not null && !_documents.Any())
             {
-                _documents.Add(currentDocument);
+                _documents.Add((currentDocument, Convert(currentDocument)));
             }
             
-            foreach (var document in _documents.GetConsumingEnumerable(context.CancellationToken))
+            foreach (var (document, descriptor) in _documents.GetConsumingEnumerable(context.CancellationToken))
             {
-                await responseStream.WriteAsync(new OnDocumentChangedResponse { ActiveDocument = Convert(document) });
+                await responseStream.WriteAsync(new OnDocumentChangedResponse { DocumentDescriptor = descriptor });
             }
         }
     }

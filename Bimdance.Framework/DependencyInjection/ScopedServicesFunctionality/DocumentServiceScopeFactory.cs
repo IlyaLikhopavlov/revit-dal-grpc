@@ -18,7 +18,7 @@ namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality
             _serviceScopeFactory = serviceScopeFactory;
         }
 
-        public IServiceScope CreateDocumentScope(Document document)
+        public IServiceScope CreateScope(Document document)
         {
             if (document.IsFamilyDocument)
             {
@@ -41,12 +41,17 @@ namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality
 
         }
 
+        //public EventHandler<DocumentClosingEventArgs> DocumentClosing { get; set; }
+
         private void DocumentOnDocumentClosing(object sender, DocumentClosingEventArgs e)
         {
-            if (_scopeDictionary.TryRemove(e.Document, out var scope))
+            if (!_scopeDictionary.TryRemove(e.Document, out var scope))
             {
-                scope.Document.DocumentClosing -= DocumentOnDocumentClosing;
+                return;
             }
+
+            scope.Document.DocumentClosing -= DocumentOnDocumentClosing;
+            //DocumentClosing.Invoke(this, e);
         }
 
         protected virtual void Dispose(bool disposing)

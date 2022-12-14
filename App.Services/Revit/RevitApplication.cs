@@ -9,8 +9,23 @@ namespace App.Services.Revit
 {
     public class RevitApplication
     {
-        public DocumentDescriptor ActiveDocument { get; set; }
+        private DocumentDescriptor _documentDescriptor;
 
-        public CurrentDocumentStatusEnum Status { get; set; }
+        public DocumentDescriptor ActiveDocument
+        {
+            get => _documentDescriptor;
+            set
+            {
+                _documentDescriptor = value;
+                DataStatus = DataStatusEnum.Reliable;
+            }
+        }
+
+        public DataStatusEnum DataStatus { get; private set; }
+
+        public void SetDataStatusUntrusted()
+        {
+            DataStatus = DataStatusEnum.Untrusted;
+        }
     }
 }

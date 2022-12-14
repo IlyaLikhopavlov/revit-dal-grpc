@@ -41,5 +41,7 @@ namespace Revit.Services.Processing
         public ControlledApplication ControlledApplication { get; set; }
 
         public EventHandler<EventArgs.DocumentChangedEventArgs> DocumentChanged { get; set; }
+
+        public EventHandler<EventArgs.DocumentClosingEventArgs> DocumentClosing { get; set; }
     }
 }

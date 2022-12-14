@@ -26,7 +26,9 @@ using Revit.Services.Allocation.Common;
 using Revit.Services.Grpc;
 using Revit.Services.Grpc.Services;
 using Revit.Services.Processing;
+using Revit.Services.Processing.EventArgs;
 using DocumentChangedEventArgs = Revit.Services.Processing.EventArgs.DocumentChangedEventArgs;
+using DocumentClosingEventArgs = Revit.Services.Processing.EventArgs.DocumentClosingEventArgs;
 
 namespace Revit.AddIn
 {
@@ -73,10 +75,28 @@ namespace Revit.AddIn
             _mainPanel.Create(application);
 
             application.ControlledApplication.ApplicationInitialized += ControlledApplication_ApplicationInitialized;
+            application.ControlledApplication.DocumentCreated += ControlledApplicationOnDocumentCreated;
 
             ServiceProvider.GetService<GrpcServerBootstrapper>()?.StartServer("127.0.0.1", 5005);
 
             return Result.Succeeded;
+        }
+
+        private void ControlledApplicationOnDocumentCreated(object sender, DocumentCreatedEventArgs e)
+        {
+            if (e.Status != RevitAPIEventStatus.Succeeded)
+            {
+                return;
+            }
+
+            e.Document.DocumentClosing += DocumentOnDocumentClosing;
+        }
+
+        private void DocumentOnDocumentClosing(object sender, Autodesk.Revit.DB.Events.DocumentClosingEventArgs e)
+        {
+            var appProcessing = ServiceProvider.GetService<ApplicationProcessing>();
+            appProcessing?.DocumentClosing(this, new DocumentClosingEventArgs { ClosingDocument = e.Document});
+            e.Document.DocumentClosing -= DocumentOnDocumentClosing;
         }
 
         public Result OnShutdown(UIControlledApplication application)

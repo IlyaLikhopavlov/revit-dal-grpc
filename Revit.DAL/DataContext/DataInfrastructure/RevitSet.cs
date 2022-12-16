@@ -1,54 +1,38 @@
 ﻿using System.Collections;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.ExtensibleStorage;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using System.Reflection.Metadata;
+using Bimdance.Framework.Exceptions;
 using Revit.DAL.Converters.Common;
+using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DAL.DataContext.DataInfrastructure.Enums;
 using Revit.DAL.Exceptions;
-using Revit.DAL.Storage.Infrastructure;
-using Revit.DML;
+using Revit.Services.Grpc.Services;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
-namespace Revit.DAL.DataContext.DataInfrastructure
+namespace App.DAL.DataContext.DataInfrastructure
 {
-    public abstract class RevitSet<TModelElement, TRevitElement> : IEnumerable<TModelElement>, ISynchronizable, IRevitSet
-        where TModelElement : DML.Element
-        where TRevitElement : Autodesk.Revit.DB.Element
+    public abstract class RevitSet<TModelElement> : IEnumerable<TModelElement>, ISynchronizable, IRevitSet
+        where TModelElement : Revit.DML.Element
     {
         private readonly Queue<EntityProxy<TModelElement>> _addBuffer = new();
 
-        protected Dictionary<int, EntityProxy<TModelElement>> EntityProxiesDictionary = new();
-
-        protected IDictionary<int, TRevitElement> SourcesDictionary = new Dictionary<int, TRevitElement>();
+        protected IDictionary<int, EntityProxy<TModelElement>> EntityProxiesDictionary = new Dictionary<int, EntityProxy<TModelElement>>();
 
         private readonly ISchemaDescriptorsRepository _schemaDescriptorsRepository;
 
-        private readonly RevitInstanceConverter<TModelElement, TRevitElement> _converter;
+        private readonly RevitInstanceConverter<TModelElement> _converter;
 
-        protected Document Document;
+        protected DocumentDescriptor DocumentDescriptor;
 
         protected RevitSet(
             Document document, 
             IFactory<Document, ISchemaDescriptorsRepository> schemaDescriptorsRepositoryFactory,
-            IFactory<Document, RevitInstanceConverter<TModelElement, TRevitElement>> converterFactory)
+            IFactory<Document, RevitInstanceConverter<TModelElement>> converterFactory)
         {
             Document = document;
             _schemaDescriptorsRepository = schemaDescriptorsRepositoryFactory.New(Document);
             _converter = converterFactory.New(Document);
         }
-
-        public IReadOnlyCollection<TRevitElement> Sources => new List<TRevitElement>(SourcesDictionary.Values);
-
-        public IReadOnlyCollection<EntityPair> EntityPairs => EntityProxiesDictionary?
-            .Join(SourcesDictionary, t => t.Key, s => s.Key, (target, source) =>
-                new EntityPair
-                {
-                    Target = target.Value.Entity,
-                    Source = source.Value
-                }).ToList();
-
-        public Type RevitEntityType => typeof(TRevitElement);
-
+        
         public Type InternalEntityType => typeof(TModelElement);
 
         public IEnumerable<object> Entities => Entries.Select(x => x.Entity)!;
@@ -68,20 +52,22 @@ namespace Revit.DAL.DataContext.DataInfrastructure
 
         protected virtual List<TRevitElement> GetInstances()
         {
-            using var collector = new FilteredElementCollector(Document);
-
-            var descriptor = _schemaDescriptorsRepository[typeof(TModelElement).Name];
-
-            if (descriptor.TargetType != typeof(TRevitElement))
-            {
-                throw new InvalidOperationException("");
-            }
+            //todo request data through GRPC about whole set instances
             
-            return collector
-                .OfClass(typeof(FamilyInstance))
-                .WherePasses(new ExtensibleStorageFilter(descriptor.Guid))
-                .OfType<TRevitElement>()
-                .ToList();
+            //using var collector = new FilteredElementCollector(Document);
+
+            //var descriptor = _schemaDescriptorsRepository[typeof(TModelElement).Name];
+
+            //if (descriptor.TargetType != typeof(TRevitElement))
+            //{
+            //    throw new InvalidOperationException("");
+            //}
+            
+            //return collector
+            //    .OfClass(typeof(FamilyInstance))
+            //    .WherePasses(new ExtensibleStorageFilter(descriptor.Guid))
+            //    .OfType<TRevitElement>()
+            //    .ToList();
         }
 
         public (TModelElement, TRevitElement) Find(int keyValue)

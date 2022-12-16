@@ -7,14 +7,28 @@ import "CommonMessages.proto";
 service RevitDataExchange {
 	rpc PushDataToRevitInstance (.PushDataToRevitInstanceRequest) returns (.BasicResponse);
 	rpc PullDataFromRevitInstance (.PullDataFromRevitInstanceRequest) returns (.PullDataFromRevitInstanceResponse);
+	rpc PullDataFromRevitInstances (.PullDataFromRevitInstancesRequest) returns (.PullDataFromRevitInstancesResponse);
+	rpc PullDataFromRevitInstancesByType (.PullDataFromRevitInstancesByTypeRequest) returns (.PullDataFromRevitInstancesResponse);
+	rpc AllocateRevitInstancesByType (.AllocateRevitInstancesByTypeRequest) returns (.AllocateRevitInstancesByTypeResponse);
 }
 
+enum DomainModelTypesEnum {
+	Foo = 0;
+	Bar = 1;
+}
+
+message InstanceData {
+	int32 InstanceId = 1;
+	string Data = 2;
+}
+
+//Push one instance by ID
 message PushDataToRevitInstanceRequest {
 	string DocumentId = 1;
-	int32 InstanceId = 2;
-	string Data = 3;
+	InstanceData InstanceData = 2;
 }
 
+//Pull one instance by ID
 message PullDataFromRevitInstanceRequest {
 	string DocumentId = 1;
 	int32 InstanceId = 2;
@@ -23,4 +37,32 @@ message PullDataFromRevitInstanceRequest {
 message PullDataFromRevitInstanceResponse {
 	ErrorInfo ErrorInfo = 1;
 	string Data = 2;
+}
+
+//Pull a range of instances by ID
+message PullDataFromRevitInstancesRequest {
+	string DocumentId = 1;
+	repeated int32 InstanceId = 2;
+}
+
+message PullDataFromRevitInstancesResponse {
+	ErrorInfo ErrorInfo = 1;
+	repeated InstanceData InstancesData = 2;
+}
+
+//Pull a range of instances by Type
+message PullDataFromRevitInstancesByTypeRequest {
+	string DocumentId = 1;
+	DomainModelTypesEnum Type = 2;
+}
+
+//Allocate a range of instances by specific Type
+message AllocateRevitInstancesByTypeRequest {
+	string DocumentId = 1;
+	DomainModelTypesEnum AllocationType = 2;
+}
+
+message AllocateRevitInstancesByTypeResponse {
+	ErrorInfo ErrorInfo = 1;
+	repeated int32 AllocatedItemsId = 2;
 }

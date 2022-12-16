@@ -42,31 +42,31 @@ namespace Revit.AddIn
         public Result OnStartup(UIControlledApplication application)
         {
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
-            serviceCollection.AddTransient<SchemaDescriptor>();
+            //serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
+            //serviceCollection.AddTransient<SchemaDescriptor>();
 
             serviceCollection.AddSingleton(new ApplicationProcessing(application));
             serviceCollection.AddSingleton<FamilyInstanceAllocationService>();
             serviceCollection.AddScoped<ModelItemsAllocationService>();
             serviceCollection.AddScoped<SampleRendering>();
 
-            serviceCollection.AddScoped<ExtensibleStorage<DataSchema>>();
-            serviceCollection.AddScoped<ExtensibleStorageDictionary>();
-            serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
-            serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
-            serviceCollection.AddScoped<ISchemaDescriptorsRepository, SchemaDescriptorsRepository>();
+            //serviceCollection.AddScoped<ExtensibleStorage<DataSchema>>();
+            //serviceCollection.AddScoped<ExtensibleStorageDictionary>();
+            //serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
+            //serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
+            //serviceCollection.AddScoped<ISchemaDescriptorsRepository, SchemaDescriptorsRepository>();
 
             //grpc
             serviceCollection.AddSingleton<RevitActiveDocumentNotificationService>();
             serviceCollection.AddSingleton<GrpcServerBootstrapper>();
 
-            serviceCollection.AddScoped<RevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
-            serviceCollection.AddScoped<RevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
+            //serviceCollection.AddScoped<RevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
+            //serviceCollection.AddScoped<RevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
 
-            serviceCollection.AddScoped<BarSet>();
-            serviceCollection.AddScoped<FooSet>();
+            //serviceCollection.AddScoped<BarSet>();
+            //serviceCollection.AddScoped<FooSet>();
 
-            serviceCollection.AddScoped<IDataContext, DataContext>();
+            //serviceCollection.AddScoped<IDataContext, DataContext>();
 
             serviceCollection.AddFactoryFacility();
 

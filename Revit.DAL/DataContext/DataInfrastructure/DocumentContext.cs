@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using Bimdance.Framework.Exceptions;
 using Revit.DAL.Constants;
 using Revit.DAL.Exceptions;
 using Element = Revit.DML.Element;

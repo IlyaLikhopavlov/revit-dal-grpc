@@ -1,9 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Events;
-using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Grpc.Core;
-using Microsoft.Extensions.DependencyInjection;
 using Revit.Services.Processing;
 using DocumentClosingEventArgs = Revit.Services.Processing.EventArgs.DocumentClosingEventArgs;
 

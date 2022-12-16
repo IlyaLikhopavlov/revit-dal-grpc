@@ -8,14 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
     <ProjectReference Include="..\Revit.Families\Revit.Families.csproj" />
     <ProjectReference Include="..\Revit.GrpcServer\Revit.Grpc.Bundle.csproj" />
+    <ProjectReference Include="..\Revit.ScopedServicesFunctionality\Revit.ScopedServicesFunctionality.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Net.Http" />
     <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Allocation\Utils\" />
   </ItemGroup>
 
 </Project>

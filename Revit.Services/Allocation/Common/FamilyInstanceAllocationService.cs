@@ -1,7 +1,7 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Events;
+using BimCd.Revit.DAL.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Revit.DAL.Utils;
 using Revit.Services.Processing;
 
 namespace Revit.Services.Allocation.Common
@@ -23,7 +23,7 @@ namespace Revit.Services.Allocation.Common
         {
             _applicationProcessing ??= _serviceProvider.GetService<ApplicationProcessing>();
             
-            if (instancesNumber <= 0)
+            if (_applicationProcessing is null || instancesNumber <= 0)
             {
                 return new List<int>();
             }

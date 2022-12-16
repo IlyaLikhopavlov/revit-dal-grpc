@@ -1,12 +1,11 @@
-﻿using Autodesk.Revit.DB;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+﻿using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.DAL.Converters.Common;
 using Revit.DAL.Storage;
 using Revit.DML;
 
 namespace Revit.DAL.Converters
 {
-    public class BarConverter : RevitInstanceConverter<Bar, FamilyInstance>
+    public class BarConverter : RevitInstanceConverter<Bar>
     {
         public BarConverter(
             IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
@@ -15,11 +14,11 @@ namespace Revit.DAL.Converters
         {
         }
 
-        protected override void PushParametersToRevit(FamilyInstance revitElement, Bar modelElement)
+        protected override void PushParametersToRevit(Bar modelElement)
         {
         }
 
-        protected override void PullParametersFromRevit(FamilyInstance revitElement, ref Bar modelElement)
+        protected override void PullParametersFromRevit(ref Bar modelElement)
         {
         }
     }

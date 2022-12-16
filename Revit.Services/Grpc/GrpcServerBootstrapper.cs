@@ -10,10 +10,14 @@ namespace Revit.Services.Grpc
         private Server _server;
 
         private readonly RevitActiveDocumentNotificationService _revitActiveDocumentNotificationService;
+        private readonly RevitDataExchangeService _dataExchangeService;
 
-        public GrpcServerBootstrapper(RevitActiveDocumentNotificationService revitActiveDocumentNotificationService)
+        public GrpcServerBootstrapper(
+            RevitActiveDocumentNotificationService revitActiveDocumentNotificationService,
+            RevitDataExchangeService revitDataExchangeService)
         {
             _revitActiveDocumentNotificationService = revitActiveDocumentNotificationService;
+            _dataExchangeService = revitDataExchangeService;
         }
 
         public bool StartServer(string address, int port)
@@ -29,7 +33,8 @@ namespace Revit.Services.Grpc
                 {
                     Services =
                     {
-                        RevitActiveDocumentNotification.BindService(_revitActiveDocumentNotificationService)
+                        RevitActiveDocumentNotification.BindService(_revitActiveDocumentNotificationService),
+                        RevitDataExchange.BindService(_dataExchangeService)
                     },
                     Ports = { new ServerPort(address, port, ServerCredentials.Insecure) },
                 };

@@ -1,7 +1,6 @@
 ﻿using Autodesk.Revit.DB;
-using Revit.DAL.Utils;
-using Revit.DML;
 using Revit.Families.Common;
+using Revit.Services.Grpc.Services;
 
 namespace Revit.Families.Rendering
 {
@@ -28,21 +27,14 @@ namespace Revit.Families.Rendering
             _document = document;
         }
 
-        public FamilySymbol Render(Type type)
+        public FamilySymbol Render(DomainModelTypesEnum instanceType)
         {
-            (string Family, string Resource) name;
-            if (type == typeof(Foo))
+            var name = instanceType switch
             {
-                name = (FooNames.Family, FooNames.Resource);
-            }
-            else if (type == typeof(Bar))
-            {
-                name = (BarNames.Family, BarNames.Resource);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Family doesn't exist for the type {type.Name}");
-            }
+                DomainModelTypesEnum.Foo => (FooNames.Family, FooNames.Resource),
+                DomainModelTypesEnum.Bar => (BarNames.Family, BarNames.Resource),
+                _ => throw new ArgumentOutOfRangeException($"Family doesn't exist for the type {instanceType}")
+            };
 
             var sampleSymbol = _document.GetFamilySymbols(name.Family).FirstOrDefault();
             if (sampleSymbol != null)

@@ -9,7 +9,8 @@ enum ExceptionCodeEnum {
 	NameAlreadyExists = 103;
 	NumberAlreadyExists = 104;
 	RequestedIdDidNotFound = 105; 
-	RequestedPartNumberDidNotFound = 106; 
+	RequestedPartNumberDidNotFound = 106;
+	RevitDocumentIdWrong = 107;
 
 	Exception = 201;
 	DeadlineExceeded = 202;
@@ -25,4 +26,15 @@ message BasicResponse {
 }
 
 message EmptyRequest {
+}
+
+enum DocumentActionEnum {
+	Activated = 0;
+	Closed = 1;
+}
+
+message DocumentDescriptor {
+	string Title = 1;
+	string Id = 2;
+	DocumentActionEnum DocumentAction = 3;
 }

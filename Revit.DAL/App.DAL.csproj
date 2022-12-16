@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
 	  <LangVersion>10.0</LangVersion>
@@ -12,12 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
     <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
 </Project>

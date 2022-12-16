@@ -1,88 +1,56 @@
-﻿
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.DataContext;
-using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.Families.Rendering;
-using Revit.DML;
 using Revit.Services.Allocation.Common;
-using Element = Revit.DML.Element;
+using Revit.Services.Grpc.Services;
 
 namespace Revit.Services.Allocation
 {
     public class ModelItemsAllocationService
     {
-        private readonly IDataContext _dataContext;
-        
+
         private readonly FamilyInstanceAllocationService _familyInstanceAllocationService;
         private readonly SampleRendering _sampleRendering;
 
         public ModelItemsAllocationService(
-            IFactory<Document, IDataContext> dataContextFactory,
             IFactory<Document, SampleRendering> sampleFactory,
             FamilyInstanceAllocationService familyInstanceAllocationService,
             Document document)
         {
             _familyInstanceAllocationService = familyInstanceAllocationService;
             _sampleRendering = sampleFactory.New(document);
-            _dataContext = dataContextFactory.New(document);
         }
 
-        private int AllocateInstance<T>() where T : Element, new()
+        public int[] AllocateInstance(DomainModelTypesEnum instanceType)
         {
             var allocatedItems = Array.Empty<int>();
 
             try
             {
-                var familySymbol = _sampleRendering?.Render(typeof(T))
+                var familySymbol = _sampleRendering?.Render(instanceType)
                                    ?? throw new InvalidOperationException(@"Family symbol didn't get.");
 
                 allocatedItems = _familyInstanceAllocationService
                     .PlaceInstances(familySymbol, int.MaxValue)
                     .ToArray();
-
-                if (allocatedItems.Length > 0)
-                {
-                    var allocatedEntities = allocatedItems.Select(x =>
-                        new T
-                        {
-                            Id = x,
-                            Name = $"{typeof(T).Name}{x}",
-                        });
-
-                    foreach (var allocatedEntity in allocatedEntities)
-                    {
-                        var switcher = new Dictionary<Type, Action<Element>>
-                        {
-                            { typeof(Foo), x => _dataContext.Foo.Attach((Foo)x) },
-                            { typeof(Bar), x => _dataContext.Bar.Attach((Bar)x) }
-                        };
-
-                        if (switcher.TryGetValue(allocatedEntity.GetType(), out var attachAction))
-                        {
-                            attachAction.Invoke(allocatedEntity);
-                        }
-                    }
-
-                    _dataContext.SaveChanges();
-                }
             }
             catch (Exception ex)
             {
-                TaskDialog.Show("Error", $"{ex}");
+                TaskDialog.Show("Allocation process failed", $"{ex}");
             }
 
-            return allocatedItems.Length;
+            return allocatedItems;
         }
 
-        public int AllocateFoo()
+        public int[] AllocateFoo()
         {
-            return AllocateInstance<Foo>();
+            return AllocateInstance(DomainModelTypesEnum.Foo);
         }
 
-        public int AllocateBar()
+        public int[] AllocateBar()
         {
-            return AllocateInstance<Bar>();
+            return AllocateInstance(DomainModelTypesEnum.Bar);
         }
     }
 }

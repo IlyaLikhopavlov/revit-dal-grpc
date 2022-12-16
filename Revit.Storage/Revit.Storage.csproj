@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+	  <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2023.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
+    <ProjectReference Include="..\Revit.Families\Revit.Families.csproj" />
+    <ProjectReference Include="..\Revit.GrpcServer\Revit.Grpc.Bundle.csproj" />
+  </ItemGroup>
+
+</Project>

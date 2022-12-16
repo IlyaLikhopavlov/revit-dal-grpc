@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.Grpc.Bundle.ScopedServicesFunctionality;
+﻿using App.Grpc.Bundle.ScopedServicesFunctionality;
 using App.Services.Revit;
 using Grpc.Core;
-using Grpc.Core.Utils;
 using Revit.Services.Grpc.Services;
 
 namespace App.Services.Grpc
@@ -19,11 +13,11 @@ namespace App.Services.Grpc
 
         private readonly RevitActiveDocumentNotification.RevitActiveDocumentNotificationClient _client;
 
-        private readonly IDocumentServiceScopeFactory _scopeFactory;
+        private readonly IDocumentDescriptorServiceScopeFactory _scopeFactory;
 
         public RevitActiveDocumentNotificationClient(
             RevitApplication revitApplication,
-            IDocumentServiceScopeFactory scopeFactory)
+            IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitApplication = revitApplication;
             

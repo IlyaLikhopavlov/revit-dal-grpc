@@ -8,8 +8,6 @@
 
         IEnumerable<object> Entities { get; }
 
-        IReadOnlyCollection<EntityPair> EntityPairs { get; }
-
         object GetEntity(int id);
 
         object GetEntry(int id);

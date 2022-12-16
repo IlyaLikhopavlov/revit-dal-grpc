@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Microsoft.Extensions.DependencyInjection;
+using Revit.ScopedServicesFunctionality;
 using Revit.Services.Allocation;
 
 namespace Revit.AddIn.Commands
@@ -15,7 +16,7 @@ namespace Revit.AddIn.Commands
         {
             var document = commandData.Application.ActiveUIDocument.Document;
 
-            using var scopeFactory = RevitDalApp.ServiceProvider.GetService<IDocumentServiceScopeFactory>();
+            using var scopeFactory = RevitDalApp.ServiceProvider.GetService<IRevitDocumentServiceScopeFactory>();
             var documentScope = scopeFactory?.CreateScope(document);
             var allocationService = documentScope?
                 .ServiceProvider

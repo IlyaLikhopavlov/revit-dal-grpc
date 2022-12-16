@@ -1,72 +1,70 @@
-﻿using Autodesk.Revit.DB;
+﻿
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.Storage;
-using Revit.DAL.Storage.Infrastructure;
-using Revit.DAL.Storage.Schemas;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Revit.Services.Grpc.Services;
 using Element = Revit.DML.Element;
 
 namespace Revit.DAL.Converters.Common
 {
-    public abstract class RevitInstanceConverter<TModelElement, TRevitElement> 
+    public abstract class RevitInstanceConverter<TModelElement> 
         where TModelElement : Element
-        where TRevitElement : Autodesk.Revit.DB.Element
     {
-        protected readonly ExtensibleStorage<DataSchema> ExtensibleStorage;
+        //protected readonly ExtensibleStorage<DataSchema> ExtensibleStorage;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new();
 
-        protected RevitInstanceConverter(IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
-            Document document)
+        protected RevitInstanceConverter(/*IFactory<Document, IExtensibleStorageService> extensibleStorageFactory*/
+            DocumentDescriptor documentDescriptor)
         {
-            ExtensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
+            //ExtensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
         }
 
         protected IList<JsonConverter> JsonConverters => _jsonSerializerOptions.Converters;
 
-        protected abstract void PushParametersToRevit(TRevitElement revitElement, TModelElement modelElement);
+        protected abstract void PushParametersToRevit(TModelElement modelElement);
 
-        protected abstract void PullParametersFromRevit(TRevitElement revitElement, ref TModelElement modelElement);
+        protected abstract void PullParametersFromRevit(ref TModelElement modelElement);
 
-        public virtual void PushToRevit(TRevitElement revitElement, TModelElement modelElement)
+        public virtual void PushToRevit(TModelElement modelElement)
         {
-            if (!string.IsNullOrEmpty(modelElement.Name) && revitElement.Name != modelElement.Name)
-            {
-                revitElement.Name = modelElement.Name;
-            }
+            //if (!string.IsNullOrEmpty(modelElement.Name) && revitElement.Name != modelElement.Name)
+            //{
+            //    revitElement.Name = modelElement.Name;
+            //}
 
-            PushParametersToRevit(revitElement, modelElement);
+            PushParametersToRevit(modelElement);
 
             var schema = new DataSchema
             {
                 Data = JsonSerializer.Serialize(modelElement, _jsonSerializerOptions)
             };
 
-            ExtensibleStorage.UpdateEntity(revitElement, schema);
+            //ExtensibleStorage.UpdateEntity(revitElement, schema);
         }
 
-        public virtual TModelElement PullFromRevit(TRevitElement revitElement)
+        public virtual TModelElement PullFromRevit()
         {
-            var entity = ExtensibleStorage.GetEntity(revitElement);
+            //var entity = ExtensibleStorage.GetEntity(revitElement);
 
-            if (entity.Data == null)
-            {
-                return null;
-            }
+            //if (entity.Data == null)
+            //{
+            //    return null;
+            //}
 
-            var modelElement = JsonSerializer.Deserialize<TModelElement>(entity.Data, _jsonSerializerOptions);
+            //var modelElement = JsonSerializer.Deserialize<TModelElement>(entity.Data, _jsonSerializerOptions);
 
-            PullParametersFromRevit(revitElement, ref modelElement);
+            //PullParametersFromRevit(ref modelElement);
 
-            if (modelElement is null)
-            {
-                return null;
-            }
+            //if (modelElement is null)
+            //{
+            //    return null;
+            //}
 
-            modelElement.Id = revitElement.Id.IntegerValue;
+            //modelElement.Id = revitElement.Id.IntegerValue;
 
-            return modelElement;
+            //return modelElement;
+            throw new NotImplementedException();
         }
 
         public string ModelElementName => typeof(TModelElement).Name;

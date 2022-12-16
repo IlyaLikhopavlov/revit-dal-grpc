@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
+    <ProjectReference Include="..\App.ScopedServicesFunctionality\App.ScopedServicesFunctionality.csproj" />
+    <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
   </ItemGroup>
 
 </Project>

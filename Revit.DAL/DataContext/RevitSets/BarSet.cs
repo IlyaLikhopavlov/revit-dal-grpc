@@ -3,7 +3,6 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.DAL.Constants;
-using Revit.DAL.Converters.Common;
 using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DML;
 using Revit.DAL.Storage.Infrastructure;

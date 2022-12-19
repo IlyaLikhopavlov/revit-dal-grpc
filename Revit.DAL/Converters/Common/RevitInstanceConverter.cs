@@ -1,23 +1,26 @@
-﻿
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using App.Services.Grpc;
 using Revit.Services.Grpc.Services;
+using static Grpc.Core.Metadata;
 using Element = Revit.DML.Element;
 
-namespace Revit.DAL.Converters.Common
+namespace App.DAL.Converters.Common
 {
     public abstract class RevitInstanceConverter<TModelElement> 
         where TModelElement : Element
     {
-        //protected readonly ExtensibleStorage<DataSchema> ExtensibleStorage;
+        protected readonly RevitExtraDataExchangeClient Client;
+
+        protected readonly DocumentDescriptor DocumentDescriptor;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new();
 
-        protected RevitInstanceConverter(/*IFactory<Document, IExtensibleStorageService> extensibleStorageFactory*/
+        protected RevitInstanceConverter(RevitExtraDataExchangeClient client,
             DocumentDescriptor documentDescriptor)
         {
-            //ExtensibleStorage = (ExtensibleStorage<DataSchema>)extensibleStorageFactory.New(document)[ModelElementName];
+            Client = client;
+            DocumentDescriptor = documentDescriptor;
         }
 
         protected IList<JsonConverter> JsonConverters => _jsonSerializerOptions.Converters;
@@ -26,45 +29,35 @@ namespace Revit.DAL.Converters.Common
 
         protected abstract void PullParametersFromRevit(ref TModelElement modelElement);
 
-        public virtual void PushToRevit(TModelElement modelElement)
+        public virtual async Task PushToRevit(TModelElement modelElement)
         {
-            //if (!string.IsNullOrEmpty(modelElement.Name) && revitElement.Name != modelElement.Name)
-            //{
-            //    revitElement.Name = modelElement.Name;
-            //}
+            //PushParametersToRevit(modelElement);
 
-            PushParametersToRevit(modelElement);
-
-            var schema = new DataSchema
-            {
-                Data = JsonSerializer.Serialize(modelElement, _jsonSerializerOptions)
-            };
-
-            //ExtensibleStorage.UpdateEntity(revitElement, schema);
+            await Client.PushDataToRevitInstance(
+                typeof(TModelElement), 
+                DocumentDescriptor,
+                new InstanceData
+                {
+                    Data = JsonSerializer.Serialize(modelElement, _jsonSerializerOptions),
+                    InstanceId = modelElement.Id
+                });
         }
 
-        public virtual TModelElement PullFromRevit()
+        public virtual async Task<TModelElement> PullFromRevit(int instanceId)
         {
-            //var entity = ExtensibleStorage.GetEntity(revitElement);
-
-            //if (entity.Data == null)
-            //{
-            //    return null;
-            //}
-
-            //var modelElement = JsonSerializer.Deserialize<TModelElement>(entity.Data, _jsonSerializerOptions);
+            var data = await Client.PullDataFromRevitInstance(typeof(TModelElement), DocumentDescriptor, instanceId);
+            var modelElement = JsonSerializer.Deserialize<TModelElement>(data, _jsonSerializerOptions);
 
             //PullParametersFromRevit(ref modelElement);
 
-            //if (modelElement is null)
-            //{
-            //    return null;
-            //}
+            return modelElement;
+        }
 
-            //modelElement.Id = revitElement.Id.IntegerValue;
-
-            //return modelElement;
-            throw new NotImplementedException();
+        public virtual async Task<IEnumerable<TModelElement>> PullWholeFromRevit()
+        {
+            var data = await Client.PullDataFromRevitInstancesByType(typeof(TModelElement), DocumentDescriptor);
+            return data.Select(x =>
+                JsonSerializer.Deserialize<TModelElement>(x.Data, _jsonSerializerOptions)).ToArray();
         }
 
         public string ModelElementName => typeof(TModelElement).Name;

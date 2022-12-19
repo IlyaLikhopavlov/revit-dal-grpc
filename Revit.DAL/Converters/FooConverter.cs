@@ -1,25 +1,20 @@
-﻿using Autodesk.Revit.DB;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.Converters.Common;
-using Revit.DAL.Storage;
+﻿using App.DAL.Converters.Common;
+using App.Services.Grpc;
 using Revit.DML;
 
-namespace Revit.DAL.Converters
+namespace App.DAL.Converters
 {
-    public class FooConverter : RevitInstanceConverter<Foo, FamilyInstance>
+    public class FooConverter : RevitInstanceConverter<Foo>
     {
-        public FooConverter(
-            IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
-            Document document) : 
-            base(extensibleStorageFactory, document)
+        public FooConverter(RevitExtraDataExchangeClient client, DocumentDescriptor documentDescriptor) : base(client, documentDescriptor)
         {
         }
 
-        protected override void PushParametersToRevit(FamilyInstance revitElement, Foo modelElement)
+        protected override void PushParametersToRevit(Foo modelElement)
         {
         }
 
-        protected override void PullParametersFromRevit(FamilyInstance revitElement, ref Foo modelElement)
+        protected override void PullParametersFromRevit(ref Foo modelElement)
         {
         }
     }

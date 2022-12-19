@@ -18,32 +18,29 @@ namespace Revit.Services.Grpc.Services
             return base.PullDataFromRevitInstances(request, context);
         }
 
-        public override Task<PullDataFromRevitInstancesResponse> PullDataFromRevitInstancesByType(
+        public override async Task<PullDataFromRevitInstancesResponse> PullDataFromRevitInstancesByType(
             PullDataFromRevitInstancesByTypeRequest request, ServerCallContext context) =>
-            _externalEventsService.Execute<PullDataFromRevitInstancesByTypeRequest, PullDataFromRevitInstancesResponse>(
+            await _externalEventsService.Execute<PullDataFromRevitInstancesByTypeRequest, PullDataFromRevitInstancesResponse>(
                 nameof(PullDataFromRevitInstancesByTypeEventHandler), request);
-        
 
-        public override Task<AllocateRevitInstancesByTypeResponse> AllocateRevitInstancesByType(
+        public override async Task<AllocateRevitInstancesByTypeResponse> AllocateRevitInstancesByType(
             AllocateRevitInstancesByTypeRequest request, ServerCallContext context) =>
-            _externalEventsService.Execute<AllocateRevitInstancesByTypeRequest, AllocateRevitInstancesByTypeResponse>(
+            await _externalEventsService.Execute<AllocateRevitInstancesByTypeRequest, AllocateRevitInstancesByTypeResponse>(
                 nameof(AllocateRevitInstancesByTypeEventHandler), request);
 
-        public override Task<BasicResponse> PushDataToRevitInstance(PushDataToRevitInstanceRequest request, ServerCallContext context)
-        {
-            return base.PushDataToRevitInstance(request, context);
-        }
-
-        public override Task<BasicResponse> PushDataToRevitInstances(
+        public override async Task<BasicResponse> PushDataToRevitInstances(
             PushDataToRevitInstancesRequest request, ServerCallContext context) =>
-            _externalEventsService.Execute<PushDataToRevitInstancesRequest, BasicResponse>(
+            await _externalEventsService.Execute<PushDataToRevitInstancesRequest, BasicResponse>(
                 nameof(PushDataToRevitInstancesEventHandler), request);
 
-        public override Task<PullDataFromRevitInstanceResponse> PullDataFromRevitInstance(PullDataFromRevitInstanceRequest request, ServerCallContext context)
-        {
-            return base.PullDataFromRevitInstance(request, context);
-        }
+        public override async Task<BasicResponse> PushDataToRevitInstance(
+            PushDataToRevitInstanceRequest request, ServerCallContext context) =>
+            await _externalEventsService.Execute<PushDataToRevitInstanceRequest, BasicResponse>(
+                nameof(PushDataToRevitInstanceEventHandler), request);
 
-
+        public override async Task<PullDataFromRevitInstanceResponse> PullDataFromRevitInstance(
+            PullDataFromRevitInstanceRequest request, ServerCallContext context) =>
+            await _externalEventsService.Execute<PullDataFromRevitInstanceRequest, PullDataFromRevitInstanceResponse>(
+                nameof(PullDataFromRevitInstanceEventHandler), request);
     }
 }

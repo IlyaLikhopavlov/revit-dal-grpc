@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,53 @@ namespace App.Services.Grpc
             }
 
             return response.InstancesData.ToArray();
+        }
+
+        public async Task<string> PullDataFromRevitInstance(Type type, DocumentDescriptor documentDescriptor, int instanceId)
+        {
+            if (!TypesMapping.TryGetValue(type, out var requiredType))
+            {
+                throw new ArgumentOutOfRangeException(nameof(type));
+            }
+
+            var response = await _client.PullDataFromRevitInstanceAsync(
+                new PullDataFromRevitInstanceRequest
+                {
+                    InstanceId = instanceId,
+                    DocumentId = documentDescriptor.Id,
+                    Type = requiredType
+                });
+
+            if (response?.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response?.ErrorInfo.Code} Message: {response?.ErrorInfo.Message}");
+            }
+
+            return response.Data;
+        }
+
+        public async Task PushDataToRevitInstance(
+            Type type, 
+            DocumentDescriptor documentDescriptor,
+            InstanceData instanceData)
+        {
+            if (!TypesMapping.TryGetValue(type, out var requiredType))
+            {
+                throw new ArgumentOutOfRangeException(nameof(type));
+            }
+
+            var response = await _client.PushDataToRevitInstanceAsync(
+                new PushDataToRevitInstanceRequest
+                {
+                    DocumentId = documentDescriptor.Id,
+                    InstanceData = instanceData,
+                    Type = requiredType
+                });
+
+            if (response?.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response?.ErrorInfo.Code} Message: {response?.ErrorInfo.Message}");
+            }
         }
     }
 }

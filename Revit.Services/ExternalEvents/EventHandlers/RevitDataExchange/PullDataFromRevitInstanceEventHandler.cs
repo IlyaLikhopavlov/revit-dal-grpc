@@ -1,30 +1,31 @@
-﻿using Revit.Services.ExternalEvents.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
-using Revit.Services.Grpc.Services;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.ScopedServicesFunctionality;
-using Revit.Services.Allocation;
 using Microsoft.Extensions.DependencyInjection;
+using Revit.ScopedServicesFunctionality;
+using Revit.Services.ExternalEvents.Infrastructure;
+using Revit.Services.Grpc.Services;
 using Revit.Storage.InstancesAccess;
 
 namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 {
-    public class PushDataToRevitInstancesEventHandler : ExternalServiceEventHandler<PushDataToRevitInstancesRequest, BasicResponse>
+    public class PullDataFromRevitInstanceEventHandler : ExternalServiceEventHandler<PullDataFromRevitInstanceRequest, PullDataFromRevitInstanceResponse>
     {
         private readonly IRevitDocumentServiceScopeFactory _scopeFactory;
 
-        public PushDataToRevitInstancesEventHandler(IRevitDocumentServiceScopeFactory scopeFactory)
+        public PullDataFromRevitInstanceEventHandler(IRevitDocumentServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
         }
 
-        protected override BasicResponse Execute(Document document)
+        protected override PullDataFromRevitInstanceResponse Execute(Document document)
         {
+
+            InstanceData result;
             try
             {
                 var documentScope = _scopeFactory?.CreateScope(document);
@@ -33,11 +34,11 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
                     .GetService<IFactory<Document, RevitDataContext>>()?
                     .New(document);
 
-                revitDataContext?.PushDataIntoInstancesById(Request.InstanceData, Request.Type);
+                result = revitDataContext?.PullDataFromRevitInstance(Request.InstanceId,  Request.Type);
             }
             catch (Exception ex)
             {
-                return new BasicResponse
+                return new PullDataFromRevitInstanceResponse
                 {
                     ErrorInfo =
                         new ErrorInfo
@@ -48,10 +49,13 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
                 };
             }
 
-            return new BasicResponse
+            var response = new PullDataFromRevitInstanceResponse
             {
                 ErrorInfo = new ErrorInfo { Code = ExceptionCodeEnum.Success },
+                Data = result?.Data
             };
+
+            return response;
         }
     }
 }

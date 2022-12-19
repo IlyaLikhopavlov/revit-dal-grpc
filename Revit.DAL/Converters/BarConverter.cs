@@ -1,16 +1,12 @@
-﻿using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.Converters.Common;
-using Revit.DAL.Storage;
+﻿using App.DAL.Converters.Common;
+using App.Services.Grpc;
 using Revit.DML;
 
-namespace Revit.DAL.Converters
+namespace App.DAL.Converters
 {
     public class BarConverter : RevitInstanceConverter<Bar>
     {
-        public BarConverter(
-            IFactory<Document, IExtensibleStorageService> extensibleStorageFactory,
-            Document document) : 
-            base(extensibleStorageFactory, document)
+        public BarConverter(RevitExtraDataExchangeClient client, DocumentDescriptor documentDescriptor) : base(client, documentDescriptor)
         {
         }
 

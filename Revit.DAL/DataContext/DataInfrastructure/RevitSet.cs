@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Reflection.Metadata;
+using App.DAL.Converters.Common;
+using App.Services.Grpc;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Exceptions;
-using Revit.DAL.Converters.Common;
 using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DAL.DataContext.DataInfrastructure.Enums;
 using Revit.DAL.Exceptions;
@@ -17,20 +19,20 @@ namespace App.DAL.DataContext.DataInfrastructure
 
         protected IDictionary<int, EntityProxy<TModelElement>> EntityProxiesDictionary = new Dictionary<int, EntityProxy<TModelElement>>();
 
-        private readonly ISchemaDescriptorsRepository _schemaDescriptorsRepository;
-
         private readonly RevitInstanceConverter<TModelElement> _converter;
+
+        protected RevitExtraDataExchangeClient Client;
 
         protected DocumentDescriptor DocumentDescriptor;
 
         protected RevitSet(
-            Document document, 
-            IFactory<Document, ISchemaDescriptorsRepository> schemaDescriptorsRepositoryFactory,
-            IFactory<Document, RevitInstanceConverter<TModelElement>> converterFactory)
+            DocumentDescriptor documentDescriptor,
+            RevitExtraDataExchangeClient client,
+            IFactory<DocumentDescriptor, RevitInstanceConverter<TModelElement>> converterFactory)
         {
-            Document = document;
-            _schemaDescriptorsRepository = schemaDescriptorsRepositoryFactory.New(Document);
-            _converter = converterFactory.New(Document);
+            DocumentDescriptor = documentDescriptor;
+            _converter = converterFactory.New(DocumentDescriptor);
+            Client = client;
         }
         
         public Type InternalEntityType => typeof(TModelElement);
@@ -39,41 +41,15 @@ namespace App.DAL.DataContext.DataInfrastructure
 
         public IEnumerable<EntityProxy<TModelElement>> Entries => EntityProxiesDictionary.Values.Concat(_addBuffer);
 
-        public virtual void PullRevitEntities()
+        public virtual async Task PullRevitEntities()
         {
-            SourcesDictionary = GetInstances()
-                .ToDictionary(x => x.Id.IntegerValue, x => x);
-
-            EntityProxiesDictionary = SourcesDictionary
-                ?.ToDictionary(
-                    x => x.Key,
-                    x => new EntityProxy<TModelElement>(_converter.PullFromRevit(x.Value), x.Value.Id.IntegerValue));
+            EntityProxiesDictionary = (await _converter.PullWholeFromRevit())
+                .ToDictionary(x => x.Id, x => new EntityProxy<TModelElement>(x, x.Id));
         }
 
-        protected virtual List<TRevitElement> GetInstances()
+        public TModelElement Find(int keyValue)
         {
-            //todo request data through GRPC about whole set instances
-            
-            //using var collector = new FilteredElementCollector(Document);
-
-            //var descriptor = _schemaDescriptorsRepository[typeof(TModelElement).Name];
-
-            //if (descriptor.TargetType != typeof(TRevitElement))
-            //{
-            //    throw new InvalidOperationException("");
-            //}
-            
-            //return collector
-            //    .OfClass(typeof(FamilyInstance))
-            //    .WherePasses(new ExtensibleStorageFilter(descriptor.Guid))
-            //    .OfType<TRevitElement>()
-            //    .ToList();
-        }
-
-        public (TModelElement, TRevitElement) Find(int keyValue)
-        {
-            return (EntityProxiesDictionary.TryGetValue(keyValue, out var entityProxy) ? entityProxy.Entity : null, 
-                    SourcesDictionary.TryGetValue(keyValue, out var revitElement) ? revitElement : null);
+            return EntityProxiesDictionary.TryGetValue(keyValue, out var entityProxy) ? entityProxy.Entity : null;
         }
 
         public TModelElement Remove(TModelElement entity)
@@ -92,14 +68,6 @@ namespace App.DAL.DataContext.DataInfrastructure
             if (EntityProxiesDictionary.ContainsKey(entity.Id))
             {
                 throw new RevitDataAccessException($"Entity with ID={entity.Id} can't be attached to the {typeof(TModelElement)} set. Provided ID already exists.");
-            }
-
-            if (!SourcesDictionary.ContainsKey(entity.Id))
-            {
-                var revitElement = (TRevitElement)Document?.GetElement(new ElementId(entity.Id)) 
-                                   ?? throw new RevitDataAccessException($"Element with ID={entity.Id} didn't find in the revit document.");
-                
-                SourcesDictionary?.Add(revitElement.Id.IntegerValue, revitElement);
             }
 
             EntityProxiesDictionary.Add(
@@ -159,11 +127,9 @@ namespace App.DAL.DataContext.DataInfrastructure
             }
         }
 
-        protected abstract TRevitElement CreateRevitElement(TModelElement modelElement);
-
-        protected virtual void PushToRevit(TRevitElement revitElement, TModelElement modelElement)
+        protected virtual void PushToRevit(TModelElement modelElement)
         {
-            _converter?.PushToRevit(revitElement, modelElement);
+            _converter?.PushToRevit(modelElement);
         }
 
         private void SyncAdded(EntityProxy<TModelElement> entityProxy)
@@ -186,7 +152,7 @@ namespace App.DAL.DataContext.DataInfrastructure
             entityProxy.Id = revitElement.Id.IntegerValue;
             entityProxy.EntityState = EntityState.Unchanged;
 
-            PushToRevit(revitElement, entityProxy.Entity);
+            PushToRevit(entityProxy.Entity);
 
             EntityProxiesDictionary.Add(entityProxy.Entity.Id, entityProxy);
         }

@@ -25,6 +25,33 @@ namespace Revit.Storage.InstancesAccess
             _storageService = extensibleStorageServiceFactory.New(document);
         }
 
+        public void PushDataToRevitInstance(InstanceData data, DomainModelTypesEnum entityType)
+        {
+            var element = _document.GetElement(new ElementId(data.InstanceId));
+            var storage = _storageService.GetDataSchemaStorage(entityType);
+
+            SaveChanges(() =>
+            {
+                storage.UpdateEntity(element, 
+                    new DataSchema
+                    {
+                        Data = data.Data
+                    });
+            });
+        }
+
+        public InstanceData PullDataFromRevitInstance(int instanceId, DomainModelTypesEnum entityType)
+        {
+            var element = _document.GetElement(new ElementId(instanceId));
+            var storage = _storageService.GetDataSchemaStorage(entityType);
+
+            return new InstanceData
+            {
+                InstanceId = element.Id.IntegerValue,
+                Data = storage.GetEntity(element)?.Data
+            };
+        }
+
         public void PushDataIntoInstancesById(IEnumerable<InstanceData> data, DomainModelTypesEnum entityType)
         {
             var storage = _storageService.GetDataSchemaStorage(entityType);

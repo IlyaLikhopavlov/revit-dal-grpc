@@ -12,6 +12,6 @@
 
         object GetEntry(int id);
 
-        void PullRevitEntities();
+        Task PullRevitEntities();
     }
 }

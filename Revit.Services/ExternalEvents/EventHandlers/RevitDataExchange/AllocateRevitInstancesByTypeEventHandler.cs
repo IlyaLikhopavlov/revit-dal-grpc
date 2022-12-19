@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 {
-    internal class AllocateRevitInstancesByTypeEventHandler : ExternalServiceEventHandler<AllocateRevitInstancesByTypeRequest, AllocateRevitInstancesByTypeResponse>
+    public class AllocateRevitInstancesByTypeEventHandler : ExternalServiceEventHandler<AllocateRevitInstancesByTypeRequest, AllocateRevitInstancesByTypeResponse>
     {
         private readonly IRevitDocumentServiceScopeFactory _scopeFactory;
 
@@ -19,13 +19,48 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 
         protected override AllocateRevitInstancesByTypeResponse Execute(Document document)
         {
-            var documentScope = _scopeFactory?.CreateScope(document);
-            var allocationService = documentScope?
-                .ServiceProvider
-                .GetService<IFactory<Document, ModelItemsAllocationService>>()
-                ?.New(document);
+            int[] itemsId;
+            try
+            {
+                var documentScope = _scopeFactory?.CreateScope(document);
+                var allocationService = documentScope?
+                    .ServiceProvider
+                    .GetService<IFactory<Document, ModelItemsAllocationService>>()
+                    ?.New(document);
 
-            allocationService?.AllocateBar();
+                itemsId = allocationService?.AllocateInstance(Request.AllocationType);
+            }
+            catch (Exception ex)
+            {
+                return new AllocateRevitInstancesByTypeResponse
+                {
+                    ErrorInfo =
+                        new ErrorInfo
+                        {
+                            Code = ExceptionCodeEnum.Unknown,
+                            Message = ex.Message
+                        }
+                };
+            }
+
+            if (itemsId?.Length == 0)
+            {
+                return new AllocateRevitInstancesByTypeResponse
+                {
+                    ErrorInfo = 
+                        new ErrorInfo
+                        {
+                            Code = ExceptionCodeEnum.Unknown,
+                            Message = @"No items are allocated"
+                        }
+                };
+            }
+
+            return new AllocateRevitInstancesByTypeResponse
+            {
+                ErrorInfo = new ErrorInfo { Code = ExceptionCodeEnum.Success },
+                AllocatedItemsId = { itemsId }
+            };
         }
     }
 }

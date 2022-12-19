@@ -1,6 +1,6 @@
-﻿using Revit.Storage.Infrastructure.Model;
+﻿using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public class IntIdGenerator : ExtensibleStorageArray<int>, IIntIdGenerator
     {
@@ -10,7 +10,7 @@ namespace Revit.Storage.Infrastructure
         private const int MinRangeBound = 10000;
         private const int MaxRangeBound = 10000000;
 
-        public IntIdGenerator(SchemaDescriptor schemaDescriptor) 
+        public IntIdGenerator(SchemaDescriptor schemaDescriptor)
             : base(schemaDescriptor)
         {
             _random = new Random();

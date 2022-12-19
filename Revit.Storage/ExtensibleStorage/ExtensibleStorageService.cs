@@ -1,12 +1,14 @@
 ﻿using System.Collections.Concurrent;
+using System.ComponentModel;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.Storage.Infrastructure;
-using Revit.Storage.Infrastructure.Model;
-using Revit.Storage.Schemas;
+using Revit.Services.Grpc.Services;
+using Revit.Storage.ExtensibleStorage.Infrastructure;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
+using Revit.Storage.ExtensibleStorage.Schemas;
 
-namespace Revit.Storage
+namespace Revit.Storage.ExtensibleStorage
 {
 
     //todo dispose dependencies
@@ -60,16 +62,31 @@ namespace Revit.Storage
             }
         }
 
-        public IExtensibleStorage this[string name]
+        public IExtensibleStorageDataSchema GetDataSchemaStorage(DomainModelTypesEnum entityType)
+        {
+            return this[entityType.ToString()] is not IExtensibleStorageDataSchema result ? null : result;
+        }
+
+        public IExtensibleStorageDictionary GetDictionaryStorage(string entityName)
+        {
+            return this[entityName] is not IExtensibleStorageDictionary result ? null : result;
+        }
+
+        public IIntIdGenerator GetIdGenerator(string entityName)
+        {
+            return this[entityName] is not IIntIdGenerator result ? null : result;
+        }
+
+        public IExtensibleStorage this[string entityName]
         {
             get
             {
-                if (_extensibleStorages.TryGetValue(name, out var extensibleStorage))
+                if (_extensibleStorages.TryGetValue(entityName, out var extensibleStorage))
                 {
                     return extensibleStorage;
                 }
 
-                throw new ArgumentException($"Extensible storage hasn't found by name {name}");
+                throw new ArgumentException($"Extensible storage hasn't found by name {entityName}");
             }
         }
 

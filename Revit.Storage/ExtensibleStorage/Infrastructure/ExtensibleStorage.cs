@@ -2,9 +2,9 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Bimdance.Framework.Exceptions;
-using Revit.Storage.Infrastructure.Model;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public class ExtensibleStorage<T> : IExtensibleStorage where T : class, new()
     {

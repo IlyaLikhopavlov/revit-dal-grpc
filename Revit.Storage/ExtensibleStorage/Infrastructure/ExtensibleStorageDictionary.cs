@@ -1,13 +1,13 @@
 ﻿using Autodesk.Revit.DB.ExtensibleStorage;
-using Revit.Storage.Infrastructure.Model;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
-    public class ExtensibleStorageDictionary : ExtensibleStorageCollection<Dictionary<string, string>, IDictionary<string, string>>
+    public class ExtensibleStorageDictionary : ExtensibleStorageCollection<Dictionary<string, string>, IDictionary<string, string>>, IExtensibleStorageDictionary
     {
         public ExtensibleStorageDictionary(SchemaDescriptor schemaDescriptor)
             : base(
-                schemaDescriptor.SchemaInfo.Guid.ToString(), 
+                schemaDescriptor.SchemaInfo.Guid.ToString(),
                 schemaDescriptor.SchemaInfo.EntityName,
                 schemaDescriptor.SchemaInfo.FieldName,
                 schemaDescriptor.SchemaInfo.TargetElement)
@@ -77,7 +77,7 @@ namespace Revit.Storage.Infrastructure
         }
 
         public static int GetId(string keyId, string prefix) => int.Parse(keyId.Replace(prefix + "|", string.Empty));
-        
+
         public IEnumerable<string> GetAll<T>(string prefix)
         {
             if (string.IsNullOrEmpty(prefix))

@@ -1,4 +1,4 @@
-﻿namespace Revit.Storage.Infrastructure.Model.Enums
+﻿namespace Revit.Storage.ExtensibleStorage.Infrastructure.Model.Enums
 {
     public enum TargetObjectKindEnum
     {

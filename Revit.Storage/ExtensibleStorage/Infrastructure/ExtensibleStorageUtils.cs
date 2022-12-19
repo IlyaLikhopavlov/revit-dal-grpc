@@ -2,13 +2,13 @@
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Bimdance.Framework.Exceptions;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public static class ExtensibleStorageUtils
     {
         public const int SetMethodParametersCount = 2;
         public const string FieldNameParameterName = @"fieldName";
-        
+
         private static readonly IDictionary<Type, Func<Entity, string, object>> AvailableTypesDictionary =
             new Dictionary<Type, Func<Entity, string, object>>
             {
@@ -65,6 +65,6 @@ namespace Revit.Storage.Infrastructure
             return entity.IsValid();
         }
 
-        
+
     }
 }

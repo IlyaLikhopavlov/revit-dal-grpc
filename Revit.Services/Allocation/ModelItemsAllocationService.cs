@@ -24,7 +24,7 @@ namespace Revit.Services.Allocation
 
         public int[] AllocateInstance(DomainModelTypesEnum instanceType)
         {
-            var allocatedItems = Array.Empty<int>();
+            int[] allocatedItems;
 
             try
             {
@@ -38,6 +38,7 @@ namespace Revit.Services.Allocation
             catch (Exception ex)
             {
                 TaskDialog.Show("Allocation process failed", $"{ex}");
+                throw;
             }
 
             return allocatedItems;

@@ -2,7 +2,7 @@
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Revit.Families;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public abstract class ExtensibleStorageCollection<TTarget, TBase> : IExtensibleStorage
         where TTarget : class, TBase, new()

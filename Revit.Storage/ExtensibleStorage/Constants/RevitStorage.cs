@@ -1,4 +1,4 @@
-﻿namespace Revit.Storage.Constants
+﻿namespace Revit.Storage.ExtensibleStorage.Constants
 {
     public static class RevitStorage
     {

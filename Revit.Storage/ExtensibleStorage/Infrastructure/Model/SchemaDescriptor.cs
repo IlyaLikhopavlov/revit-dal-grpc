@@ -1,24 +1,24 @@
 ﻿using Autodesk.Revit.DB;
 using Revit.Services.Grpc.Services;
-using Revit.Storage.Infrastructure.Model.Enums;
-using Revit.Storage.Schemas;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model.Enums;
+using Revit.Storage.ExtensibleStorage.Schemas;
 
-namespace Revit.Storage.Infrastructure.Model
+namespace Revit.Storage.ExtensibleStorage.Infrastructure.Model
 {
     public class SchemaDescriptor
     {
         private readonly SchemaInfo _schemaInfo;
-        
+
         public SchemaDescriptor(SchemaInfo schemaInfo)
         {
             _schemaInfo = schemaInfo;
 
             if (typeof(SchemaInfo)
                 .GetProperties()
-                .Where(x => 
+                .Where(x =>
                     x.Name != nameof(SchemaInfo.TargetElement) &&
                     x.Name != nameof(SchemaInfo.DomainModelType))
-                .Select(p => 
+                .Select(p =>
                     p.GetValue(schemaInfo))
                 .Any(v => v is null))
             {
@@ -28,7 +28,7 @@ namespace Revit.Storage.Infrastructure.Model
             AssignConverter();
         }
 
-        public SchemaDescriptor(SchemaDescriptor descriptor) 
+        public SchemaDescriptor(SchemaDescriptor descriptor)
             : this(
                 new SchemaInfo
                 {
@@ -50,7 +50,7 @@ namespace Revit.Storage.Infrastructure.Model
             var switcher = new Dictionary<Type, Func<object, string>>
             {
                 {
-                    typeof(IDictionary<string, string>), 
+                    typeof(IDictionary<string, string>),
                         o =>
                         {
                             var dictionary = (IDictionary<string, string>)o;
@@ -79,7 +79,7 @@ namespace Revit.Storage.Infrastructure.Model
             {
                 throw new ArgumentNullException(nameof(targetType));
             }
-            
+
             var switcher = new Dictionary<Type, TargetObjectKindEnum>
             {
                 { typeof(FamilyInstance), TargetObjectKindEnum.FamilyInstance },

@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
     <ProjectReference Include="..\Revit.Services\Revit.Services.csproj" />
+    <ProjectReference Include="..\Revit.Storage\Revit.Storage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

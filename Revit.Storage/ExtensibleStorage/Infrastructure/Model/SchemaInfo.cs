@@ -1,7 +1,7 @@
 ﻿using Autodesk.Revit.DB;
 using Revit.Services.Grpc.Services;
 
-namespace Revit.Storage.Infrastructure.Model
+namespace Revit.Storage.ExtensibleStorage.Infrastructure.Model
 {
     public class SchemaInfo
     {
@@ -10,12 +10,12 @@ namespace Revit.Storage.Infrastructure.Model
         }
 
         public SchemaInfo(
-            Guid guid, 
-            DomainModelTypesEnum? domainModelType, 
-            string entityName, 
-            Type schemaType, 
-            Type targetType, 
-            Element targetElement, 
+            Guid guid,
+            DomainModelTypesEnum? domainModelType,
+            string entityName,
+            Type schemaType,
+            Type targetType,
+            Element targetElement,
             string fieldName)
         {
             Guid = guid;
@@ -42,7 +42,7 @@ namespace Revit.Storage.Infrastructure.Model
         public Guid Guid { get; set; }
 
         public DomainModelTypesEnum? DomainModelType { get; set; }
-        
+
         public string EntityName { get; set; }
 
         public Type SchemaType { get; set; }

@@ -6,6 +6,7 @@ import "CommonMessages.proto";
 
 service RevitDataExchange {
 	rpc PushDataToRevitInstance (.PushDataToRevitInstanceRequest) returns (.BasicResponse);
+	rpc PushDataToRevitInstances (.PushDataToRevitInstancesRequest) returns (.BasicResponse);
 	rpc PullDataFromRevitInstance (.PullDataFromRevitInstanceRequest) returns (.PullDataFromRevitInstanceResponse);
 	rpc PullDataFromRevitInstances (.PullDataFromRevitInstancesRequest) returns (.PullDataFromRevitInstancesResponse);
 	rpc PullDataFromRevitInstancesByType (.PullDataFromRevitInstancesByTypeRequest) returns (.PullDataFromRevitInstancesResponse);
@@ -26,12 +27,21 @@ message InstanceData {
 message PushDataToRevitInstanceRequest {
 	string DocumentId = 1;
 	InstanceData InstanceData = 2;
+	DomainModelTypesEnum DomainModelTypesEnum = 3;
+}
+
+//Push a range of instances by IDs
+message PushDataToRevitInstancesRequest {
+	string DocumentId = 1;
+	repeated InstanceData InstanceData = 2;
+	DomainModelTypesEnum DomainModelTypesEnum = 3;
 }
 
 //Pull one instance by ID
 message PullDataFromRevitInstanceRequest {
 	string DocumentId = 1;
 	int32 InstanceId = 2;
+	DomainModelTypesEnum DomainModelTypesEnum = 3;
 }
 
 message PullDataFromRevitInstanceResponse {
@@ -43,6 +53,7 @@ message PullDataFromRevitInstanceResponse {
 message PullDataFromRevitInstancesRequest {
 	string DocumentId = 1;
 	repeated int32 InstanceId = 2;
+	DomainModelTypesEnum DomainModelTypesEnum = 3;
 }
 
 message PullDataFromRevitInstancesResponse {

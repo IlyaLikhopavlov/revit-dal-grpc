@@ -1,4 +1,4 @@
-﻿namespace Revit.Storage.Infrastructure;
+﻿namespace Revit.Storage.ExtensibleStorage.Infrastructure;
 
 public interface IIntIdGenerator : IExtensibleStorage
 {

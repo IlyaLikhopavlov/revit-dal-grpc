@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Revit.Families\Revit.Families.csproj" />
     <ProjectReference Include="..\Revit.GrpcServer\Revit.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\Revit.ScopedServicesFunctionality\Revit.ScopedServicesFunctionality.csproj" />
+    <ProjectReference Include="..\Revit.Storage\Revit.Storage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

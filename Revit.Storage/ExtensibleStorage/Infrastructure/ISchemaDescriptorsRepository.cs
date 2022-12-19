@@ -1,6 +1,6 @@
-﻿using Revit.Storage.Infrastructure.Model;
+﻿using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public interface ISchemaDescriptorsRepository : IEnumerable<SchemaDescriptor>
     {

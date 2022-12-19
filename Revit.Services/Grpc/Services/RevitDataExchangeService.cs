@@ -24,9 +24,16 @@ namespace Revit.Services.Grpc.Services
             return base.PushDataToRevitInstance(request, context);
         }
 
+        public override Task<BasicResponse> PushDataToRevitInstances(PushDataToRevitInstancesRequest request, ServerCallContext context)
+        {
+            return base.PushDataToRevitInstances(request, context);
+        }
+
         public override Task<PullDataFromRevitInstanceResponse> PullDataFromRevitInstance(PullDataFromRevitInstanceRequest request, ServerCallContext context)
         {
             return base.PullDataFromRevitInstance(request, context);
         }
+
+
     }
 }

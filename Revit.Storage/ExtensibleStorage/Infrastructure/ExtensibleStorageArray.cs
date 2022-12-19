@@ -1,7 +1,7 @@
 ﻿using Autodesk.Revit.DB.ExtensibleStorage;
-using Revit.Storage.Infrastructure.Model;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public class ExtensibleStorageArray<T> : ExtensibleStorageCollection<List<T>, IList<T>>
     {

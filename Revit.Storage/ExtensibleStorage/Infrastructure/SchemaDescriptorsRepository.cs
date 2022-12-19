@@ -3,13 +3,13 @@ using System.Collections.Concurrent;
 using Autodesk.Revit.DB;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Revit.Services.Grpc.Services;
-using Revit.Storage.Constants;
-using Revit.Storage.Infrastructure.Model;
-using Revit.Storage.Schemas;
+using Revit.Storage.ExtensibleStorage.Constants;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
+using Revit.Storage.ExtensibleStorage.Schemas;
 using ArgumentException = System.ArgumentException;
 using InvalidOperationException = System.InvalidOperationException;
 
-namespace Revit.Storage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
     public class SchemaDescriptorsRepository : ISchemaDescriptorsRepository
     {
@@ -17,12 +17,13 @@ namespace Revit.Storage.Infrastructure
 
         public SchemaDescriptorsRepository(IFactory<SchemaInfo, SchemaDescriptor> descriptorsFactory, Document document)
         {
-            var descriptors = new []
+            var descriptors = new[]
             {
                 descriptorsFactory.New(
                     new SchemaInfo {
                         Guid = new Guid(RevitStorage.FooSchemaGuid),
                         EntityName = DomainModelTypesEnum.Foo.ToString(),
+                        DomainModelType = DomainModelTypesEnum.Foo,
                         SchemaType = typeof(DataSchema),
                         TargetType = typeof(FamilyInstance),
                         FieldName = nameof(DataSchema.Data)
@@ -32,6 +33,7 @@ namespace Revit.Storage.Infrastructure
                     new SchemaInfo {
                         Guid = new Guid(RevitStorage.BarSchemaGuid),
                         EntityName = DomainModelTypesEnum.Bar.ToString(),
+                        DomainModelType = DomainModelTypesEnum.Bar,
                         SchemaType = typeof(DataSchema),
                         TargetType = typeof(FamilyInstance),
                         FieldName = nameof(DataSchema.Data)
@@ -60,10 +62,10 @@ namespace Revit.Storage.Infrastructure
                     }),
             };
 
-            if (descriptors.GroupBy(x => x.SchemaInfo.EntityName).Any(x => x.Count() > 1) || 
+            if (descriptors.GroupBy(x => x.SchemaInfo.EntityName).Any(x => x.Count() > 1) ||
                 descriptors.Any(x => string.IsNullOrWhiteSpace(x.SchemaInfo.EntityName)))
             {
-                throw new InvalidOperationException("Schema name must be unique");
+                throw new InvalidOperationException("Schema name must be unique and not empty.");
             }
 
             _descriptorsDictionary = new ConcurrentDictionary<Guid, SchemaDescriptor>(
@@ -91,7 +93,7 @@ namespace Revit.Storage.Infrastructure
                 {
                     throw new ArgumentNullException(nameof(entityName));
                 }
-                
+
                 return _descriptorsDictionary.Values.FirstOrDefault(x => entityName == x.SchemaInfo.EntityName) ??
                        throw new ArgumentException(nameof(entityName));
             }

@@ -1,5 +1,4 @@
-﻿using App.Grpc.Bundle.ScopedServicesFunctionality;
-using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
+﻿using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.Services.Grpc.Services;
 

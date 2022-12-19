@@ -4,7 +4,7 @@ using Revit.Services.Grpc.Services;
 
 namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 {
-    internal class PushDataToRevitInstanceEventHandler : ExternalServiceEventHandler<PushDataToRevitInstanceRequest, BasicResponse>
+    public class PushDataToRevitInstanceEventHandler : ExternalServiceEventHandler<PushDataToRevitInstanceRequest, BasicResponse>
     {
         public PushDataToRevitInstanceEventHandler()
         {

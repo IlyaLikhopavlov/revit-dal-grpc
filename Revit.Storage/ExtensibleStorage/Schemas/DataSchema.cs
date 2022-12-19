@@ -1,4 +1,4 @@
-﻿namespace Revit.Storage.Schemas
+﻿namespace Revit.Storage.ExtensibleStorage.Schemas
 {
     public sealed class DataSchema
     {

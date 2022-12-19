@@ -1,4 +1,4 @@
-﻿using App.Grpc.Bundle.ScopedServicesFunctionality;
+﻿using App.ScopedServicesFunctionality;
 using App.Services.Revit;
 using Grpc.Core;
 using Revit.Services.Grpc.Services;

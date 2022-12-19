@@ -7,6 +7,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using Bimdance.Framework.DependencyInjection;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
+using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.AddIn.Commands.Initialization;
 using Revit.AddIn.RibbonPanels;
@@ -27,8 +28,15 @@ using Revit.Services.Grpc;
 using Revit.Services.Grpc.Services;
 using Revit.Services.Processing;
 using Revit.Services.Processing.EventArgs;
+using Revit.Storage.ExtensibleStorage;
+using Revit.Storage.ExtensibleStorage.Infrastructure;
+using Revit.Storage.InstancesAccess;
 using DocumentChangedEventArgs = Revit.Services.Processing.EventArgs.DocumentChangedEventArgs;
 using DocumentClosingEventArgs = Revit.Services.Processing.EventArgs.DocumentClosingEventArgs;
+using Revit.ScopedServicesFunctionality;
+using Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange;
+using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
+using Revit.Services.ExternalEvents.Infrastructure;
 
 namespace Revit.AddIn
 {
@@ -42,31 +50,29 @@ namespace Revit.AddIn
         public Result OnStartup(UIControlledApplication application)
         {
             var serviceCollection = new ServiceCollection();
-            //serviceCollection.AddSingleton<IDocumentServiceScopeFactory, DocumentServiceScopeFactory>();
-            //serviceCollection.AddTransient<SchemaDescriptor>();
+            serviceCollection.AddSingleton<IRevitDocumentServiceScopeFactory, RevitDocumentServiceScopeFactory>();
+            serviceCollection.AddTransient<SchemaDescriptor>();
 
             serviceCollection.AddSingleton(new ApplicationProcessing(application));
             serviceCollection.AddSingleton<FamilyInstanceAllocationService>();
             serviceCollection.AddScoped<ModelItemsAllocationService>();
             serviceCollection.AddScoped<SampleRendering>();
 
-            //serviceCollection.AddScoped<ExtensibleStorage<DataSchema>>();
-            //serviceCollection.AddScoped<ExtensibleStorageDictionary>();
-            //serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
-            //serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
-            //serviceCollection.AddScoped<ISchemaDescriptorsRepository, SchemaDescriptorsRepository>();
+            serviceCollection.AddScoped<IExtensibleStorageDataSchema, ExtensibleStorageDataSchema>();
+            serviceCollection.AddScoped<IExtensibleStorageDictionary, ExtensibleStorageDictionary>();
+            serviceCollection.AddScoped<IIntIdGenerator, IntIdGenerator>();
+            serviceCollection.AddScoped<IExtensibleStorageService, ExtensibleStorageService>();
+            serviceCollection.AddScoped<ISchemaDescriptorsRepository, SchemaDescriptorsRepository>();
 
             //grpc
             serviceCollection.AddSingleton<RevitActiveDocumentNotificationService>();
             serviceCollection.AddSingleton<GrpcServerBootstrapper>();
 
-            //serviceCollection.AddScoped<RevitInstanceConverter<Foo, FamilyInstance>, FooConverter>();
-            //serviceCollection.AddScoped<RevitInstanceConverter<Bar, FamilyInstance>, BarConverter>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, AllocateRevitInstancesByTypeEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstanceEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstancesEventHandler>();
 
-            //serviceCollection.AddScoped<BarSet>();
-            //serviceCollection.AddScoped<FooSet>();
-
-            //serviceCollection.AddScoped<IDataContext, DataContext>();
+            serviceCollection.AddScoped<RevitDataContext>();
 
             serviceCollection.AddFactoryFacility();
 
@@ -102,7 +108,7 @@ namespace Revit.AddIn
         public Result OnShutdown(UIControlledApplication application)
         {
             ServiceProvider?.GetService<GrpcServerBootstrapper>()?.StopServer();
-            ServiceProvider?.GetService<IDocumentServiceScopeFactory>()?.Dispose();
+            ServiceProvider?.GetService<IDocumentServiceScopeFactory<>>()?.Dispose();
 
             return Result.Succeeded;
         }

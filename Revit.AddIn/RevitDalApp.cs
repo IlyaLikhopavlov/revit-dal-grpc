@@ -6,20 +6,9 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using Bimdance.Framework.DependencyInjection;
-using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
-using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.AddIn.Commands.Initialization;
 using Revit.AddIn.RibbonPanels;
-using Revit.DAL.Converters;
-using Revit.DAL.Storage.Infrastructure.Model;
-using Revit.DAL.Storage.Infrastructure;
-using Revit.DAL.Storage;
-using Revit.DAL.Storage.Schemas;
-using Revit.DAL.Converters.Common;
-using Revit.DAL.DataContext;
-using Revit.DAL.DataContext.RevitSets;
-using Revit.DML;
 using Element = Autodesk.Revit.DB.Element;
 using Revit.Families.Rendering;
 using Revit.Services.Allocation;
@@ -66,11 +55,13 @@ namespace Revit.AddIn
 
             //grpc
             serviceCollection.AddSingleton<RevitActiveDocumentNotificationService>();
+            serviceCollection.AddSingleton<RevitDataExchangeService>();
             serviceCollection.AddSingleton<GrpcServerBootstrapper>();
 
             serviceCollection.AddSingleton<IExternalServiceEventHandler, AllocateRevitInstancesByTypeEventHandler>();
             serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstanceEventHandler>();
             serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstancesEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, PullDataFromRevitInstancesByTypeEventHandler>();
 
             serviceCollection.AddScoped<RevitDataContext>();
 
@@ -108,7 +99,7 @@ namespace Revit.AddIn
         public Result OnShutdown(UIControlledApplication application)
         {
             ServiceProvider?.GetService<GrpcServerBootstrapper>()?.StopServer();
-            ServiceProvider?.GetService<IDocumentServiceScopeFactory<>>()?.Dispose();
+            //ServiceProvider?.GetService<IDocumentServiceScopeFactory<>>()?.Dispose();
 
             return Result.Succeeded;
         }

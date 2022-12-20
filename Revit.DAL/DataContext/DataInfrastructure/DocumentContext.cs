@@ -1,30 +1,24 @@
-﻿using Autodesk.Revit.DB;
-using Bimdance.Framework.Exceptions;
-using Revit.DAL.Constants;
-using Revit.DAL.Exceptions;
+﻿using Bimdance.Framework.Exceptions;
 using Element = Revit.DML.Element;
 
-namespace Revit.DAL.DataContext.DataInfrastructure
+namespace App.DAL.DataContext.DataInfrastructure
 {
     public abstract class DocumentContext : IDisposable
     {
-        protected readonly Document Document;
+        protected readonly DocumentDescriptor DocumentDescriptor;
 
         protected List<IRevitSet> RevitSets;
 
         protected Guid ContextGuid { get; } = Guid.NewGuid();
 
-        protected DocumentContext(Document document)
+        protected DocumentContext(DocumentDescriptor document)
         {
-            Document = document ?? throw new ArgumentException($"{nameof(document)} isn't initialized.");
+            DocumentDescriptor = document ?? throw new ArgumentException($"{nameof(document)} isn't initialized.");
         }
 
         protected void Initialize()
         {
             SetSets();
-            var modelBuilder = new ModelBuilder(RevitSets);
-            OnModelCreating(modelBuilder);
-            modelBuilder.Build();
             ResolveForeignRelations();
         }
 
@@ -40,58 +34,10 @@ namespace Revit.DAL.DataContext.DataInfrastructure
 
         protected abstract void ResolveForeignRelations();
 
-        public void SaveChanges(bool isInSubTransaction = false)
+        public async Task SaveChanges()
         {
-            if (Document.IsReadOnly)
-            {
-                throw new InvalidOperationException($"Document {Document.Title} is read only. Changes can't be saved.");
-            }
-
-            if (!Document.IsModifiable && !isInSubTransaction)
-            {
-                using var transaction = new Transaction(Document, RevitStorage.SaveChangesTransactionName);
-                try
-                {
-                    if (transaction.Start() == TransactionStatus.Started)
-                    {
-                        Sync();
-                    }
-
-                    if (TransactionStatus.Committed != transaction.Commit())
-                    {
-                        transaction.RollBack();
-                    }
-                }
-                catch (Exception)
-                {
-                    transaction.RollBack();
-                    throw;
-                }
-            }
-            else
-            {
-                using var subTransaction = new SubTransaction(Document);
-                try
-                {
-                    if (subTransaction.Start() == TransactionStatus.Started)
-                    {
-                        Sync();
-                    }
-
-                    if (TransactionStatus.Committed != subTransaction.Commit())
-                    {
-                        subTransaction.RollBack();
-                    }
-                }
-                catch (Exception)
-                {
-                    subTransaction.RollBack();
-                    throw;
-                }
-            }
+            await Sync();
         }
-
-        protected abstract void OnModelCreating(ModelBuilder modelBuilder);
 
         public EntityProxy<TEntity> Entry<TEntity>(TEntity entity)
             where TEntity : Element
@@ -114,13 +60,13 @@ namespace Revit.DAL.DataContext.DataInfrastructure
             }
         }
 
-        protected void Sync()
+        protected async Task Sync()
         {
             var syncSets = RevitSets.Cast<ISynchronizable>();
 
             foreach (var syncSet in syncSets)
             {
-                syncSet.Sync();
+                await syncSet.Sync();
             }
         }
 

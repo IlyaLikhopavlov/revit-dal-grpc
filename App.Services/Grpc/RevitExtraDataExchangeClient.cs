@@ -95,5 +95,44 @@ namespace App.Services.Grpc
                 throw new InvalidOperationException($"Code: {response?.ErrorInfo.Code} Message: {response?.ErrorInfo.Message}");
             }
         }
+
+        public async Task<int> CreateRevitElement(Type type, DocumentDescriptor documentDescriptor)
+        {
+            if (!TypesMapping.TryGetValue(type, out var requiredType))
+            {
+                throw new ArgumentOutOfRangeException(nameof(type));
+            }
+
+            var response = await _client.CreateRevitInstanceAsync(
+                new CreateRevitInstanceRequest
+                {
+                    DocumentId = documentDescriptor.Id,
+                    Type = requiredType
+                });
+
+            if (response?.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response?.ErrorInfo.Code} Message: {response?.ErrorInfo.Message}");
+            }
+
+            if (response.InstanceId <= 0)
+            {
+                throw new InvalidOperationException($"Incorrect ID returned after instance creation.");
+            }
+
+            return response.InstanceId;
+        }
+
+        public async Task<bool> DeleteRevitElement(int instanceId, DocumentDescriptor documentDescriptor)
+        {
+            var response = await _client.DeleteRevitInstanceAsync(
+                new DeleteRevitInsatnceRequest
+                {
+                    DocumentId = documentDescriptor.Id,
+                    InstanceId = instanceId
+                });
+
+            return response?.ErrorInfo.Code == ExceptionCodeEnum.Success;
+        }
     }
 }

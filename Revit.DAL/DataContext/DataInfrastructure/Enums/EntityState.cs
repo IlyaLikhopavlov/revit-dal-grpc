@@ -1,4 +1,4 @@
-﻿namespace Revit.DAL.DataContext.DataInfrastructure.Enums
+﻿namespace App.DAL.DataContext.DataInfrastructure.Enums
 {
     public enum EntityState
     {

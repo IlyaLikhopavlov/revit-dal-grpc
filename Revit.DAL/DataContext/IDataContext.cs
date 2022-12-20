@@ -1,6 +1,6 @@
-﻿using Revit.DAL.DataContext.RevitSets;
+﻿using App.DAL.DataContext.RevitSets;
 
-namespace Revit.DAL.DataContext
+namespace App.DAL.DataContext
 {
     public interface IDataContext
     {
@@ -8,6 +8,6 @@ namespace Revit.DAL.DataContext
 
         BarSet Bar { get; }
 
-        void SaveChanges(bool isInSubTransaction = false);
+        Task SaveChanges();
     }
 }

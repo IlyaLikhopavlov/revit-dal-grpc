@@ -11,6 +11,7 @@
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\App.Services\App.Services.csproj" />
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

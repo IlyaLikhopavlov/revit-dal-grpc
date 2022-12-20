@@ -63,6 +63,8 @@ namespace Revit.AddIn
             serviceCollection.AddSingleton<IExternalServiceEventHandler, PullDataFromRevitInstanceEventHandler>();
             serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstancesEventHandler>();
             serviceCollection.AddSingleton<IExternalServiceEventHandler, PullDataFromRevitInstancesByTypeEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, CreateRevitInstanceEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, DeleteRevitInstanceEventHandler>();
 
             serviceCollection.AddScoped<RevitDataContext>();
 

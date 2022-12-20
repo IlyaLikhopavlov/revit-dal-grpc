@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using App.DAL.Converters;
+using App.DAL.DataContext;
+using App.DAL.DataContext.RevitSets;
 using App.ScopedServicesFunctionality;
 using App.Services.Revit;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
@@ -22,6 +25,12 @@ namespace App.Main
             serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, DocumentDescriptorServiceScopeFactory>();
             serviceCollection.AddSingleton<Services.Grpc.RevitActiveDocumentNotificationClient>();
             serviceCollection.AddSingleton<Services.Grpc.RevitExtraDataExchangeClient>();
+
+            serviceCollection.AddScoped<BarConverter>();
+            serviceCollection.AddScoped<FooConverter>();
+            serviceCollection.AddScoped<BarSet>();
+            serviceCollection.AddScoped<FooSet>();
+            serviceCollection.AddScoped<IDataContext, DataContext>();
         }
 
         public void Build()

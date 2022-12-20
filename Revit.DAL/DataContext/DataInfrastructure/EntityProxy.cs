@@ -1,7 +1,7 @@
-﻿using Revit.DAL.DataContext.DataInfrastructure.Enums;
+﻿using App.DAL.DataContext.DataInfrastructure.Enums;
 using Revit.DML;
 
-namespace Revit.DAL.DataContext.DataInfrastructure
+namespace App.DAL.DataContext.DataInfrastructure
 {
     public class EntityProxy<TModelElement> : IEntityProxy
         where TModelElement : Element

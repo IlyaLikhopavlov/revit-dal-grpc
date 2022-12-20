@@ -1,8 +1,8 @@
-﻿using Revit.DAL.DataContext.DataInfrastructure;
-using Revit.DAL.DataContext.DataInfrastructure.Enums;
+﻿using App.DAL.DataContext.DataInfrastructure;
+using App.DAL.DataContext.DataInfrastructure.Enums;
 using Revit.DML;
 
-namespace Revit.DAL.DataContext
+namespace App.DAL.DataContext
 {
     public class BaseEntityProxy
     {

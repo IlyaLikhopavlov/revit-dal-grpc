@@ -87,6 +87,29 @@ namespace Revit.Storage.InstancesAccess
                 });
         }
 
+        public int? CreateRevitElement(DomainModelTypesEnum entityType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteRevitElement(int instanceId)
+        {
+            var requiredId = new ElementId(instanceId);
+
+            if (_document?.GetElement(requiredId) is null)
+            {
+                return false;
+            }
+
+            var deletedIds = Array.Empty<ElementId>();
+            SaveChanges(() =>
+            {
+                deletedIds = _document.Delete(requiredId).ToArray();
+            });
+            
+            return deletedIds.Any(x => x.Equals(requiredId));
+        }
+
         public void SaveChanges(Action sync, bool isInSubTransaction = false)
         {
             if (_document.IsReadOnly)

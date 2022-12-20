@@ -1,7 +1,7 @@
-﻿namespace Revit.DAL.DataContext.DataInfrastructure
+﻿namespace App.DAL.DataContext.DataInfrastructure
 {
     public interface ISynchronizable
     {
-        void Sync();
+        Task Sync();
     }
 }

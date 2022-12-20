@@ -1,27 +1,17 @@
-﻿using App.DAL.DataContext.DataInfrastructure;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.ExtensibleStorage;
+﻿using App.DAL.Converters.Common;
+using App.DAL.DataContext.DataInfrastructure;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.Constants;
-using Revit.DAL.DataContext.DataInfrastructure;
 using Revit.DML;
-using Revit.DAL.Storage.Infrastructure;
 
-namespace Revit.DAL.DataContext.RevitSets
+namespace App.DAL.DataContext.RevitSets
 {
-    public class BarSet : RevitSet<Bar, FamilyInstance>
+    public class BarSet : RevitSet<Bar>
     {
         public BarSet(
-            IFactory<Document, RevitInstanceConverter<Bar, FamilyInstance>> converterFactory, 
-            IFactory<Document, ISchemaDescriptorsRepository> schemaDescriptorsRepository,
-            Document document) :
-            base(document, schemaDescriptorsRepository, converterFactory)
+            DocumentDescriptor documentDescriptor,
+            IFactory<DocumentDescriptor, RevitInstanceConverter<Bar>> converterFactory) :
+            base(documentDescriptor, converterFactory)
         {
-        }
-
-        protected override FamilyInstance CreateRevitElement(Bar modelElement)
-        {
-            throw new NotImplementedException();
         }
     }
 }

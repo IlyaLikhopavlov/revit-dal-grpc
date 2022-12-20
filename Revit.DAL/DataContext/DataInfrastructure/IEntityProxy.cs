@@ -1,6 +1,6 @@
-﻿using Revit.DAL.DataContext.DataInfrastructure.Enums;
+﻿using App.DAL.DataContext.DataInfrastructure.Enums;
 
-namespace Revit.DAL.DataContext.DataInfrastructure
+namespace App.DAL.DataContext.DataInfrastructure
 {
     public interface IEntityProxy
     {

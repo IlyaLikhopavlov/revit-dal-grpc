@@ -1,15 +1,15 @@
-﻿using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.DAL.DataContext.DataInfrastructure;
-using Revit.DAL.DataContext.RevitSets;
+﻿using App.DAL.DataContext.DataInfrastructure;
+using App.DAL.DataContext.RevitSets;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 
-namespace Revit.DAL.DataContext
+namespace App.DAL.DataContext
 {
     public class DataContext : DocumentContext, IDataContext
     {
         public DataContext(
-            IFactory<Document, FooSet> foos,
-            IFactory<Document, BarSet> bars,
-            Document document) : 
+            IFactory<DocumentDescriptor, FooSet> foos,
+            IFactory<DocumentDescriptor, BarSet> bars,
+            DocumentDescriptor document) : 
             base(document)
         {
             Foo = foos.New(document);
@@ -20,10 +20,6 @@ namespace Revit.DAL.DataContext
         public FooSet Foo { get; }
 
         public BarSet Bar { get; }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-        }
 
         protected override void ResolveForeignRelations()
         {

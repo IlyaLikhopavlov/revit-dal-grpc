@@ -1,13 +1,10 @@
 ﻿using System.Collections;
 using System.Reflection.Metadata;
 using App.DAL.Converters.Common;
+using App.DAL.DataContext.DataInfrastructure.Enums;
 using App.Services.Grpc;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Exceptions;
-using Revit.DAL.DataContext.DataInfrastructure;
-using Revit.DAL.DataContext.DataInfrastructure.Enums;
-using Revit.DAL.Exceptions;
-using Revit.Services.Grpc.Services;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace App.DAL.DataContext.DataInfrastructure
@@ -21,18 +18,14 @@ namespace App.DAL.DataContext.DataInfrastructure
 
         private readonly RevitInstanceConverter<TModelElement> _converter;
 
-        protected RevitExtraDataExchangeClient Client;
-
         protected DocumentDescriptor DocumentDescriptor;
 
         protected RevitSet(
             DocumentDescriptor documentDescriptor,
-            RevitExtraDataExchangeClient client,
             IFactory<DocumentDescriptor, RevitInstanceConverter<TModelElement>> converterFactory)
         {
             DocumentDescriptor = documentDescriptor;
             _converter = converterFactory.New(DocumentDescriptor);
-            Client = client;
         }
         
         public Type InternalEntityType => typeof(TModelElement);
@@ -93,13 +86,13 @@ namespace App.DAL.DataContext.DataInfrastructure
             return GetEnumerator();
         }
 
-        public void Sync()
+        public async Task Sync()
         {
             var listToSync = new List<EntityProxy<TModelElement>>(EntityProxiesDictionary.Values);
 
             while (_addBuffer.Count > 0)
             {
-                SyncAdded(_addBuffer.Dequeue());
+               await SyncAdded(_addBuffer.Dequeue());
             }
 
             foreach (var entityProxy in listToSync)
@@ -109,17 +102,17 @@ namespace App.DAL.DataContext.DataInfrastructure
                     case EntityState.Added:
                         break;
                     case EntityState.Deleted:
-                        SyncDeleted(entityProxy);
+                        await SyncDeleted(entityProxy);
                         break;
                     case EntityState.Modified:
-                        SyncModified(entityProxy);
+                        await SyncModified(entityProxy);
                         break;
                     case EntityState.Unchanged:
                         break;
                     case EntityState.Detached:
                         break;
                     case EntityState.Attached:
-                        SyncModified(entityProxy);
+                        await SyncModified(entityProxy);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -127,69 +120,31 @@ namespace App.DAL.DataContext.DataInfrastructure
             }
         }
 
-        protected virtual void PushToRevit(TModelElement modelElement)
+        private async Task SyncAdded(EntityProxy<TModelElement> entityProxy)
         {
-            _converter?.PushToRevit(modelElement);
-        }
+            var id = await _converter.CreateRevitElement();
 
-        private void SyncAdded(EntityProxy<TModelElement> entityProxy)
-        {
-            var revitElement = CreateRevitElement(entityProxy.Entity);
-
-            if (revitElement == null)
-            {
-                throw new RevitDataAccessException("Can't create required element");
-            }
-
-            if (!revitElement.IsValidObject)
-            {
-                return;
-            }
-
-            SourcesDictionary.Add(revitElement.Id.IntegerValue, revitElement);
-
-            entityProxy.Entity.Id = revitElement.Id.IntegerValue;
-            entityProxy.Id = revitElement.Id.IntegerValue;
+            entityProxy.Entity.Id = id;
+            entityProxy.Id = id;
             entityProxy.EntityState = EntityState.Unchanged;
 
-            PushToRevit(entityProxy.Entity);
+            await _converter.PushToRevit(entityProxy.Entity);
 
             EntityProxiesDictionary.Add(entityProxy.Entity.Id, entityProxy);
         }
 
-        protected void SyncDeleted(EntityProxy<TModelElement> entityProxy)
+        protected async Task SyncDeleted(EntityProxy<TModelElement> entityProxy)
         {
-            var requiredId = new ElementId(entityProxy.Entity.Id);
-            
-            if (Document?.GetElement(requiredId) != null)
-            {
-                Document.Delete(requiredId);
-            }
+            await _converter.DeleteRevitElement(entityProxy.Id);
 
-            SourcesDictionary.Remove(requiredId.IntegerValue);
-            EntityProxiesDictionary.Remove(requiredId.IntegerValue);
+            EntityProxiesDictionary.Remove(entityProxy.Id);
         }
 
-        protected void SyncModified(EntityProxy<TModelElement> entityProxy)
+        protected async Task SyncModified(EntityProxy<TModelElement> entityProxy)
         {
-            if (!SourcesDictionary.TryGetValue(entityProxy.Id, out var elementToModification))
-            {
-                elementToModification = (TRevitElement)Document?.GetElement(new ElementId(entityProxy.Id))!;
-            }
-
-            if (elementToModification == null)
-            {
-                throw new RevitDataAccessException($"Required element ID={entityProxy.Entity.Id} not founded in Revit. Modification failed.");
-            }
-
             entityProxy.EntityState = EntityState.Unchanged;
 
-            if (!elementToModification.IsValidObject)
-            {
-                return;
-            }
-
-            PushToRevit(elementToModification, entityProxy.Entity);
+            await _converter.PushToRevit(entityProxy.Entity);
         }
 
         public object GetEntity(int id)

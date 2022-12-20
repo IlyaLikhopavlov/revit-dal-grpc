@@ -60,6 +60,16 @@ namespace App.DAL.Converters.Common
                 JsonSerializer.Deserialize<TModelElement>(x.Data, _jsonSerializerOptions)).ToArray();
         }
 
+        public virtual async Task<int> CreateRevitElement()
+        {
+            return await Client.CreateRevitElement(typeof(TModelElement), DocumentDescriptor);
+        }
+
+        public virtual async Task<bool> DeleteRevitElement(int instanceId)
+        {
+            return await Client.DeleteRevitElement(instanceId, DocumentDescriptor);
+        }
+
         public string ModelElementName => typeof(TModelElement).Name;
     }
 }

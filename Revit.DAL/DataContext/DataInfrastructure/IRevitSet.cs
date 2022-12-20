@@ -1,9 +1,7 @@
-﻿namespace Revit.DAL.DataContext.DataInfrastructure
+﻿namespace App.DAL.DataContext.DataInfrastructure
 {
     public interface IRevitSet
     {
-        Type RevitEntityType { get; }
-
         Type InternalEntityType { get; }
 
         IEnumerable<object> Entities { get; }

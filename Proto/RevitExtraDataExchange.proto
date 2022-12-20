@@ -11,6 +11,8 @@ service RevitDataExchange {
 	rpc PullDataFromRevitInstances (.PullDataFromRevitInstancesRequest) returns (.PullDataFromRevitInstancesResponse);
 	rpc PullDataFromRevitInstancesByType (.PullDataFromRevitInstancesByTypeRequest) returns (.PullDataFromRevitInstancesResponse);
 	rpc AllocateRevitInstancesByType (.AllocateRevitInstancesByTypeRequest) returns (.AllocateRevitInstancesByTypeResponse);
+	rpc CreateRevitInstance (.CreateRevitInstanceRequest) returns (.CreateRevitInstanceResponse);
+	rpc DeleteRevitInstance (.DeleteRevitInsatnceRequest) returns (.BasicResponse);
 }
 
 enum DomainModelTypesEnum {
@@ -76,4 +78,21 @@ message AllocateRevitInstancesByTypeRequest {
 message AllocateRevitInstancesByTypeResponse {
 	ErrorInfo ErrorInfo = 1;
 	repeated int32 AllocatedItemsId = 2;
+}
+
+//Create revit instance by Type
+message CreateRevitInstanceRequest {
+	string DocumentId = 1;
+	DomainModelTypesEnum Type = 2;
+}
+
+message CreateRevitInstanceResponse {
+	ErrorInfo ErrorInfo = 1;
+	int32 InstanceId = 2;
+}
+
+//Delete revit instance
+message DeleteRevitInsatnceRequest {
+	string DocumentId = 1;
+	int32 InstanceId = 2;
 }

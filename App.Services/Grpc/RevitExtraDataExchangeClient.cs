@@ -20,11 +20,32 @@ namespace App.Services.Grpc
 
         private readonly RevitDataExchange.RevitDataExchangeClient _client;
         
-        public RevitExtraDataExchangeClient(RevitDataExchange.RevitDataExchangeClient client)
+        public RevitExtraDataExchangeClient(/*RevitDataExchange.RevitDataExchangeClient client*/)
         {
-            _client = client;
+            //_client = client;
             var channel = new Channel("127.0.0.1:5005", ChannelCredentials.Insecure);
             _client = new RevitDataExchange.RevitDataExchangeClient(channel);
+        }
+
+        public async Task<int[]> Allocate(Type type)
+        {
+            if (!TypesMapping.TryGetValue(type, out var requiredType))
+            {
+                throw new ArgumentOutOfRangeException(nameof(type));
+            }
+
+            var response = await _client.AllocateRevitInstancesByTypeAsync(
+                new AllocateRevitInstancesByTypeRequest
+                {
+                    AllocationType = requiredType
+                });
+
+            if (response?.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response?.ErrorInfo.Code} Message: {response?.ErrorInfo.Message}");
+            }
+
+            return response.AllocatedItemsId.ToArray();
         }
 
         public async Task<InstanceData[]> PullDataFromRevitInstancesByType(Type type, DocumentDescriptor documentDescriptor)

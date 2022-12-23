@@ -7,13 +7,13 @@ namespace App.DAL.DataContext
     public class DataContext : DocumentContext, IDataContext
     {
         public DataContext(
-            IFactory<DocumentDescriptor, FooSet> foos,
-            IFactory<DocumentDescriptor, BarSet> bars,
-            DocumentDescriptor document) : 
-            base(document)
+            IFactory<DocumentDescriptor, FooSet> foosFactory,
+            IFactory<DocumentDescriptor, BarSet> barsFactory,
+            DocumentDescriptor documentDescriptor) : 
+            base(documentDescriptor)
         {
-            Foo = foos.New(document);
-            Bar = bars.New(document);
+            Foo = foosFactory.New(documentDescriptor);
+            Bar = barsFactory.New(documentDescriptor);
             Initialize();
         }
 

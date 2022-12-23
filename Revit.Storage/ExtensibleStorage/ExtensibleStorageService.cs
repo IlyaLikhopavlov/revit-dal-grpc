@@ -16,17 +16,17 @@ namespace Revit.Storage.ExtensibleStorage
     {
         private readonly ConcurrentDictionary<string, IExtensibleStorage> _extensibleStorages = new();
 
-        private readonly IFactory<SchemaDescriptor, ExtensibleStorage<DataSchema>>
+        private readonly IFactory<SchemaDescriptor, IExtensibleStorageDataSchema>
             _dataExtensibleStorageFactory;
 
-        private readonly IFactory<SchemaDescriptor, ExtensibleStorageDictionary>
+        private readonly IFactory<SchemaDescriptor, IExtensibleStorageDictionary>
             _dictionaryExtensibleStorageFactory;
 
         private readonly IFactory<SchemaDescriptor, IIntIdGenerator> _idGeneratorFactory;
 
         public ExtensibleStorageService(
-            IFactory<SchemaDescriptor, ExtensibleStorage<DataSchema>> dataExtensibleStorageFactory,
-            IFactory<SchemaDescriptor, ExtensibleStorageDictionary> dictionaryExtensibleStorageFactory,
+            IFactory<SchemaDescriptor, IExtensibleStorageDataSchema> dataExtensibleStorageFactory,
+            IFactory<SchemaDescriptor, IExtensibleStorageDictionary> dictionaryExtensibleStorageFactory,
             IFactory<SchemaDescriptor, IIntIdGenerator> idGeneratorFactory,
             IFactory<Document, ISchemaDescriptorsRepository> repositoryFactory,
             Document document)

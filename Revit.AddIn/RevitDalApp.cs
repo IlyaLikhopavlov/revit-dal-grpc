@@ -44,6 +44,8 @@ namespace Revit.AddIn
 
             serviceCollection.AddSingleton(new ApplicationProcessing(application));
             serviceCollection.AddSingleton<FamilyInstanceAllocationService>();
+            serviceCollection.AddSingleton<IExternalEventsService, ExternalEventsService>();
+            serviceCollection.AddSingleton<IRequestsQueue, RequestsQueue>();
             serviceCollection.AddScoped<ModelItemsAllocationService>();
             serviceCollection.AddScoped<SampleRendering>();
 

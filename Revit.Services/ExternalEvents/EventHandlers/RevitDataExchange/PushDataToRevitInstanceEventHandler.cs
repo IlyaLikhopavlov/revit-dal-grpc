@@ -8,7 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 {
-    public class PushDataToRevitInstanceEventHandler : ExternalServiceEventHandler<PushDataToRevitInstanceRequest, BasicResponse>
+    public class
+        PushDataToRevitInstanceEventHandler : ExternalServiceEventHandler<PushDataToRevitInstanceRequest, BasicResponse>
     {
         private readonly IRevitDocumentServiceScopeFactory _scopeFactory;
 
@@ -47,4 +48,5 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
                 ErrorInfo = new ErrorInfo { Code = ExceptionCodeEnum.Success }
             };
         }
+    }
 }

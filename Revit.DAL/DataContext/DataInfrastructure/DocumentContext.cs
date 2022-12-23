@@ -11,9 +11,9 @@ namespace App.DAL.DataContext.DataInfrastructure
 
         protected Guid ContextGuid { get; } = Guid.NewGuid();
 
-        protected DocumentContext(DocumentDescriptor document)
+        protected DocumentContext(DocumentDescriptor documentDescriptor)
         {
-            DocumentDescriptor = document ?? throw new ArgumentException($"{nameof(document)} isn't initialized.");
+            DocumentDescriptor = documentDescriptor ?? throw new ArgumentException($"{nameof(documentDescriptor)} isn't initialized.");
         }
 
         protected void Initialize()

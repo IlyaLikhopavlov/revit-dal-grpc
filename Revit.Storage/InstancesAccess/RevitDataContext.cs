@@ -19,7 +19,7 @@ namespace Revit.Storage.InstancesAccess
         
         private readonly IExtensibleStorageService _storageService;
 
-        protected RevitDataContext(Document document, IFactory<Document, IExtensibleStorageService> extensibleStorageServiceFactory)
+        public RevitDataContext(IFactory<Document, IExtensibleStorageService> extensibleStorageServiceFactory, Document document)
         {
             _document = document ?? throw new ArgumentException($"{nameof(document)} isn't initialized.");
             _storageService = extensibleStorageServiceFactory.New(document);

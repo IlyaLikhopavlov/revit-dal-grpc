@@ -55,4 +55,3 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
         }
     }
 }
-}

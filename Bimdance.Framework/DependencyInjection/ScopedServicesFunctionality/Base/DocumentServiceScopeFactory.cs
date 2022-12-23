@@ -23,34 +23,14 @@ namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Bas
 
         public virtual IServiceScope CreateScope(T t)
         {
-            //if (document.IsFamilyDocument)
-            //{
-            //    return null;
-            //}
-
             if (ScopeDictionary.TryGetValue(t, out var scope))
             {
                 return scope;
             }
 
             var newScope = Scope<T>.CreateScope(_serviceScopeFactory.CreateScope(), t);
-            return !ScopeDictionary.TryAdd(t, newScope) ? newScope : null;
-
-            //document.DocumentClosing += DocumentOnDocumentClosing;
+            return ScopeDictionary.TryAdd(t, newScope) ? newScope : null;
         }
-
-        //public EventHandler<DocumentClosingEventArgs> DocumentClosing { get; set; }
-
-        //private void DocumentOnDocumentClosing(object sender, DocumentClosingEventArgs e)
-        //{
-        //    if (!_scopeDictionary.TryRemove(e.Document, out var scope))
-        //    {
-        //        return;
-        //    }
-
-        //    scope.Document.DocumentClosing -= DocumentOnDocumentClosing;
-        //    //DocumentClosing.Invoke(this, e);
-        //}
 
         protected virtual void Dispose(bool disposing)
         {

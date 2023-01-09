@@ -2,7 +2,7 @@
 using App.DAL.DataContext.DataInfrastructure;
 using Revit.DML;
 
-namespace Revit.DAL.Utils
+namespace App.DAL.Utils
 {
     public static class DataContextExtensions
     {

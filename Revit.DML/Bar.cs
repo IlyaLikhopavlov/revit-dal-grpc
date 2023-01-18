@@ -1,4 +1,4 @@
-﻿namespace Revit.DML
+﻿namespace App.DML
 {
     public class Bar : BaseEntity
     {

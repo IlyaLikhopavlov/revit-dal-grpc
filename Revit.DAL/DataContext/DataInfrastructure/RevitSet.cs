@@ -2,6 +2,7 @@
 using System.Reflection.Metadata;
 using App.DAL.Converters.Common;
 using App.DAL.DataContext.DataInfrastructure.Enums;
+using App.DML;
 using App.Services.Grpc;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Exceptions;
@@ -10,7 +11,7 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 namespace App.DAL.DataContext.DataInfrastructure
 {
     public abstract class RevitSet<TModelElement> : IEnumerable<TModelElement>, ISynchronizable, IRevitSet
-        where TModelElement : Revit.DML.Element
+        where TModelElement : Element
     {
         private readonly Queue<EntityProxy<TModelElement>> _addBuffer = new();
 

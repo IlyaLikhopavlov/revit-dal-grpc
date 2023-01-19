@@ -6,6 +6,6 @@
         {
         }
 
-        public string TypeName => GetType().FullName;
+        public string? TypeName => GetType().FullName;
     }
 }

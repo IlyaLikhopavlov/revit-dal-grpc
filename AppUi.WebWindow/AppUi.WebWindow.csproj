@@ -11,4 +11,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="7.0.52" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
+    <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
+    <ProjectReference Include="..\App.Services\App.Services.csproj" />
+    <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.DML;
+﻿using App.DML;
 using Grpc.Core;
 using Revit.Services.Grpc.Services;
 
-namespace App.Services.Grpc
+namespace App.CommunicationServices.Grpc
 {
     public class RevitExtraDataExchangeClient
     {
@@ -20,9 +14,8 @@ namespace App.Services.Grpc
 
         private readonly RevitDataExchange.RevitDataExchangeClient _client;
         
-        public RevitExtraDataExchangeClient(/*RevitDataExchange.RevitDataExchangeClient client*/)
+        public RevitExtraDataExchangeClient()
         {
-            //_client = client;
             var channel = new Channel("127.0.0.1:5005", ChannelCredentials.Insecure);
             _client = new RevitDataExchange.RevitDataExchangeClient(channel);
         }

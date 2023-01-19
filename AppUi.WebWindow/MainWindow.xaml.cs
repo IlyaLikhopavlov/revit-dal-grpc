@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using App.CommunicationServices.Grpc;
+using App.CommunicationServices.Revit;
+using App.DAL.Converters;
+using App.DAL.DataContext.RevitSets;
+using App.DAL.DataContext;
+using App.ScopedServicesFunctionality;
+using App.Services;
+using Bimdance.Framework.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Revit.Services.Grpc.Services;
 
 namespace AppUi.WebWindow
 {
@@ -21,12 +18,38 @@ namespace AppUi.WebWindow
     /// </summary>
     public partial class MainWindow : Window
     {
+        private void StartUp()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddWpfBlazorWebView();
+
+            serviceCollection.AddSingleton<RevitApplication>();
+            serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, DocumentDescriptorServiceScopeFactory>();
+            serviceCollection.AddSingleton<RevitActiveDocumentNotificationClient>();
+            serviceCollection.AddScoped<RevitExtraDataExchangeClient>();
+
+            serviceCollection.AddScoped<BarConverter>();
+            serviceCollection.AddScoped<FooConverter>();
+            serviceCollection.AddScoped<BarSet>();
+            serviceCollection.AddScoped<FooSet>();
+            serviceCollection.AddScoped<IDataContext, DataContext>();
+            serviceCollection.AddScoped<RevitDataService>();
+
+            serviceCollection.AddFactoryFacility();
+
+            Resources.Add("services", serviceCollection.BuildServiceProvider());
+        }
+
         public MainWindow()
         {
             InitializeComponent();
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddWpfBlazorWebView();
-            Resources.Add("services", serviceCollection.BuildServiceProvider());
+
+            StartUp();
+
+            if (Resources["services"] is IServiceProvider serviceProvider)
+            {
+                serviceProvider.GetService<RevitActiveDocumentNotificationClient>()?.RunGettingRevitNotification();
+            }
         }
     }
 }

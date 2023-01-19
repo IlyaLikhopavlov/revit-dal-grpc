@@ -1,0 +1,85 @@
+﻿@using global::App.CommunicationServices.Revit
+@using global::App.CommunicationServices.Revit.EventArgs
+@using global::App.ScopedServicesFunctionality
+@using global::App.Services
+@using Microsoft.Extensions.DependencyInjection
+@using Bimdance.Framework.DependencyInjection.FactoryFunctionality
+@inject RevitApplication RevitApplication
+@inject IDocumentDescriptorServiceScopeFactory DocumentDescriptorServiceScopeFactory
+
+<h1>RevitDataTable</h1>
+
+<p>Document file name: @RevitApplication?.ActiveDocument?.Title</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in _revitDataService?.GetFoos()!)
+    {
+        <tr>
+            <td>
+                @item.Id
+            </td>
+            <td>
+                @item.Name
+            </td>
+            <td>-</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="AllocateFoos">Allocate Foos</button>
+<button class="btn btn-primary" @onclick="AllocateBars">Allocate Bars</button>
+
+@code {
+    private RevitDataService? _revitDataService;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        InitRevitDataService();
+        RevitApplication.DocumentDescriptorChanged += DocumentDescriptorChanged;
+    }
+
+    private void InitRevitDataService()
+    {
+        if (RevitApplication.ActiveDocument is null)
+        {
+            return;
+        }
+
+        var scope = DocumentDescriptorServiceScopeFactory.CreateScope(RevitApplication.ActiveDocument);
+        _revitDataService = 
+            scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, RevitDataService>>()?
+                .New(RevitApplication.ActiveDocument);
+    }
+
+    private async void DocumentDescriptorChanged(object? sender, DocumentDescriptorChangedEventArgs e)
+    {
+        InitRevitDataService();        
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void AllocateFoos()
+    {
+        _revitDataService?.AllocateFoosAsync();
+    }
+
+    private void AllocateBars()
+    {
+        _revitDataService?.AllocateBarsAsync();
+    }
+
+    public void Dispose()
+    {
+        RevitApplication.DocumentDescriptorChanged -= DocumentDescriptorChanged;
+    }
+}

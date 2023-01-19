@@ -8,13 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="7.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
-    <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
+    <ProjectReference Include="..\App.ScopedServicesFunctionality\App.ScopedServicesFunctionality.csproj" />
     <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
   </ItemGroup>
 

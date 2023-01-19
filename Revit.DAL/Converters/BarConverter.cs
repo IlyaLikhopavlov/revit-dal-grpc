@@ -1,6 +1,6 @@
-﻿using App.DAL.Converters.Common;
+﻿using App.CommunicationServices.Grpc;
+using App.DAL.Converters.Common;
 using App.DML;
-using App.Services.Grpc;
 
 namespace App.DAL.Converters
 {

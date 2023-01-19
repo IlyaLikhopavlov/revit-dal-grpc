@@ -19,6 +19,7 @@ namespace App.DAL.DataContext.DataInfrastructure
         protected void Initialize()
         {
             SetSets();
+            PullSets();
             ResolveForeignRelations();
         }
 

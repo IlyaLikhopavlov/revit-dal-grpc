@@ -1,9 +1,10 @@
-﻿using App.ScopedServicesFunctionality;
-using App.Services.Revit;
+﻿using App.CommunicationServices.Revit;
+using App.CommunicationServices.Revit.EventArgs;
+using App.ScopedServicesFunctionality;
 using Grpc.Core;
 using Revit.Services.Grpc.Services;
 
-namespace App.Services.Grpc
+namespace App.CommunicationServices.Grpc
 {
     public class RevitActiveDocumentNotificationClient : IDisposable
     {
@@ -37,29 +38,31 @@ namespace App.Services.Grpc
 
                     if (descriptor.DocumentAction == DocumentActionEnum.Activated)
                     {
-                        _revitApplication.ActiveDocument = descriptor; 
+                        _revitApplication.ActiveDocument = descriptor;
+                        _revitApplication.DocumentDescriptorChanged?.Invoke(
+                            this, 
+                            new DocumentDescriptorChangedEventArgs { DocumentDescriptor = descriptor });
                     }
                     else
                     {
                         _scopeFactory.OnDocumentClosing(descriptor);
                         continue;
                     }
-                    
-                    if (string.IsNullOrWhiteSpace(_revitApplication.ActiveDocument.Id))
+
+                    if (!string.IsNullOrWhiteSpace(_revitApplication.ActiveDocument.Id))
                     {
-                        Console.WriteLine($"- no data {_revitApplication.DataStatus}");
                         continue;
                     }
 
-                    Console.WriteLine($"Document - {_revitApplication.ActiveDocument.Title} Data status - {_revitApplication.DataStatus} " + 
-                                      $"Document Action - {_revitApplication.ActiveDocument.DocumentAction}");
+                    _revitApplication.DocumentDescriptorChanged?.Invoke(
+                        this, 
+                        new DocumentDescriptorChangedEventArgs { DocumentDescriptor = null });
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _revitApplication.SetDataStatusUntrusted();
-                Console.WriteLine($"Revit communication failed - {ex}");
             }
         }
 

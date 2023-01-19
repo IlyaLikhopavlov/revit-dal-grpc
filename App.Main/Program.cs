@@ -1,11 +1,12 @@
-﻿using App.DAL.DataContext;
+﻿using App.CommunicationServices.Grpc;
+using App.CommunicationServices.Revit;
+using App.DAL.DataContext;
 using App.DML;
 using App.Main;
 using App.ScopedServicesFunctionality;
-using App.Services.Grpc;
-using App.Services.Revit;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Microsoft.Extensions.DependencyInjection;
+using Revit.Services.Grpc.Services;
 
 var startUp = new StartUp();
 startUp.Build();

@@ -3,7 +3,6 @@ using System.Reflection.Metadata;
 using App.DAL.Converters.Common;
 using App.DAL.DataContext.DataInfrastructure.Enums;
 using App.DML;
-using App.Services.Grpc;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Exceptions;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;

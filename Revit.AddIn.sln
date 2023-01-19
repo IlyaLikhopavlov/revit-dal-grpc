@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.Services", "Revit.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.Grpc.Bundle", "Revit.GrpcServer\Revit.Grpc.Bundle.csproj", "{12100663-98B8-4258-9251-9141ACA47F15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Services", "App.Services\App.Services.csproj", "{737DAFB4-86CA-429A-B1F6-5D51BE5B35C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.CommunicationServices", "App.CommunicationServices\App.CommunicationServices.csproj", "{737DAFB4-86CA-429A-B1F6-5D51BE5B35C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Grpc.Bundle", "App.Grpc.Bundle\App.Grpc.Bundle.csproj", "{D0992701-2671-4A29-87B7-FA13EF52C9FE}"
 EndProject
@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.ScopedServicesFunctio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.ScopedServicesFunctionality", "App.ScopedServicesFunctionality\App.ScopedServicesFunctionality.csproj", "{E38A57D2-971E-4F9F-99CD-141274B13205}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUi.WebWindow", "AppUi.WebWindow\AppUi.WebWindow.csproj", "{18CA8905-3E26-40EB-A398-ED11A53363D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppUi.WebWindow", "AppUi.WebWindow\AppUi.WebWindow.csproj", "{18CA8905-3E26-40EB-A398-ED11A53363D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Services", "App.Services\App.Services.csproj", "{34DD34A7-DC67-4CBD-BC66-718161FE836C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{18CA8905-3E26-40EB-A398-ED11A53363D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18CA8905-3E26-40EB-A398-ED11A53363D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18CA8905-3E26-40EB-A398-ED11A53363D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

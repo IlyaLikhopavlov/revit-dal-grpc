@@ -1,16 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-	  <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
-    <ProjectReference Include="..\App.ScopedServicesFunctionality\App.ScopedServicesFunctionality.csproj" />
-    <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
+    <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
   </ItemGroup>
 
 </Project>

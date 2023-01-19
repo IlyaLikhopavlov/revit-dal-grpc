@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Revit.Services.Grpc.Services;
+﻿using App.CommunicationServices.Revit.Enums;
+using App.CommunicationServices.Revit.EventArgs;
 
-namespace App.Services.Revit
+namespace App.CommunicationServices.Revit
 {
     public class RevitApplication
     {
         private DocumentDescriptor _documentDescriptor;
+
+        public EventHandler<DocumentDescriptorChangedEventArgs> DocumentDescriptorChanged { get; set; }
 
         public DocumentDescriptor ActiveDocument
         {

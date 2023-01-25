@@ -16,8 +16,8 @@ namespace Revit.Storage.InstancesAccess
         public static Guid DetermineSchemaGuid(DomainModelTypesEnum entityType) => 
             entityType switch
             {
-                DomainModelTypesEnum.Bar => new Guid(RevitStorage.FooSchemaGuid),
-                DomainModelTypesEnum.Foo => new Guid(RevitStorage.BarSchemaGuid),
+                DomainModelTypesEnum.Bar => new Guid(RevitStorage.BarSchemaGuid),
+                DomainModelTypesEnum.Foo => new Guid(RevitStorage.FooSchemaGuid),
                 _ => throw new InvalidEnumArgumentException(nameof(entityType))
             };
 

@@ -17,4 +17,8 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="taskkill /f /fi &quot;imagename eq Revit.exe&quot;" />
+  </Target>
+
 </Project>

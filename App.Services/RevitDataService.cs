@@ -1,6 +1,7 @@
 ﻿using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit.EventArgs;
 using App.DAL.DataContext;
+using App.DAL.Utils;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Initialization;
@@ -64,6 +65,11 @@ namespace App.Services
         {
             var result = _dataContext.Bar.Entries.Select(x => x.Entity);
             return result;
+        }
+
+        public IEnumerable<BaseEntity> GetAllBaseEntities()
+        {
+            return _dataContext.GetBaseEntityProxies().Select(x => x.BaseEntity);
         }
     }
 }

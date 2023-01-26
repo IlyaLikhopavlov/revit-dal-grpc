@@ -20,7 +20,7 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in _revitDataService?.GetFoos()!)
+    @foreach (var item in _revitDataService?.GetAllBaseEntities()!)
     {
         <tr>
             <td>
@@ -29,7 +29,9 @@
             <td>
                 @item.Name
             </td>
-            <td>-</td>
+            <td>
+                @(item.TypeName ?? @"unknown")
+            </td>
         </tr>
     }
     </tbody>

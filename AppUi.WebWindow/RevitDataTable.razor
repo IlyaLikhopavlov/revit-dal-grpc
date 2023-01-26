@@ -39,17 +39,18 @@
 <button class="btn btn-primary" @onclick="AllocateBars">Allocate Bars</button>
 
 @code {
-    private RevitDataService? _revitDataService;
+    private RevitDataService _revitDataService;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-
-        InitRevitDataService();
+        await base.OnInitializedAsync();
+        
         RevitApplication.DocumentDescriptorChanged += DocumentDescriptorChanged;
+
+        await InitRevitDataServiceAsync();
     }
 
-    private void InitRevitDataService()
+    private async Task InitRevitDataServiceAsync()
     {
         if (RevitApplication.ActiveDocument is null)
         {
@@ -60,11 +61,18 @@
         _revitDataService = 
             scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, RevitDataService>>()?
                 .New(RevitApplication.ActiveDocument);
+
+        var initTask = _revitDataService?.Initialization;
+
+        if (initTask is not null)
+        {
+            await initTask;
+        }
     }
 
-    private async void DocumentDescriptorChanged(object? sender, DocumentDescriptorChangedEventArgs e)
+    private async void DocumentDescriptorChanged(object sender, DocumentDescriptorChangedEventArgs e)
     {
-        InitRevitDataService();        
+        await InitRevitDataServiceAsync();        
         await InvokeAsync(StateHasChanged);
     }
 

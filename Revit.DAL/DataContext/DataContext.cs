@@ -1,6 +1,7 @@
 ﻿using App.DAL.DataContext.DataInfrastructure;
 using App.DAL.DataContext.RevitSets;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Bimdance.Framework.Initialization;
 
 namespace App.DAL.DataContext
 {
@@ -14,8 +15,15 @@ namespace App.DAL.DataContext
         {
             Foo = foosFactory.New(documentDescriptor);
             Bar = barsFactory.New(documentDescriptor);
-            Initialize();
+            Initialization = InitializeAsync();
         }
+
+        private async Task InitializeAsync()
+        {
+            await InitializeSetsAsync();
+        }
+
+        public Task Initialization { get; }
 
         public FooSet Foo { get; }
 

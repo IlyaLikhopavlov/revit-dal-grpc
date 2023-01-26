@@ -1,4 +1,5 @@
 ﻿using Bimdance.Framework.Exceptions;
+using Bimdance.Framework.Initialization;
 using Element = App.DML.Element;
 
 namespace App.DAL.DataContext.DataInfrastructure
@@ -16,10 +17,10 @@ namespace App.DAL.DataContext.DataInfrastructure
             DocumentDescriptor = documentDescriptor ?? throw new ArgumentException($"{nameof(documentDescriptor)} isn't initialized.");
         }
 
-        protected void Initialize()
+        protected async Task InitializeSetsAsync()
         {
             SetSets();
-            PullSets();
+            await PullSets();
             ResolveForeignRelations();
         }
 
@@ -53,11 +54,11 @@ namespace App.DAL.DataContext.DataInfrastructure
             return (EntityProxy<TEntity>)requiredSet.GetEntry(entity.Id);
         }
 
-        public void PullSets()
+        public async Task PullSets()
         {
             foreach (var revitSet in RevitSets)
             {
-                revitSet.PullRevitEntities();
+                await revitSet.PullRevitEntities();
             }
         }
 

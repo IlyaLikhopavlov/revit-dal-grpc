@@ -1,11 +1,13 @@
 ﻿using App.CommunicationServices.Grpc;
+using App.CommunicationServices.Revit.EventArgs;
 using App.DAL.DataContext;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Bimdance.Framework.Initialization;
 
 namespace App.Services
 {
-    public class RevitDataService
+    public class RevitDataService : IAsyncInitialization
     {
         private readonly IDataContext _dataContext;
 
@@ -18,7 +20,15 @@ namespace App.Services
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
             _dataContext = dataContextFactory.New(documentDescriptor);
+            Initialization = InitializeAsync();
         }
+
+        private async Task InitializeAsync()
+        {
+            await _dataContext.Initialization;
+        }
+
+        public Task Initialization { get; }
 
         public async Task AllocateFoosAsync()
         {
@@ -46,12 +56,14 @@ namespace App.Services
 
         public IEnumerable<Foo> GetFoos()
         {
-            return _dataContext.Foo.Entries.Select(x => x.Entity);
+            var result = _dataContext.Foo.Entries.Select(x => x.Entity).ToList();
+            return result;
         }
 
         public IEnumerable<Bar> GetBars()
         {
-            return _dataContext.Bar.Entries.Select(x => x.Entity);
+            var result = _dataContext.Bar.Entries.Select(x => x.Entity);
+            return result;
         }
     }
 }

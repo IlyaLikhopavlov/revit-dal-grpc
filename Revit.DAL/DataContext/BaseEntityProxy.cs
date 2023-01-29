@@ -13,7 +13,7 @@ namespace App.DAL.DataContext
             _entityProxy = entityProxy;
         }
 
-        public BaseEntity BaseEntity =>
+        public BaseItem BaseItem =>
             _entityProxy switch
             {
                 EntityProxy<Foo> fooProxy => fooProxy.Entity,

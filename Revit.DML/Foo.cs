@@ -1,7 +1,7 @@
 ﻿namespace App.DML
 {
 
-    public class Foo : BaseEntity
+    public class Foo : BaseItem
     {
         public Foo() : this(null, null)
         {

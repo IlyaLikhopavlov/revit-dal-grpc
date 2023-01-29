@@ -67,9 +67,9 @@ namespace App.Services
             return result;
         }
 
-        public IEnumerable<BaseEntity> GetAllBaseEntities()
+        public IEnumerable<BaseItem> GetAllBaseEntities()
         {
-            return _dataContext.GetBaseEntityProxies().Select(x => x.BaseEntity);
+            return _dataContext.GetBaseEntityProxies().Select(x => x.BaseItem);
         }
     }
 }

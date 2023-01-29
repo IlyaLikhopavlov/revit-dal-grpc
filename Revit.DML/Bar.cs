@@ -1,6 +1,6 @@
 ﻿namespace App.DML
 {
-    public class Bar : BaseEntity
+    public class Bar : BaseItem
     {
         public Bar() : this(null, null)
         {

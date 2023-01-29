@@ -16,7 +16,7 @@ namespace App.DAL.Utils
 
         public static IEnumerable<BaseEntityProxy> GetBaseEntityProxies(
             this IDataContext dataContext,
-            Func<BaseEntity, bool> predicate = null)
+            Func<BaseItem, bool> predicate = null)
         {
             var automationItemEntries = dataContext.Foo.Entries
                 .Where(x => predicate?.Invoke(x.Entity) ?? true)

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.AddIn", "Revit.AddIn\Revit.AddIn.csproj", "{5192BB50-F17E-4414-A6F8-3A2B8F04397D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.DAL", "Revit.DAL\App.DAL.csproj", "{005AF18C-13B6-4D41-978E-7A51C2A58E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.DAL.Revit", "Revit.DAL\App.DAL.Revit.csproj", "{005AF18C-13B6-4D41-978E-7A51C2A58E42}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bimdance.Framework", "Bimdance.Framework\Bimdance.Framework.csproj", "{5BA0F1F3-A275-4C33-A5D3-020E2B824655}"
 EndProject
@@ -32,6 +32,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppUi.WebWindow", "AppUi.WebWindow\AppUi.WebWindow.csproj", "{18CA8905-3E26-40EB-A398-ED11A53363D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Services", "App.Services\App.Services.csproj", "{34DD34A7-DC67-4CBD-BC66-718161FE836C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.DAL.Db", "App.DAL.Db\App.DAL.Db.csproj", "{3CFADCB9-3572-45EC-A9FD-03DC53BD52D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34DD34A7-DC67-4CBD-BC66-718161FE836C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CFADCB9-3572-45EC-A9FD-03DC53BD52D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CFADCB9-3572-45EC-A9FD-03DC53BD52D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CFADCB9-3572-45EC-A9FD-03DC53BD52D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CFADCB9-3572-45EC-A9FD-03DC53BD52D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

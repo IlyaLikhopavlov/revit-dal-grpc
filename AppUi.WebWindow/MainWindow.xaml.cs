@@ -1,15 +1,17 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit;
 using App.DAL.Converters;
 using App.DAL.DataContext.RevitSets;
 using App.DAL.DataContext;
+using App.DAL.Db;
 using App.ScopedServicesFunctionality;
 using App.Services;
 using Bimdance.Framework.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Revit.Services.Grpc.Services;
 
 namespace AppUi.WebWindow
 {
@@ -35,6 +37,10 @@ namespace AppUi.WebWindow
             serviceCollection.AddScoped<IDataContext, DataContext>();
             serviceCollection.AddScoped<RevitDataService>();
 
+            serviceCollection.AddTransient<ProjectsDbInitializer>();
+
+            serviceCollection.AddDbContextFactory<ProjectsDataContext>();
+
             serviceCollection.AddFactoryFacility();
 
             Resources.Add("services", serviceCollection.BuildServiceProvider());
@@ -46,10 +52,13 @@ namespace AppUi.WebWindow
 
             StartUp();
 
-            if (Resources["services"] is IServiceProvider serviceProvider)
+            if (Resources["services"] is not IServiceProvider serviceProvider)
             {
-                serviceProvider.GetService<RevitActiveDocumentNotificationClient>()?.RunGettingRevitNotification();
+                return;
             }
+
+            serviceProvider.GetService<RevitActiveDocumentNotificationClient>()?.RunGettingRevitNotification();
+            serviceProvider.GetService<ProjectsDbInitializer>()?.InitDataBase();
         }
     }
 }

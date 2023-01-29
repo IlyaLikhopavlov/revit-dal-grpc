@@ -11,7 +11,7 @@
     <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
-    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.Revit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

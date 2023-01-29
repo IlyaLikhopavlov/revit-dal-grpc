@@ -9,14 +9,21 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="7.0.52" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
+    <ProjectReference Include="..\App.DAL.Db\App.DAL.Db.csproj" />
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\App.Services\App.Services.csproj" />
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
-    <ProjectReference Include="..\Revit.DAL\App.DAL.csproj" />
+    <ProjectReference Include="..\Revit.DAL\App.DAL.Revit.csproj" />
   </ItemGroup>
 
 </Project>

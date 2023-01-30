@@ -1,8 +1,8 @@
-﻿using App.DAL.DataContext.DataInfrastructure;
-using App.DAL.DataContext.DataInfrastructure.Enums;
+﻿using App.DAL.Revit.DataContext.DataInfrastructure;
+using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
 
-namespace App.DAL.DataContext
+namespace App.DAL.Revit.DataContext
 {
     public class BaseEntityProxy
     {

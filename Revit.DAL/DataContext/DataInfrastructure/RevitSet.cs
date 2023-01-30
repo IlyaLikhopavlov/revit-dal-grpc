@@ -1,13 +1,12 @@
 ﻿using System.Collections;
-using System.Reflection.Metadata;
-using App.DAL.Converters.Common;
-using App.DAL.DataContext.DataInfrastructure.Enums;
+using App.DAL.Revit.Converters.Common;
+using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Exceptions;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
-namespace App.DAL.DataContext.DataInfrastructure
+namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
     public abstract class RevitSet<TModelElement> : IEnumerable<TModelElement>, ISynchronizable, IRevitSet
         where TModelElement : Element

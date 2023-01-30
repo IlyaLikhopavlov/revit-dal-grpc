@@ -3,7 +3,7 @@ using App.CommunicationServices.Revit.EventArgs;
 
 namespace App.CommunicationServices.Revit
 {
-    public class RevitApplication
+    public class ApplicationObject
     {
         private DocumentDescriptor _documentDescriptor;
 

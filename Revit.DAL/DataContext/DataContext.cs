@@ -1,9 +1,8 @@
-﻿using App.DAL.DataContext.DataInfrastructure;
-using App.DAL.DataContext.RevitSets;
+﻿using App.DAL.Revit.DataContext.DataInfrastructure;
+using App.DAL.Revit.DataContext.RevitSets;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Bimdance.Framework.Initialization;
 
-namespace App.DAL.DataContext
+namespace App.DAL.Revit.DataContext
 {
     public class DataContext : DocumentContext, IDataContext
     {

@@ -1,7 +1,7 @@
-﻿using App.DAL.DataContext.RevitSets;
+﻿using App.DAL.Revit.DataContext.RevitSets;
 using Bimdance.Framework.Initialization;
 
-namespace App.DAL.DataContext
+namespace App.DAL.Revit.DataContext
 {
     public interface IDataContext : IAsyncInitialization
     {

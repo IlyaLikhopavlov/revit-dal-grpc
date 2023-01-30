@@ -1,8 +1,8 @@
 ﻿using App.CommunicationServices.Grpc;
-using App.DAL.Converters.Common;
+using App.DAL.Revit.Converters.Common;
 using App.DML;
 
-namespace App.DAL.Converters
+namespace App.DAL.Revit.Converters
 {
     public class BarConverter : RevitInstanceConverter<Bar>
     {

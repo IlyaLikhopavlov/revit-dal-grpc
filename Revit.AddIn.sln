@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.CommunicationServices",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Grpc.Bundle", "App.Grpc.Bundle\App.Grpc.Bundle.csproj", "{D0992701-2671-4A29-87B7-FA13EF52C9FE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Main", "App.Main\App.Main.csproj", "{ED8252E6-8933-495F-8E96-AF0D2253CDA2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.Storage", "Revit.Storage\Revit.Storage.csproj", "{0B48B167-06B6-4E6E-9348-1E02BCDDF7AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.ScopedServicesFunctionality", "Revit.ScopedServicesFunctionality\Revit.ScopedServicesFunctionality.csproj", "{EEFAF5AE-6CBA-4B45-B65E-6195E8A43CB6}"
@@ -79,10 +77,6 @@ Global
 		{D0992701-2671-4A29-87B7-FA13EF52C9FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0992701-2671-4A29-87B7-FA13EF52C9FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0992701-2671-4A29-87B7-FA13EF52C9FE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED8252E6-8933-495F-8E96-AF0D2253CDA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED8252E6-8933-495F-8E96-AF0D2253CDA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED8252E6-8933-495F-8E96-AF0D2253CDA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED8252E6-8933-495F-8E96-AF0D2253CDA2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B48B167-06B6-4E6E-9348-1E02BCDDF7AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B48B167-06B6-4E6E-9348-1E02BCDDF7AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B48B167-06B6-4E6E-9348-1E02BCDDF7AA}.Release|Any CPU.ActiveCfg = Release|Any CPU

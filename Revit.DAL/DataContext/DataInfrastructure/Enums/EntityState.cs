@@ -1,4 +1,4 @@
-﻿namespace App.DAL.DataContext.DataInfrastructure.Enums
+﻿namespace App.DAL.Revit.DataContext.DataInfrastructure.Enums
 {
     public enum EntityState
     {

@@ -1,10 +1,9 @@
-﻿using App.DAL.Converters;
-using App.DAL.Converters.Common;
-using App.DAL.DataContext.DataInfrastructure;
+﻿using App.DAL.Revit.Converters;
+using App.DAL.Revit.DataContext.DataInfrastructure;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 
-namespace App.DAL.DataContext.RevitSets
+namespace App.DAL.Revit.DataContext.RevitSets
 {
     public class FooSet : RevitSet<Foo>
     {

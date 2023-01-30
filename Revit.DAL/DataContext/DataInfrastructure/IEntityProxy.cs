@@ -1,6 +1,6 @@
-﻿using App.DAL.DataContext.DataInfrastructure.Enums;
+﻿using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 
-namespace App.DAL.DataContext.DataInfrastructure
+namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
     public interface IEntityProxy
     {

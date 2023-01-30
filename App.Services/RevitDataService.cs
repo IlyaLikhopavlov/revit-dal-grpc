@@ -1,7 +1,7 @@
 ﻿using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit.EventArgs;
-using App.DAL.DataContext;
-using App.DAL.Utils;
+using App.DAL.Revit.DataContext;
+using App.DAL.Revit.Utils;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Initialization;

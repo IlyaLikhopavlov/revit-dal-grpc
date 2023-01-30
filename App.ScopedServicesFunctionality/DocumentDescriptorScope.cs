@@ -3,9 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace App.ScopedServicesFunctionality
 {
-    internal class DocumentDescriptorScope : Scope<DocumentDescriptor>
+    public class DocumentDescriptorScope : Scope<DocumentDescriptor>
     {
-        public DocumentDescriptorScope(IServiceScope serviceScope, DocumentDescriptor t) : base(serviceScope, t)
+        public DocumentDescriptorScope(IServiceScope serviceScope, DocumentDescriptor documentDescriptor) 
+            : base(serviceScope, documentDescriptor)
         {
         }
     }

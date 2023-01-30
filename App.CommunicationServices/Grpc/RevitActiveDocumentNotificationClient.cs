@@ -10,17 +10,17 @@ namespace App.CommunicationServices.Grpc
     {
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        private readonly RevitApplication _revitApplication;
+        private readonly ApplicationObject _applicationObject;
 
         private readonly RevitActiveDocumentNotification.RevitActiveDocumentNotificationClient _client;
 
         private readonly IDocumentDescriptorServiceScopeFactory _scopeFactory;
 
         public RevitActiveDocumentNotificationClient(
-            RevitApplication revitApplication,
+            ApplicationObject applicationObject,
             IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
-            _revitApplication = revitApplication;
+            _applicationObject = applicationObject;
             
             var channel = new Channel("127.0.0.1:5005", ChannelCredentials.Insecure);
             _client = new RevitActiveDocumentNotification.RevitActiveDocumentNotificationClient(channel);
@@ -38,8 +38,8 @@ namespace App.CommunicationServices.Grpc
 
                     if (descriptor.DocumentAction == DocumentActionEnum.Activated)
                     {
-                        _revitApplication.ActiveDocument = descriptor;
-                        _revitApplication.DocumentDescriptorChanged?.Invoke(
+                        _applicationObject.ActiveDocument = descriptor;
+                        _applicationObject.DocumentDescriptorChanged?.Invoke(
                             this, 
                             new DocumentDescriptorChangedEventArgs { DocumentDescriptor = descriptor });
                     }
@@ -49,12 +49,12 @@ namespace App.CommunicationServices.Grpc
                         continue;
                     }
 
-                    if (!string.IsNullOrWhiteSpace(_revitApplication.ActiveDocument.Id))
+                    if (!string.IsNullOrWhiteSpace(_applicationObject.ActiveDocument.Id))
                     {
                         continue;
                     }
 
-                    _revitApplication.DocumentDescriptorChanged?.Invoke(
+                    _applicationObject.DocumentDescriptorChanged?.Invoke(
                         this, 
                         new DocumentDescriptorChangedEventArgs { DocumentDescriptor = null });
                 }
@@ -62,7 +62,7 @@ namespace App.CommunicationServices.Grpc
             }
             catch (Exception)
             {
-                _revitApplication.SetDataStatusUntrusted();
+                _applicationObject.SetDataStatusUntrusted();
             }
         }
 

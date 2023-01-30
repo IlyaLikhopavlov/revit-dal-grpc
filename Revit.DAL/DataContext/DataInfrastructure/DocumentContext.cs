@@ -1,8 +1,7 @@
 ﻿using Bimdance.Framework.Exceptions;
-using Bimdance.Framework.Initialization;
 using Element = App.DML.Element;
 
-namespace App.DAL.DataContext.DataInfrastructure
+namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
     public abstract class DocumentContext : IDisposable
     {

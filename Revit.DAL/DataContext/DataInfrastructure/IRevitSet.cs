@@ -1,4 +1,4 @@
-﻿namespace App.DAL.DataContext.DataInfrastructure
+﻿namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
     public interface IRevitSet
     {

@@ -3,10 +3,10 @@ using System.IO;
 using System.Windows;
 using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit;
-using App.DAL.Converters;
-using App.DAL.DataContext.RevitSets;
-using App.DAL.DataContext;
 using App.DAL.Db;
+using App.DAL.Revit.Converters;
+using App.DAL.Revit.DataContext;
+using App.DAL.Revit.DataContext.RevitSets;
 using App.ScopedServicesFunctionality;
 using App.Services;
 using Bimdance.Framework.DependencyInjection;
@@ -25,7 +25,7 @@ namespace AppUi.WebWindow
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddWpfBlazorWebView();
 
-            serviceCollection.AddSingleton<RevitApplication>();
+            serviceCollection.AddSingleton<ApplicationObject>();
             serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, DocumentDescriptorServiceScopeFactory>();
             serviceCollection.AddSingleton<RevitActiveDocumentNotificationClient>();
             serviceCollection.AddScoped<RevitExtraDataExchangeClient>();

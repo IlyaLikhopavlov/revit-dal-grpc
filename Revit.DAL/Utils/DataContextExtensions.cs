@@ -1,8 +1,8 @@
-﻿using App.DAL.DataContext;
-using App.DAL.DataContext.DataInfrastructure;
+﻿using App.DAL.Revit.DataContext;
+using App.DAL.Revit.DataContext.DataInfrastructure;
 using App.DML;
 
-namespace App.DAL.Utils
+namespace App.DAL.Revit.Utils
 {
     public static class DataContextExtensions
     {

@@ -1,7 +1,7 @@
-﻿using App.DAL.DataContext.DataInfrastructure.Enums;
+﻿using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
 
-namespace App.DAL.DataContext.DataInfrastructure
+namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
     public class EntityProxy<TModelElement> : IEntityProxy
         where TModelElement : Element

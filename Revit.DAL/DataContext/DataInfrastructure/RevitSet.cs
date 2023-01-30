@@ -41,14 +41,16 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 
         public TModelElement Find(int keyValue)
         {
-            return EntityProxiesDictionary.TryGetValue(keyValue, out var entityProxy) ? entityProxy.Entity : null;
+            return EntityProxiesDictionary.TryGetValue(keyValue, out var entityProxy) 
+                ? entityProxy.Entity 
+                : throw new InvalidOperationException($"Object with provided ID={keyValue} hasn't found.");
         }
 
-        public TModelElement Remove(TModelElement entity)
+        public TModelElement Remove(int keyValue)
         {
-            if (!EntityProxiesDictionary.TryGetValue(entity.Id, out var entityProxy))
+            if (!EntityProxiesDictionary.TryGetValue(keyValue, out var entityProxy))
             {
-                return null;
+                throw new InvalidOperationException($"Object with provided ID={keyValue} hasn't found.");
             }
 
             entityProxy.EntityState = EntityState.Deleted;

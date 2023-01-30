@@ -14,7 +14,7 @@ namespace App.DAL.Common.Repositories
         void Insert(T element);
         void Delete(int elementId);
         void Update(T element);
-        void Save();
+        Task SaveAsync();
 
     }
 }

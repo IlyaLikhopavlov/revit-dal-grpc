@@ -18,7 +18,8 @@ namespace App.DAL.Common.Repositories.DbRepositories
 
         private readonly DocumentDescriptor _documentDescriptor;
 
-        public FooDbRepository(IDbContextFactory<ProjectsDataContext> dbContextFactory, 
+        public FooDbRepository(
+            IDbContextFactory<ProjectsDataContext> dbContextFactory,
             DocumentDescriptor documentDescriptor)
         {
             _dbContext = dbContextFactory.CreateDbContext();
@@ -51,7 +52,6 @@ namespace App.DAL.Common.Repositories.DbRepositories
             entity.ProjectId = project.Id;
 
             _dbContext.Foos.Add(entity);
-            Save();
         }
 
         public void Delete(int elementId)
@@ -59,8 +59,8 @@ namespace App.DAL.Common.Repositories.DbRepositories
             var entity = _dbContext.Foos
                 .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                 .First(x => x.Id == elementId);
+            
             _dbContext.Foos.Remove(entity);
-            Save();
         }
 
         public void Update(Foo element)
@@ -68,15 +68,15 @@ namespace App.DAL.Common.Repositories.DbRepositories
             var entity = _dbContext.Foos
                 .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                 .First(x => x.Id == element.Id);
+            
             entity.UpdateFooEntityByFoo(element);
-            _dbContext.Foos.Update(entity);
-            Save();
 
+            _dbContext.Foos.Update(entity);
         }
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _dbContext.SaveChanges();
+            _ = await _dbContext.SaveChangesAsync();
         }
 
         public void Dispose()

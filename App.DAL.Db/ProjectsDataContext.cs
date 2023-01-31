@@ -10,9 +10,9 @@ namespace App.DAL.Db
 {
     public class ProjectsDataContext : DbContext
     {
-        public ProjectsDataContext()
-        {
-        }
+        //public ProjectsDataContext()
+        //{
+        //}
 
         public ProjectsDataContext(DbContextOptions<ProjectsDataContext> options)
             : base(options)
@@ -21,8 +21,8 @@ namespace App.DAL.Db
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var path = Path.Combine(Environment.CurrentDirectory, "projects.db");
-            optionsBuilder.UseSqlite($"Data Source={path}");
+            //var path = Path.Combine(Environment.CurrentDirectory, "projects.db");
+            //optionsBuilder.UseSqlite($"Data Source={path}");
             base.OnConfiguring(optionsBuilder);
         }
 

@@ -62,7 +62,7 @@
         var scope = DocumentDescriptorServiceScopeFactory.CreateScope(ApplicationObject.ActiveDocument);
         _revitDataService = 
             scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, RevitDataService>>()?
-                .New(((DocumentDescriptorScope)scope).ScopeObject);
+                .New(ApplicationObject.ActiveDocument);
 
         var initTask = _revitDataService?.Initialization;
 

@@ -15,10 +15,13 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
+    <ProjectReference Include="..\App.DAL.Common\App.DAL.Common.csproj" />
     <ProjectReference Include="..\App.DAL.Db\App.DAL.Db.csproj" />
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\App.Services\App.Services.csproj" />

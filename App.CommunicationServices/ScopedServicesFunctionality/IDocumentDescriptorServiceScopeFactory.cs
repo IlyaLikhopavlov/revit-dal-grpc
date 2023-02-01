@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace App.ScopedServicesFunctionality
+namespace App.CommunicationServices.ScopedServicesFunctionality
 {
     public interface IDocumentDescriptorServiceScopeFactory
     {
-        IServiceScope CreateScope(DocumentDescriptor documentDescriptor);
+        IServiceScope CreateScope();
+
+        T GetScopedService<T>() where T : class;
 
         void RemoveScope(DocumentDescriptor documentDescriptor);
     }

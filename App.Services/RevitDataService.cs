@@ -1,32 +1,35 @@
 ﻿using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit.EventArgs;
+using App.DAL.Common.Repositories;
+using App.DAL.Common.Repositories.Factories;
 using App.DAL.Revit.DataContext;
 using App.DAL.Revit.Utils;
 using App.DML;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Initialization;
 
 namespace App.Services
 {
     public class RevitDataService : IAsyncInitialization
     {
-        private readonly IDataContext _dataContext;
+        private readonly IFooRepository _fooRepository; 
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
 
         public RevitDataService(
-            IFactory<DocumentDescriptor, IDataContext> dataContextFactory, 
-            RevitExtraDataExchangeClient revitExtraDataExchangeClient,
-            DocumentDescriptor documentDescriptor)
+            IFooRepositoryFactory fooRepositoryFactory, 
+            RevitExtraDataExchangeClient revitExtraDataExchangeClient)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
-            _dataContext = dataContextFactory.New(documentDescriptor);
+            _fooRepository = fooRepositoryFactory.Create();
             Initialization = InitializeAsync();
         }
 
         private async Task InitializeAsync()
         {
-            await _dataContext.Initialization;
+            if (_fooRepository is IAsyncInitialization repository)
+            {
+                await repository.Initialization;
+            }
         }
 
         public Task Initialization { get; }
@@ -37,39 +40,42 @@ namespace App.Services
 
             foreach (var id in allocated)
             {
-                _dataContext?.Foo.Attach(new Foo { Id = id, Name = $@"Foo {id}", Description = @"description" });
+                _fooRepository.Insert(new Foo { Id = id, Name = $@"Foo {id}", Description = @"description" });
             }
 
-            await _dataContext?.SaveChanges()!;
+            await _fooRepository?.SaveAsync()!;
         }
 
         public async Task AllocateBarsAsync()
         {
-            var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Bar))!;
+            //var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Bar))!;
 
-            foreach (var id in allocated)
-            {
-                _dataContext?.Bar.Attach(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
-            }
+            //foreach (var id in allocated)
+            //{
+            //    _dataContext?.Bar.Attach(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
+            //}
 
-            await _dataContext?.SaveChanges()!;
+            //await _dataContext?.SaveChanges()!;
         }
 
         public IEnumerable<Foo> GetFoos()
         {
-            var result = _dataContext.Foo.Entries.Select(x => x.Entity).ToList();
-            return result;
+            //var result = _dataContext.Foo.Entries.Select(x => x.Entity).ToList();
+            return _fooRepository.GetAll();
+            //return result;
         }
 
         public IEnumerable<Bar> GetBars()
         {
-            var result = _dataContext.Bar.Entries.Select(x => x.Entity);
-            return result;
+            //var result = _dataContext.Bar.Entries.Select(x => x.Entity);
+            //return result;
+            return Array.Empty<Bar>();
         }
 
         public IEnumerable<BaseItem> GetAllBaseEntities()
         {
-            return _dataContext.GetBaseEntityProxies().Select(x => x.BaseItem);
+            //return _dataContext.GetBaseEntityProxies().Select(x => x.BaseItem);
+            return Array.Empty<Bar>();
         }
     }
 }

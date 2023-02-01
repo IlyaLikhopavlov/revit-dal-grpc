@@ -25,15 +25,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.Storage", "Revit.Stor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Revit.ScopedServicesFunctionality", "Revit.ScopedServicesFunctionality\Revit.ScopedServicesFunctionality.csproj", "{EEFAF5AE-6CBA-4B45-B65E-6195E8A43CB6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.ScopedServicesFunctionality", "App.ScopedServicesFunctionality\App.ScopedServicesFunctionality.csproj", "{E38A57D2-971E-4F9F-99CD-141274B13205}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppUi.WebWindow", "AppUi.WebWindow\AppUi.WebWindow.csproj", "{18CA8905-3E26-40EB-A398-ED11A53363D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Services", "App.Services\App.Services.csproj", "{34DD34A7-DC67-4CBD-BC66-718161FE836C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.DAL.Db", "App.DAL.Db\App.DAL.Db.csproj", "{3CFADCB9-3572-45EC-A9FD-03DC53BD52D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.DAL.Common", "App.DAL.Common\App.DAL.Common.csproj", "{8449A9E1-692E-4924-A6C6-16B13B76F879}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.DAL.Common", "App.DAL.Common\App.DAL.Common.csproj", "{8449A9E1-692E-4924-A6C6-16B13B76F879}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +83,6 @@ Global
 		{EEFAF5AE-6CBA-4B45-B65E-6195E8A43CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEFAF5AE-6CBA-4B45-B65E-6195E8A43CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEFAF5AE-6CBA-4B45-B65E-6195E8A43CB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E38A57D2-971E-4F9F-99CD-141274B13205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E38A57D2-971E-4F9F-99CD-141274B13205}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E38A57D2-971E-4F9F-99CD-141274B13205}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E38A57D2-971E-4F9F-99CD-141274B13205}.Release|Any CPU.Build.0 = Release|Any CPU
 		{18CA8905-3E26-40EB-A398-ED11A53363D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{18CA8905-3E26-40EB-A398-ED11A53363D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18CA8905-3E26-40EB-A398-ED11A53363D4}.Release|Any CPU.ActiveCfg = Release|Any CPU

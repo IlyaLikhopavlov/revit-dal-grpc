@@ -27,6 +27,12 @@ namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Bas
             return ScopeDictionary.TryAdd(t, newScope) ? newScope : null;
         }
 
+        public void RemoveScope(T t)
+        {
+            ScopeDictionary.TryRemove(t, out var scope);
+            scope.Dispose();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)

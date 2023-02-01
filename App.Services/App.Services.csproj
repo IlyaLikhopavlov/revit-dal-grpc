@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
+    <ProjectReference Include="..\App.DAL.Common\App.DAL.Common.csproj" />
     <ProjectReference Include="..\Revit.DAL\App.DAL.Revit.csproj" />
   </ItemGroup>
 

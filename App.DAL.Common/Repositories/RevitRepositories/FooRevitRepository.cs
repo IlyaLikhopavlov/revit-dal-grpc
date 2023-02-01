@@ -7,10 +7,11 @@ using App.DAL.Revit.DataContext;
 using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Bimdance.Framework.Initialization;
 
 namespace App.DAL.Common.Repositories.RevitRepositories
 {
-    public class FooRevitRepository : IFooRepository
+    public class FooRevitRepository : IFooRepository, IAsyncInitialization
     {
         private readonly IDataContext _context;
 
@@ -19,6 +20,12 @@ namespace App.DAL.Common.Repositories.RevitRepositories
             DocumentDescriptor documentDescriptor)
         {
             _context = dataContextFactory.New(documentDescriptor);
+            Initialization = InitializeAsync();
+        }
+
+        private async Task InitializeAsync()
+        {
+            await _context.Initialization;
         }
 
         public IEnumerable<Foo> GetAll()
@@ -56,5 +63,7 @@ namespace App.DAL.Common.Repositories.RevitRepositories
         public void Dispose()
         {
         }
+
+        public Task Initialization { get; }
     }
 }

@@ -1,11 +1,8 @@
 ﻿@using global::App.CommunicationServices.Revit
 @using global::App.CommunicationServices.Revit.EventArgs
-@using global::App.ScopedServicesFunctionality
 @using global::App.Services
-@using Microsoft.Extensions.DependencyInjection
-@using Bimdance.Framework.DependencyInjection.FactoryFunctionality
 @inject ApplicationObject ApplicationObject
-@inject IDocumentDescriptorServiceScopeFactory DocumentDescriptorServiceScopeFactory
+@inject RevitDataService RevitDataService
 
 <h1>RevitDataTable</h1>
 
@@ -20,7 +17,7 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in _revitDataService?.GetAllBaseEntities()!)
+    @foreach (var item in RevitDataService?.GetFoos()!)
     {
         <tr>
             <td>
@@ -41,8 +38,6 @@
 <button class="btn btn-primary" @onclick="AllocateBars">Allocate Bars</button>
 
 @code {
-    private RevitDataService _revitDataService;
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -59,12 +54,7 @@
             return;
         }
 
-        var scope = DocumentDescriptorServiceScopeFactory.CreateScope(ApplicationObject.ActiveDocument);
-        _revitDataService = 
-            scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, RevitDataService>>()?
-                .New(ApplicationObject.ActiveDocument);
-
-        var initTask = _revitDataService?.Initialization;
+        var initTask = RevitDataService?.Initialization;
 
         if (initTask is not null)
         {
@@ -80,12 +70,12 @@
 
     private void AllocateFoos()
     {
-        _revitDataService?.AllocateFoosAsync();
+        RevitDataService?.AllocateFoosAsync();
     }
 
     private void AllocateBars()
     {
-        _revitDataService?.AllocateBarsAsync();
+        RevitDataService?.AllocateBarsAsync();
     }
 
     public void Dispose()

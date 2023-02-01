@@ -4,15 +4,26 @@ using Revit.Services.Grpc.Services;
 
 namespace App.ScopedServicesFunctionality
 {
-    public class DocumentDescriptorServiceScopeFactory : DocumentServiceScopeFactory<DocumentDescriptor>, IDocumentDescriptorServiceScopeFactory
+    public class DocumentDescriptorServiceScopeFactory : IDocumentDescriptorServiceScopeFactory
     {
-        public DocumentDescriptorServiceScopeFactory(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
+        private readonly DocumentServiceScopeFactory<DocumentDescriptor> _documentServiceScopeFactory;
+
+        private readonly ApplicationObject _applicationObject;
+
+        public DocumentDescriptorServiceScopeFactory(DocumentServiceScopeFactory<DocumentDescriptor> documentServiceScopeFactory, ApplicationObject applicationObject)
         {
+            _documentServiceScopeFactory = documentServiceScopeFactory;
+            _applicationObject = applicationObject;
         }
 
-        public void OnDocumentClosing(DocumentDescriptor documentDescriptor)
+        public T GetScopedService<T>()
         {
-            ScopeDictionary.TryRemove(documentDescriptor, out var scope);
+
+        }
+
+        public void RemoveScope(DocumentDescriptor documentDescriptor)
+        {
+            _documentServiceScopeFactory.RemoveScope(documentDescriptor);
         }
     }
 }

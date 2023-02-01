@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit;
+using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories;
 using App.DAL.Common.Repositories.DbRepositories;
 using App.DAL.Common.Repositories.Factories;
@@ -11,10 +12,10 @@ using App.DAL.Db;
 using App.DAL.Revit.Converters;
 using App.DAL.Revit.DataContext;
 using App.DAL.Revit.DataContext.RevitSets;
-using App.ScopedServicesFunctionality;
 using App.Services;
 using Bimdance.Framework.DependencyInjection;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,9 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<IConfiguration>(configuration);
 
             serviceCollection.AddSingleton<ApplicationObject>();
-            serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, DocumentDescriptorServiceScopeFactory>();
+            serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, 
+                DocumentDescriptorServiceScopeFactory>();
+            serviceCollection.AddSingleton<DocumentServiceScopeFactory<DocumentDescriptor>>();
             serviceCollection.AddSingleton<RevitActiveDocumentNotificationClient>();
             serviceCollection.AddScoped<RevitExtraDataExchangeClient>();
 
@@ -49,11 +52,11 @@ namespace AppUi.WebWindow
             serviceCollection.AddScoped<BarSet>();
             serviceCollection.AddScoped<FooSet>();
             serviceCollection.AddScoped<IDataContext, DataContext>();
-            serviceCollection.AddScoped<IFooRepository, FooDbRepository>();
-            serviceCollection.AddScoped<IFooRepository, FooRevitRepository>();
-            serviceCollection.AddScoped<IFooRepositoryFactory, FooRepositoryFactory>();
+            serviceCollection.AddScoped<FooDbRepository>();
+            serviceCollection.AddScoped<FooRevitRepository>();
+            serviceCollection.AddSingleton<RevitDataService>();
 
-            serviceCollection.AddScoped<RevitDataService>();
+            serviceCollection.AddSingleton<IFooRepositoryFactory, FooRepositoryFactory>();
 
             serviceCollection.AddTransient<ProjectsDbInitializer>();
 

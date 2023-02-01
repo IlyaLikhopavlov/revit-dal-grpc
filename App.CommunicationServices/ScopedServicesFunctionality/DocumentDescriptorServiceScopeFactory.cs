@@ -34,12 +34,10 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
             }
             
             var scope = _documentServiceScopeFactory.CreateScope(_applicationObject.ActiveDocument);
-            //var scopeObject = ((DocumentDescriptorScope)scope).ScopeObject;
 
-            var service = scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, T>>()?.New(_applicationObject.ActiveDocument) 
+            return scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, T>>()?
+                              .New(((Scope<DocumentDescriptor>)scope).ScopeObject) 
                           ?? throw new InvalidOperationException($"Required service {typeof(T).Name} didn't find");
-
-            return service;
         }
 
         public void RemoveScope(DocumentDescriptor documentDescriptor)

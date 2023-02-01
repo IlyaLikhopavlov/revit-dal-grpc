@@ -13,6 +13,7 @@ using App.DAL.Revit.Converters;
 using App.DAL.Revit.DataContext;
 using App.DAL.Revit.DataContext.RevitSets;
 using App.Services;
+using App.Settings.Model;
 using Bimdance.Framework.DependencyInjection;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
@@ -39,6 +40,9 @@ namespace AppUi.WebWindow
             serviceCollection.AddWpfBlazorWebView();
 
             serviceCollection.AddSingleton<IConfiguration>(configuration);
+            serviceCollection.AddOptions();
+            serviceCollection.Configure<ApplicationSettings>(options => 
+                configuration.GetSection(nameof(ApplicationSettings)).Bind(options));
 
             serviceCollection.AddSingleton<ApplicationObject>();
             serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, 
@@ -62,7 +66,6 @@ namespace AppUi.WebWindow
 
             serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
             {
-                //var path = Path.Combine(Environment.CurrentDirectory, "projects.db");
                 builder.UseSqlite($"Data Source={configuration.GetConnectionString("DefaultConnection")}");
             });
 

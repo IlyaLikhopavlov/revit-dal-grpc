@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using App.DAL.Db;
 using App.DAL.Db.Mapping;
 using App.DML;
+using App.Settings.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using FooEntity = App.DAL.Db.Model.Foo;
 
 namespace App.DAL.Common.Repositories.DbRepositories
@@ -18,12 +20,16 @@ namespace App.DAL.Common.Repositories.DbRepositories
 
         private readonly DocumentDescriptor _documentDescriptor;
 
+        private readonly IOptions<ApplicationSettings> _options;
+
         public FooDbRepository(
             IDbContextFactory<ProjectsDataContext> dbContextFactory,
-            DocumentDescriptor documentDescriptor)
+            DocumentDescriptor documentDescriptor,
+            IOptions<ApplicationSettings> options)
         {
             _dbContext = dbContextFactory.CreateDbContext();
             _documentDescriptor = documentDescriptor;
+            _options = options;
         }
 
         public IEnumerable<Foo> GetAll()

@@ -25,6 +25,7 @@
     <ProjectReference Include="..\App.DAL.Db\App.DAL.Db.csproj" />
     <ProjectReference Include="..\App.Grpc.Bundle\App.Grpc.Bundle.csproj" />
     <ProjectReference Include="..\App.Services\App.Services.csproj" />
+    <ProjectReference Include="..\App.Settings\App.Settings.csproj" />
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
     <ProjectReference Include="..\Revit.DAL\App.DAL.Revit.csproj" />
   </ItemGroup>

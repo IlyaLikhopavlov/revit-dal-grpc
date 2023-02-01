@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\App.DAL.Db\App.DAL.Db.csproj" />
+    <ProjectReference Include="..\App.Settings\App.Settings.csproj" />
     <ProjectReference Include="..\Revit.DAL\App.DAL.Revit.csproj" />
     <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
   </ItemGroup>

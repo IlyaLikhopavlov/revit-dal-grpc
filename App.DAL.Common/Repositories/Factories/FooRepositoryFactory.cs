@@ -8,31 +8,34 @@ using App.CommunicationServices.Revit;
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories.DbRepositories;
 using App.DAL.Common.Repositories.RevitRepositories;
+using App.Settings.Model;
+using App.Settings.Model.Enums;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Repositories.Factories
 {
     public class FooRepositoryFactory : IFooRepositoryFactory
     {
-        private readonly IConfiguration _configuration;
+        private readonly IOptions<ApplicationSettings> _options;
 
         private readonly IDocumentDescriptorServiceScopeFactory _documentDescriptorServiceScopeFactory;
 
         public FooRepositoryFactory(
-            IConfiguration configuration, 
+            IOptions<ApplicationSettings> options, 
             IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory)
         {
-            _configuration = configuration;
+            _options = options;
             _documentDescriptorServiceScopeFactory = documentDescriptorServiceScopeFactory;
         }
 
         public IFooRepository Create()
         {
             return 
-                _configuration["ApplicationSettings:Mode"] switch
+                _options.Value.ApplicationMode switch
                 {
-                    "web" => _documentDescriptorServiceScopeFactory.GetScopedService<FooDbRepository>(),
-                    "desktop" => _documentDescriptorServiceScopeFactory.GetScopedService<FooRevitRepository>(),
+                    ApplicationModeEnum.Web => _documentDescriptorServiceScopeFactory.GetScopedService<FooDbRepository>(),
+                    ApplicationModeEnum.Desktop => _documentDescriptorServiceScopeFactory.GetScopedService<FooRevitRepository>(),
                     _ => throw new InvalidEnumArgumentException("Required repository type didn't find")
                 };
         }

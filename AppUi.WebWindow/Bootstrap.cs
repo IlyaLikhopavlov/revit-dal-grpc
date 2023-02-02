@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using App.CommunicationServices.Grpc;
 using App.CommunicationServices.Revit;
@@ -13,7 +10,6 @@ using App.DAL.Common.Repositories.DbRepositories;
 using App.DAL.Common.Repositories.Factories;
 using App.DAL.Common.Repositories.RevitRepositories;
 using App.DAL.Db;
-using App.DAL.Db.Model;
 using App.DAL.Revit.Converters;
 using App.DAL.Revit.DataContext.RevitSets;
 using App.DAL.Revit.DataContext;
@@ -119,12 +115,13 @@ namespace AppUi.WebWindow
                 throw new ArgumentNullException(nameof(project));
             }
 
-            //sub for one document
+            //stub for one document
             applicationObject.ActiveDocument = 
                 new DocumentDescriptor
                 {
                     Id = project.UniqueId,
-                    Title = project.Title
+                    Title = project.Title,
+                    DocumentAction = DocumentActionEnum.Activated
                 };
         }
     }

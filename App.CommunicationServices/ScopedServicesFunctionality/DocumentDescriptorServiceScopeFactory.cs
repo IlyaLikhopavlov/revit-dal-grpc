@@ -32,8 +32,8 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
             {
                 throw new InvalidOperationException("Scope object isn't initialized.");
             }
-            
-            var scope = _documentServiceScopeFactory.CreateScope(_applicationObject.ActiveDocument);
+
+            var scope = CreateScope();
 
             return scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, T>>()?
                               .New(((Scope<DocumentDescriptor>)scope).ScopeObject) 

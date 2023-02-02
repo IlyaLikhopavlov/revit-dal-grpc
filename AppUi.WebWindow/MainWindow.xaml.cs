@@ -14,12 +14,14 @@ using App.DAL.Revit.DataContext;
 using App.DAL.Revit.DataContext.RevitSets;
 using App.Services;
 using App.Settings.Model;
+using App.Settings.Model.Enums;
 using Bimdance.Framework.DependencyInjection;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace AppUi.WebWindow
 {
@@ -28,65 +30,22 @@ namespace AppUi.WebWindow
     /// </summary>
     public partial class MainWindow : Window
     {
-        private void StartUp()
-        {
-            var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-            var configuration = configurationBuilder.Build();
-
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddWpfBlazorWebView();
-
-            serviceCollection.AddSingleton<IConfiguration>(configuration);
-            serviceCollection.AddOptions();
-            serviceCollection.Configure<ApplicationSettings>(options => 
-                configuration.GetSection(nameof(ApplicationSettings)).Bind(options));
-
-            serviceCollection.AddSingleton<ApplicationObject>();
-            serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory, 
-                DocumentDescriptorServiceScopeFactory>();
-            serviceCollection.AddSingleton<DocumentServiceScopeFactory<DocumentDescriptor>>();
-            serviceCollection.AddSingleton<RevitActiveDocumentNotificationClient>();
-            serviceCollection.AddScoped<RevitExtraDataExchangeClient>();
-
-            serviceCollection.AddScoped<BarConverter>();
-            serviceCollection.AddScoped<FooConverter>();
-            serviceCollection.AddScoped<BarSet>();
-            serviceCollection.AddScoped<FooSet>();
-            serviceCollection.AddScoped<IDataContext, DataContext>();
-            serviceCollection.AddScoped<FooDbRepository>();
-            serviceCollection.AddScoped<FooRevitRepository>();
-            serviceCollection.AddSingleton<RevitDataService>();
-
-            serviceCollection.AddSingleton<IFooRepositoryFactory, FooRepositoryFactory>();
-
-            serviceCollection.AddTransient<ProjectsDbInitializer>();
-
-            serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
-            {
-                builder.UseSqlite($"Data Source={configuration.GetConnectionString("DefaultConnection")}");
-            });
-
-            serviceCollection.AddFactoryFacility();
-
-            Resources.Add("services", serviceCollection.BuildServiceProvider());
-        }
-
         public MainWindow()
         {
             InitializeComponent();
 
-            StartUp();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.Load();
+            
+            Resources.Add("services", serviceCollection.BuildServiceProvider());
 
             if (Resources["services"] is not IServiceProvider serviceProvider)
             {
+                MessageBox.Show("Service provider didn't find.");
                 return;
             }
 
-            serviceProvider.GetService<RevitActiveDocumentNotificationClient>()?.RunGettingRevitNotification();
-            serviceProvider.GetService<ProjectsDbInitializer>()?.InitDataBase();
+            serviceProvider.InitializeServices();
         }
     }
 }

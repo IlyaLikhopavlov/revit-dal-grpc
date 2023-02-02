@@ -43,7 +43,7 @@ namespace App.DAL.Common.Repositories.RevitRepositories
             _context.Foo.Add(element);
         }
 
-        public void Delete(int elementId)
+        public void Remove(int elementId)
         {
             _context.Foo.Remove(elementId);
         }

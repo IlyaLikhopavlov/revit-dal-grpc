@@ -34,8 +34,12 @@ namespace App.DAL.Common.Repositories.Factories
             return 
                 _options.Value.ApplicationMode switch
                 {
-                    ApplicationModeEnum.Web => _documentDescriptorServiceScopeFactory.GetScopedService<FooDbRepository>(),
-                    ApplicationModeEnum.Desktop => _documentDescriptorServiceScopeFactory.GetScopedService<FooRevitRepository>(),
+                    ApplicationModeEnum.Web => 
+                        _documentDescriptorServiceScopeFactory.GetScopedService<FooDbRepository>(),
+
+                    ApplicationModeEnum.Desktop => 
+                        _documentDescriptorServiceScopeFactory.GetScopedService<FooRevitRepository>(),
+
                     _ => throw new InvalidEnumArgumentException("Required repository type didn't find")
                 };
         }

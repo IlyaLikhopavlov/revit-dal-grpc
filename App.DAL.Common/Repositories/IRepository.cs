@@ -12,7 +12,7 @@ namespace App.DAL.Common.Repositories
         IEnumerable<T> GetAll();
         T GetById(int elementId);
         void Insert(T element);
-        void Delete(int elementId);
+        void Remove(int elementId);
         void Update(T element);
         Task SaveAsync();
 

@@ -65,10 +65,10 @@ namespace App.DAL.Db.Mapping
 
         public static Project ProjectEntityToProject(this ProjectEntity projectEntity)
         {
-            return new Project
+            return new Project(string.Empty)
             {
                 Title = projectEntity.Title,
-                UniqueId = projectEntity.UniqueId
+                UniqueId = projectEntity.UniqueId,
             };
         }
 
@@ -79,6 +79,12 @@ namespace App.DAL.Db.Mapping
                 Title = project.Title,
                 UniqueId = project.UniqueId
             };
+        }
+
+        public static void UpdateProjectEntityByProject(this ProjectEntity projectEntity, Project project)
+        {
+            projectEntity.Title = project.Title;
+            projectEntity.UniqueId = project.UniqueId;
         }
     }
 }

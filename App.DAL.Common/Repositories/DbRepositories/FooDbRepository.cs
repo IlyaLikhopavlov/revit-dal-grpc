@@ -20,16 +20,12 @@ namespace App.DAL.Common.Repositories.DbRepositories
 
         private readonly DocumentDescriptor _documentDescriptor;
 
-        private readonly IOptions<ApplicationSettings> _options;
-
         public FooDbRepository(
             IDbContextFactory<ProjectsDataContext> dbContextFactory,
-            DocumentDescriptor documentDescriptor,
-            IOptions<ApplicationSettings> options)
+            DocumentDescriptor documentDescriptor)
         {
             _dbContext = dbContextFactory.CreateDbContext();
             _documentDescriptor = documentDescriptor;
-            _options = options;
         }
 
         public IEnumerable<Foo> GetAll()
@@ -52,7 +48,7 @@ namespace App.DAL.Common.Repositories.DbRepositories
 
         public void Insert(Foo element)
         {
-            var project =_dbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
+            var project = _dbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
 
             var entity = element.FooToFooEntity();
             entity.ProjectId = project.Id;
@@ -60,7 +56,7 @@ namespace App.DAL.Common.Repositories.DbRepositories
             _dbContext.Foos.Add(entity);
         }
 
-        public void Delete(int elementId)
+        public void Remove(int elementId)
         {
             var entity = _dbContext.Foos
                 .Where(x => x.Project.UniqueId == _documentDescriptor.Id)

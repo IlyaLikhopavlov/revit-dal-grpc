@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.DAL.Revit.DataContext;
+﻿using App.DAL.Revit.DataContext;
 using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
@@ -27,6 +22,8 @@ namespace App.DAL.Common.Repositories.RevitRepositories
         {
             await _context.Initialization;
         }
+
+        public Task Initialization { get; }
 
         public IEnumerable<Foo> GetAll()
         {
@@ -63,7 +60,5 @@ namespace App.DAL.Common.Repositories.RevitRepositories
         public void Dispose()
         {
         }
-
-        public Task Initialization { get; }
     }
 }

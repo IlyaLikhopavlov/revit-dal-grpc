@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.ComponentModel;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;

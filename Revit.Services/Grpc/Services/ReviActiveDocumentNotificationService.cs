@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Events;
 using Grpc.Core;
 using Revit.Services.Processing;
 using DocumentClosingEventArgs = Revit.Services.Processing.EventArgs.DocumentClosingEventArgs;

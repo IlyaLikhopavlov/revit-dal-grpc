@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autodesk.Revit.Attributes;
+﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
-using Microsoft.Extensions.DependencyInjection;
-using Revit.ScopedServicesFunctionality;
 
 namespace Revit.AddIn.Commands
 {

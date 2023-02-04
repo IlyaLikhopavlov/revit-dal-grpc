@@ -1,13 +1,38 @@
-﻿using App.DML;
+﻿using App.DAL.Db.Model;
+using App.DML;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Bar = App.DML.Bar;
 using FooEntity = App.DAL.Db.Model.Foo;
 using BarEntity = App.DAL.Db.Model.Bar;
+using Foo = App.DML.Foo;
+using Project = App.DML.Project;
 using ProjectEntity = App.DAL.Db.Model.Project;
 
 namespace App.DAL.Db.Mapping
 {
     public static class Mapper
     {
-        public static Foo FooEntityToFoo(this FooEntity fooEntity)
+        //private static readonly IDictionary<Type, Func<object, Element>> ConvertEntityToModel =
+        //    new Dictionary<Type, Func<object, Element>>
+        //    {
+        //        { typeof(FooEntity), e => ((FooEntity)e).FooEntityToFoo() },
+        //        { typeof(BarEntity), e => ((BarEntity)e).BarEntityToBar() },
+        //        { typeof(ProjectEntity), e => ((ProjectEntity)e).ProjectEntityToProject() }
+        //    };
+
+        public static TModel EntityToModel<TModel, TEntity>(this TEntity entity)
+            where TEntity : BaseEntity
+            where TModel : Element
+        {
+            if (!ConvertEntityToModel.TryGetValue(entity.GetType(), out var result))
+            {
+                throw new ArgumentException(nameof(entity));
+            }
+
+            return (TModel)result.Invoke(entity);
+        }
+        
+        private static Foo FooEntityToFoo(this FooEntity fooEntity)
         {
             return new Foo
             {
@@ -18,7 +43,7 @@ namespace App.DAL.Db.Mapping
             };
         }
 
-        public static FooEntity FooToFooEntity(this Foo foo)
+        private static FooEntity FooToFooEntity(this Foo foo)
         {
             return new FooEntity
             {
@@ -28,14 +53,14 @@ namespace App.DAL.Db.Mapping
             };
         }
 
-        public static void UpdateFooEntityByFoo(this FooEntity fooEntity, Foo foo)
+        private static void UpdateFooEntityByFoo(this FooEntity fooEntity, Foo foo)
         {
             fooEntity.Description = foo.Description;
             fooEntity.Name = foo.Name;
             fooEntity.Guid = foo.Guid;
         }
 
-        public static Bar BarEntityToBar(this BarEntity barEntity)
+        private static Bar BarEntityToBar(this BarEntity barEntity)
         {
             return new Bar
             {
@@ -46,7 +71,7 @@ namespace App.DAL.Db.Mapping
             };
         }
 
-        public static BarEntity BarToBarEntity(this Bar bar)
+        private static BarEntity BarToBarEntity(this Bar bar)
         {
             return new BarEntity
             {
@@ -56,14 +81,14 @@ namespace App.DAL.Db.Mapping
             };
         }
 
-        public static void UpdateBarEntityByBar(this BarEntity barEntity, Bar bar)
+        private static void UpdateBarEntityByBar(this BarEntity barEntity, Bar bar)
         {
             barEntity.Description = bar.Description;
             barEntity.Name = bar.Name;
             barEntity.Guid = bar.Guid;
         }
 
-        public static Project ProjectEntityToProject(this ProjectEntity projectEntity)
+        private static Project ProjectEntityToProject(this ProjectEntity projectEntity)
         {
             return new Project(string.Empty)
             {
@@ -72,7 +97,7 @@ namespace App.DAL.Db.Mapping
             };
         }
 
-        public static ProjectEntity ProjectToProjectEntity(this Project project)
+        private static ProjectEntity ProjectToProjectEntity(this Project project)
         {
             return new ProjectEntity
             {
@@ -81,7 +106,7 @@ namespace App.DAL.Db.Mapping
             };
         }
 
-        public static void UpdateProjectEntityByProject(this ProjectEntity projectEntity, Project project)
+        private static void UpdateProjectEntityByProject(this ProjectEntity projectEntity, Project project)
         {
             projectEntity.Title = project.Title;
             projectEntity.UniqueId = project.UniqueId;

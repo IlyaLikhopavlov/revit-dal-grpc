@@ -1,5 +1,4 @@
-﻿using Bimdance.Framework.Exceptions;
-using Element = App.DML.Element;
+﻿using Element = App.DML.Element;
 
 namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
@@ -43,12 +42,7 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
         public EntityProxy<TEntity> Entry<TEntity>(TEntity entity)
             where TEntity : Element
         {
-            var requiredSet = RevitSets.FirstOrDefault(x => x.InternalEntityType == typeof(TEntity));
-
-            if (requiredSet == null)
-            {
-                throw new RevitDataAccessException($"Set for entity type {typeof(TEntity)} not founded in the Revit context");
-            }
+            var requiredSet = RevitSets.First(x => x.InternalEntityType == typeof(TEntity));
 
             return (EntityProxy<TEntity>)requiredSet.GetEntry(entity.Id);
         }

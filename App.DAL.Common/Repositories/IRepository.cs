@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.DML;
+﻿using App.DML;
 
 namespace App.DAL.Common.Repositories
 {
-    public interface IRepository<T> : IDisposable where T : BaseItem
+    public interface IRepository<T> : IDisposable where T : Element
     {
         IEnumerable<T> GetAll();
         T GetById(int elementId);

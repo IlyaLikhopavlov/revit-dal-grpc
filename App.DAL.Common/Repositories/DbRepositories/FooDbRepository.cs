@@ -1,89 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using App.DAL.Common.Repositories.DbRepositories.Generic;
 using App.DAL.Db;
 using App.DAL.Db.Mapping;
 using App.DML;
-using App.Settings.Model;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+
 using FooEntity = App.DAL.Db.Model.Foo;
 
 namespace App.DAL.Common.Repositories.DbRepositories
 {
-    public class FooDbRepository : IFooRepository
+    public class FooDbRepository : GenericDbRepository<Foo, FooEntity>, IFooRepository
     {
-        private readonly ProjectsDataContext _dbContext;
-
-        private readonly DocumentDescriptor _documentDescriptor;
-
         public FooDbRepository(
-            IDbContextFactory<ProjectsDataContext> dbContextFactory,
-            DocumentDescriptor documentDescriptor)
+            IDbContextFactory<ProjectsDataContext> dbContextFactory, 
+            IEntityConverter<Foo, FooEntity> entityConverter, 
+            DocumentDescriptor documentDescriptor) : 
+                base(dbContextFactory, entityConverter, documentDescriptor)
         {
-            _dbContext = dbContextFactory.CreateDbContext();
-            _documentDescriptor = documentDescriptor;
-        }
-
-        public IEnumerable<Foo> GetAll()
-        {
-            return 
-                _dbContext.Foos
-                    .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
-                    .Select(x => x.FooEntityToFoo())
-                    .ToList();
-        }
-
-        public Foo GetById(int elementId)
-        {
-            return 
-                _dbContext.Foos
-                    .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
-                    .First(x => x.Id == elementId)
-                    .FooEntityToFoo();
-        }
-
-        public void Insert(Foo element)
-        {
-            var project = _dbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
-
-            var entity = element.FooToFooEntity();
-            entity.ProjectId = project.Id;
-
-            _dbContext.Foos.Add(entity);
-        }
-
-        public void Remove(int elementId)
-        {
-            var entity = _dbContext.Foos
-                .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
-                .First(x => x.Id == elementId);
-            
-            _dbContext.Foos.Remove(entity);
-        }
-
-        public void Update(Foo element)
-        {
-            var entity = _dbContext.Foos
-                .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
-                .First(x => x.Id == element.Id);
-            
-            entity.UpdateFooEntityByFoo(element);
-
-            _dbContext.Foos.Update(entity);
-        }
-
-        public async Task SaveAsync()
-        {
-            _ = await _dbContext.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            _dbContext?.Dispose();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using App.CommunicationServices.Revit;
 using App.CommunicationServices.Revit.EventArgs;
-using App.ScopedServicesFunctionality;
 using Grpc.Core;
 using Revit.Services.Grpc.Services;
 using IDocumentDescriptorServiceScopeFactory = App.CommunicationServices.ScopedServicesFunctionality.IDocumentDescriptorServiceScopeFactory;

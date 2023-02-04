@@ -3,11 +3,6 @@ using Revit.ScopedServicesFunctionality;
 using Revit.Services.ExternalEvents.Infrastructure;
 using Revit.Services.Grpc.Services;
 using Revit.Storage.InstancesAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Microsoft.Extensions.DependencyInjection;
 

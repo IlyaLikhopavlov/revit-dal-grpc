@@ -1,6 +1,5 @@
 ﻿using Autodesk.Revit.UI;
 using Grpc.Core;
-using Grpc.Core.Logging;
 using Revit.Services.Grpc.Services;
 
 namespace Revit.Services.Grpc

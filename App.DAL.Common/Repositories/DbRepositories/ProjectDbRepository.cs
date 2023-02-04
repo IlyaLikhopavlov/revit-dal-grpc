@@ -9,38 +9,43 @@ namespace App.DAL.Common.Repositories.DbRepositories
     {
         private readonly ProjectsDataContext _dbContext;
 
+        private readonly IProjectConverter _projectConverter;
+
         public ProjectDbRepository(
+            IProjectConverter projectConverter,
             IDbContextFactory<ProjectsDataContext> dbContextFactory)
         {
             _dbContext = dbContextFactory.CreateDbContext();
+            _projectConverter = projectConverter;
         }
 
         public IEnumerable<Project> GetAll()
         {
             return _dbContext.Projects
-                .Select(x => x.ProjectEntityToProject())
+                .Select(x => _projectConverter.ConvertToModel(x))
                 .ToList();
         }
 
         public Project GetById(int elementId)
         {
-            return _dbContext.Projects
-                .First(x => x.Id == elementId)
-                .ProjectEntityToProject();
+            var project = _dbContext.Projects
+                .First(x => x.Id == elementId);
+
+            return _projectConverter.ConvertToModel(project);
         }
 
         public void Insert(Project element)
         {
-            var entity = element.ProjectToProjectEntity();
+            var project = _projectConverter.ConvertToEntity(element);
 
-            _dbContext.Projects.Add(entity);
+            _dbContext.Projects.Add(project);
         }
 
         public void Remove(int elementId)
         {
-            var entity = _dbContext.Projects.First(x => x.Id == elementId);
+            var project = _dbContext.Projects.First(x => x.Id == elementId);
 
-            _dbContext.Projects.Remove(entity);
+            _dbContext.Projects.Remove(project);
         }
 
         public void Update(Project element)
@@ -48,16 +53,17 @@ namespace App.DAL.Common.Repositories.DbRepositories
             var entity = _dbContext.Projects
                 .First(x => x.Id == element.Id);
 
-            entity.UpdateProjectEntityByProject(element);
+            _projectConverter.UpdateEntity(element, ref entity);
 
             _dbContext.Projects.Update(entity);
         }
 
         public Project GetByUniqueId(string uniqueId)
         {
-            return _dbContext.Projects
-                .First(x => x.UniqueId == uniqueId)
-                .ProjectEntityToProject();
+            var project = _dbContext.Projects
+                .First(x => x.UniqueId == uniqueId);
+
+            return _projectConverter.ConvertToModel(project);
         }
 
         public async Task SaveAsync()

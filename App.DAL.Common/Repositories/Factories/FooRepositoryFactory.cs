@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.CommunicationServices.Revit;
+﻿using System.ComponentModel;
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories.DbRepositories;
 using App.DAL.Common.Repositories.RevitRepositories;
 using App.Settings.Model;
 using App.Settings.Model.Enums;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Repositories.Factories

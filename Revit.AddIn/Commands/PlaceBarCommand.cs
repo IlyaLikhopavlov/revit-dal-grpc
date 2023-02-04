@@ -2,7 +2,6 @@
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality;
 using Microsoft.Extensions.DependencyInjection;
 using Revit.ScopedServicesFunctionality;
 using Revit.Services.Allocation;

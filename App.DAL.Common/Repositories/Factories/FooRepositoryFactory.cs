@@ -1,40 +1,32 @@
-﻿using System.ComponentModel;
-using App.CommunicationServices.ScopedServicesFunctionality;
+﻿using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories.DbRepositories;
+using App.DAL.Common.Repositories.Factories.Base;
 using App.DAL.Common.Repositories.RevitRepositories;
 using App.Settings.Model;
-using App.Settings.Model.Enums;
 using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Repositories.Factories
 {
-    public class FooRepositoryFactory : IFooRepositoryFactory
+    public class FooRepositoryFactory : RepositoryFactoryBase<IFooRepository>
     {
-        private readonly IOptions<ApplicationSettings> _options;
-
-        private readonly IDocumentDescriptorServiceScopeFactory _documentDescriptorServiceScopeFactory;
 
         public FooRepositoryFactory(
             IOptions<ApplicationSettings> options, 
-            IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory)
+            IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory) 
+            : base(options, documentDescriptorServiceScopeFactory)
         {
-            _options = options;
-            _documentDescriptorServiceScopeFactory = documentDescriptorServiceScopeFactory;
         }
 
-        public IFooRepository Create()
+        protected override IFooRepository CreateRevitRepository()
         {
-            return 
-                _options.Value.ApplicationMode switch
-                {
-                    ApplicationModeEnum.Web => 
-                        _documentDescriptorServiceScopeFactory.GetScopedService<FooDbRepository>(),
+            return (FooRevitRepository)DocumentDescriptorServiceScopeFactory
+                .GetScopedService(typeof(FooRevitRepository));
+        }
 
-                    ApplicationModeEnum.Desktop => 
-                        _documentDescriptorServiceScopeFactory.GetScopedService<FooRevitRepository>(),
-
-                    _ => throw new InvalidEnumArgumentException("Required repository type didn't find")
-                };
+        protected override IFooRepository CreateDbRepository()
+        {
+            return (FooDbRepository)DocumentDescriptorServiceScopeFactory
+                .GetScopedService(typeof(FooDbRepository));
         }
     }
 }

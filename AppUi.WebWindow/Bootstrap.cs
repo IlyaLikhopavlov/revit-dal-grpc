@@ -8,6 +8,7 @@ using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories;
 using App.DAL.Common.Repositories.DbRepositories;
 using App.DAL.Common.Repositories.Factories;
+using App.DAL.Common.Repositories.Factories.Base;
 using App.DAL.Common.Repositories.RevitRepositories;
 using App.DAL.Db;
 using App.DAL.Revit.Converters;
@@ -54,15 +55,18 @@ namespace AppUi.WebWindow
             serviceCollection.AddScoped<BarSet>();
             serviceCollection.AddScoped<FooSet>();
             serviceCollection.AddScoped<IDataContext, DataContext>();
+            
             serviceCollection.AddScoped<FooDbRepository>();
             serviceCollection.AddScoped<FooRevitRepository>();
+            serviceCollection.AddScoped<BarRevitRepository>();
+            serviceCollection.AddScoped<BarDbRepository>();
             serviceCollection.AddSingleton<IProjectRepository, ProjectDbRepository>();
+            serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, FooRepositoryFactory>();
+            serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
+
             serviceCollection.AddSingleton<RevitDataService>();
 
-            serviceCollection.AddSingleton<IFooRepositoryFactory, FooRepositoryFactory>();
-
             serviceCollection.AddTransient<ProjectsDbInitializer>();
-
             serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
             {
                 builder.UseSqlite($"Data Source={configuration.GetConnectionString("DefaultConnection")}");

@@ -70,7 +70,7 @@
     /// <typeparam name="T1">The type of the first parameter used to create service instances.</typeparam>
     /// <typeparam name="T2">The type of the second parameter used to create service instances.</typeparam>
     /// <typeparam name="T3">The type of the third parameter used to create service instances.</typeparam>
-    /// <typeparam name="T4">The type of the third parameter used to create service instances.</typeparam>
+    /// <typeparam name="T4">The type of the fourth parameter used to create service instances.</typeparam>
     /// <typeparam name="TService">The type of the service to be created by the factory.</typeparam>
     public interface IFactory<in T1, in T2, in T3, in T4, out TService>
     {
@@ -80,7 +80,7 @@
         /// <param name="arg1">The first argument used to create the service instance.</param>
         /// <param name="arg2">The second argument used to create the service instance.</param>
         /// <param name="arg3">The third argument used to create the service instance.</param>
-        /// <param name="arg4">The third argument used to create the service instance.</param>
+        /// <param name="arg4">The fourth argument used to create the service instance.</param>
         /// <returns>The service instance.</returns>
         TService New(T1 arg1, T2 arg2, T3 arg3, T4 arg4);
     }

@@ -26,18 +26,37 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
             return _documentServiceScopeFactory.CreateScope(_applicationObject.ActiveDocument);
         }
 
-        public T GetScopedService<T>() where T : class 
+        private void AssertDocumentIsInitialized()
         {
             if (_applicationObject.ActiveDocument is null)
             {
                 throw new InvalidOperationException("Scope object isn't initialized.");
             }
+        }
+
+        public T GetScopedService<T>() where T : class 
+        {
+            AssertDocumentIsInitialized();
 
             var scope = CreateScope();
 
             return scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, T>>()?
                               .New(((Scope<DocumentDescriptor>)scope).ScopeObject) 
                           ?? throw new InvalidOperationException($"Required service {typeof(T).Name} didn't find");
+        }
+
+        public object GetScopedService(Type type)
+        {
+            AssertDocumentIsInitialized();
+
+            var scope = CreateScope();
+
+            var factoryType = FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), type);
+            var factory = scope.ServiceProvider.GetService(factoryType);
+
+            return
+                factoryType.GetMethod("New")
+                    ?.Invoke(factory, new object[] { ((Scope<DocumentDescriptor>)scope).ScopeObject });
         }
 
         public void RemoveScope(DocumentDescriptor documentDescriptor)

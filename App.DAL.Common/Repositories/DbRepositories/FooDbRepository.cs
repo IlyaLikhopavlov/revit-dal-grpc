@@ -3,7 +3,6 @@ using App.DAL.Db;
 using App.DAL.Db.Mapping;
 using App.DML;
 using Microsoft.EntityFrameworkCore;
-
 using FooEntity = App.DAL.Db.Model.Foo;
 
 namespace App.DAL.Common.Repositories.DbRepositories

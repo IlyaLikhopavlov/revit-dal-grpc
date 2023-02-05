@@ -1,6 +1,5 @@
 ﻿using App.DAL.Db.Model;
 using App.DML;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Bar = App.DML.Bar;
 using FooEntity = App.DAL.Db.Model.Foo;
 using BarEntity = App.DAL.Db.Model.Bar;
@@ -20,18 +19,6 @@ namespace App.DAL.Db.Mapping
         //        { typeof(ProjectEntity), e => ((ProjectEntity)e).ProjectEntityToProject() }
         //    };
 
-        public static TModel EntityToModel<TModel, TEntity>(this TEntity entity)
-            where TEntity : BaseEntity
-            where TModel : Element
-        {
-            if (!ConvertEntityToModel.TryGetValue(entity.GetType(), out var result))
-            {
-                throw new ArgumentException(nameof(entity));
-            }
-
-            return (TModel)result.Invoke(entity);
-        }
-        
         private static Foo FooEntityToFoo(this FooEntity fooEntity)
         {
             return new Foo

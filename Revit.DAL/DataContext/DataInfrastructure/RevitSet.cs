@@ -8,7 +8,7 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
-    public abstract class RevitSet<TModelElement> : IEnumerable<TModelElement>, ISynchronizable, IRevitSet
+    public abstract class RevitSet<TModelElement> : IRevitSet<TModelElement>, ISynchronizable
         where TModelElement : Element
     {
         private readonly Queue<EntityProxy<TModelElement>> _addBuffer = new();
@@ -155,7 +155,7 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 
         public object GetEntry(int id)
         {
-            return Entries.FirstOrDefault(x => x.Entity.Id == id)!;
+            return Entries.First(x => x.Entity.Id == id)!;
         }
     }
 }

@@ -71,9 +71,24 @@ namespace App.DAL.Common.Repositories.DbRepositories
             _ = await _dbContext.SaveChangesAsync();
         }
 
+        private bool _disposed;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _dbContext.Dispose();
+                }
+            }
+            _disposed = true;
+        }
+
         public void Dispose()
         {
-            _dbContext?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

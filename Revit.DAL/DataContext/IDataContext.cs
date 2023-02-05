@@ -1,4 +1,5 @@
-﻿using App.DAL.Revit.DataContext.RevitSets;
+﻿using App.DAL.Revit.DataContext.DataInfrastructure;
+using App.DAL.Revit.DataContext.RevitSets;
 using Bimdance.Framework.Initialization;
 
 namespace App.DAL.Revit.DataContext
@@ -10,5 +11,7 @@ namespace App.DAL.Revit.DataContext
         BarSet Bar { get; }
 
         Task SaveChanges();
+
+        IRevitSetBase GetRevitSet(Type entityType);
     }
 }

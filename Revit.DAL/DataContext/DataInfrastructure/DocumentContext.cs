@@ -6,7 +6,7 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
     {
         protected readonly DocumentDescriptor DocumentDescriptor;
 
-        protected List<IRevitSet> RevitSets;
+        protected List<IRevitSetBase> RevitSets;
 
         protected Guid ContextGuid { get; } = Guid.NewGuid();
 
@@ -26,8 +26,8 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
         {
             RevitSets = GetType()
                 .GetProperties()
-                .Where(p => p.PropertyType.GetInterfaces().Contains(typeof(IRevitSet)))
-                .Select(p => p.GetValue(this, null) as IRevitSet)
+                .Where(p => p.PropertyType.GetInterfaces().Contains(typeof(IRevitSetBase)))
+                .Select(p => p.GetValue(this, null) as IRevitSetBase)
                 .Where(x => x != null)
                 .ToList();
         }
@@ -45,6 +45,11 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
             var requiredSet = RevitSets.First(x => x.InternalEntityType == typeof(TEntity));
 
             return (EntityProxy<TEntity>)requiredSet.GetEntry(entity.Id);
+        }
+
+        public IRevitSetBase GetRevitSet(Type entityType)
+        {
+            return RevitSets.First(x => x.InternalEntityType == entityType);
         }
 
         public async Task PullSets()
@@ -65,8 +70,24 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
             }
         }
 
-        public virtual void Dispose()
+        private bool _disposed;
+
+        protected virtual void Dispose(bool disposing)
         {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    //todo dispose here
+                }
+            }
+            _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,15 +1,18 @@
-﻿namespace App.DAL.Revit.DataContext.DataInfrastructure
+﻿using App.DML;
+
+namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
-    public interface IRevitSet
+    public interface IRevitSet<T> : IRevitSetBase, IEnumerable<T>
+        where T : Element
     {
-        Type InternalEntityType { get; }
+        T Find(int keyValue);
 
-        IEnumerable<object> Entities { get; }
+        T Remove(int keyValue);
 
-        object GetEntity(int id);
+        T Attach(T entity);
 
-        object GetEntry(int id);
+        T Add(T entity);
 
-        Task PullRevitEntities();
+        IEnumerable<EntityProxy<T>> Entries { get; }
     }
 }

@@ -9,7 +9,6 @@ namespace App.DAL.Common.Repositories.Factories
 {
     public class FooRepositoryFactory : RepositoryFactoryBase<IFooRepository>
     {
-
         public FooRepositoryFactory(
             IOptions<ApplicationSettings> options, 
             IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory) 

@@ -1,23 +1,28 @@
 ﻿using App.CommunicationServices.Grpc;
 using App.DAL.Common.Repositories;
 using App.DAL.Common.Repositories.Factories;
+using App.DAL.Common.Repositories.Factories.Base;
 using App.DML;
 using Bimdance.Framework.Initialization;
+using System.Linq;
 
 namespace App.Services
 {
     public class RevitDataService : IAsyncInitialization
     {
-        private readonly IFooRepository _fooRepository; 
+        private readonly IFooRepository _fooRepository;
+        private readonly IBarRepository _barRepository;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
 
         public RevitDataService(
-            IFooRepositoryFactory fooRepositoryFactory, 
+            IRepositoryFactory<IFooRepository> fooRepositoryFactory,
+            IRepositoryFactory<IBarRepository> barRepositoryFactory,
             RevitExtraDataExchangeClient revitExtraDataExchangeClient)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
             _fooRepository = fooRepositoryFactory.Create();
+            _barRepository = barRepositoryFactory.Create();
             Initialization = InitializeAsync();
         }
 
@@ -45,34 +50,29 @@ namespace App.Services
 
         public async Task AllocateBarsAsync()
         {
-            //var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Bar))!;
+            var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Bar))!;
 
-            //foreach (var id in allocated)
-            //{
-            //    _dataContext?.Bar.Attach(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
-            //}
+            foreach (var id in allocated)
+            {
+                _barRepository.Insert(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
+            }
 
-            //await _dataContext?.SaveChanges()!;
+            await _barRepository?.SaveAsync()!;
         }
 
         public IEnumerable<Foo> GetFoos()
         {
-            //var result = _dataContext.Foo.Entries.Select(x => x.Entity).ToList();
             return _fooRepository.GetAll();
-            //return result;
         }
 
         public IEnumerable<Bar> GetBars()
         {
-            //var result = _dataContext.Bar.Entries.Select(x => x.Entity);
-            //return result;
-            return Array.Empty<Bar>();
+            return _barRepository.GetAll();
         }
 
         public IEnumerable<BaseItem> GetAllBaseEntities()
         {
-            //return _dataContext.GetBaseEntityProxies().Select(x => x.BaseItem);
-            return Array.Empty<Bar>();
+            return _barRepository.GetAll().Concat(_fooRepository.GetAll().Cast<BaseItem>());
         }
     }
 }

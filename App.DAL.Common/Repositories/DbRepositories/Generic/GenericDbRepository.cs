@@ -1,5 +1,5 @@
 ﻿using App.DAL.Db;
-using App.DAL.Db.Mapping;
+using App.DAL.Db.Mapping.Abstractions;
 using App.DAL.Db.Model;
 using App.DML;
 using Microsoft.EntityFrameworkCore;

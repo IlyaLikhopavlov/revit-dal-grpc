@@ -20,11 +20,11 @@ namespace Bimdance.Framework.DependencyInjection.FactoryFunctionality
 
             var factoryType = args.Length switch
             {
-                1 => typeof(Factory<>),
-                2 => typeof(Factory<,>),
-                3 => typeof(Factory<,,>),
-                4 => typeof(Factory<,,,>),
-                5 => typeof(Factory<,,,,>),
+                1 => typeof(IFactory<>),
+                2 => typeof(IFactory<,>),
+                3 => typeof(IFactory<,,>),
+                4 => typeof(IFactory<,,,>),
+                5 => typeof(IFactory<,,,,>),
                 _ => throw new ArgumentOutOfRangeException(nameof(args))
             };
 

@@ -11,6 +11,8 @@ using App.DAL.Common.Repositories.Factories;
 using App.DAL.Common.Repositories.Factories.Base;
 using App.DAL.Common.Repositories.RevitRepositories;
 using App.DAL.Db;
+using App.DAL.Db.Mapping;
+using App.DAL.Db.Mapping.Abstractions;
 using App.DAL.Revit.Converters;
 using App.DAL.Revit.DataContext.RevitSets;
 using App.DAL.Revit.DataContext;
@@ -23,6 +25,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using App.DAL.Db.Mapping.Profiles;
+using App.DML;
+using BarEntity = App.DAL.Db.Model.Bar;
+using FooEntity = App.DAL.Db.Model.Foo;
 
 namespace AppUi.WebWindow
 {
@@ -64,6 +70,10 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, FooRepositoryFactory>();
             serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
 
+            serviceCollection.AddSingleton<IProjectConverter, ProjectEntityConverter>();
+            serviceCollection.AddSingleton<IEntityConverter<Foo, FooEntity>, FooEntityConverter>();
+            serviceCollection.AddSingleton<IEntityConverter<Bar, BarEntity>, BarEntityConverter>();
+
             serviceCollection.AddSingleton<RevitDataService>();
 
             serviceCollection.AddTransient<ProjectsDbInitializer>();
@@ -73,6 +83,7 @@ namespace AppUi.WebWindow
             });
 
             serviceCollection.AddFactoryFacility();
+            serviceCollection.AddAutoMapper(typeof(DbToDomainMappingProfile));
         }
 
         internal static void InitializeServices(this IServiceProvider serviceProvider)
@@ -97,7 +108,11 @@ namespace AppUi.WebWindow
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(
+                    ex.ToString(), 
+                    "Error", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
         }
 

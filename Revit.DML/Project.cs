@@ -2,6 +2,10 @@
 {
     public class Project : BaseItem
     {
+        public Project() : this(string.Empty)
+        {
+        }
+        
         public Project(string name, Guid? guid = null, int id = -1) : base(name, guid, id)
         {
         }

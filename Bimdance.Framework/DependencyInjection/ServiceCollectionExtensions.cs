@@ -29,6 +29,8 @@ namespace Bimdance.Framework.DependencyInjection
             services.AddSingleton(new ServiceMap(services))
                 .AddSingleton(typeof(IFactory<>), typeof(Factory<>))
                 .AddSingleton(typeof(IFactory<,>), typeof(Factory<,>))
+                .AddSingleton(typeof(IFactory<,,>), typeof(Factory<,,>))
+                .AddSingleton(typeof(IFactory<,,,>), typeof(Factory<,,,>))
                 .AddSingleton(typeof(IFactory<,,,,>), typeof(Factory<,,,,>));
     }
 }

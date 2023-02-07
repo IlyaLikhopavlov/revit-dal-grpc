@@ -54,9 +54,23 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
             var factoryType = FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), type);
             var factory = scope.ServiceProvider.GetService(factoryType);
 
+            if (factory is null)
+            {
+                throw new InvalidOperationException($"Required service type {factoryType} didn't find.");
+            }
+
+            var scopeObject = ((Scope<DocumentDescriptor>)scope).ScopeObject;
+
+            if (scopeObject is null)
+            {
+                throw new InvalidOperationException("Scope object hasn't initialized yet.");
+            }
+
             return
-                factoryType.GetMethod("New")
-                    ?.Invoke(factory, new object[] { ((Scope<DocumentDescriptor>)scope).ScopeObject });
+                factory
+                    .GetType()
+                    .GetMethod("New")
+                    ?.Invoke(factory, new object[] { scopeObject });
         }
 
         public void RemoveScope(DocumentDescriptor documentDescriptor)

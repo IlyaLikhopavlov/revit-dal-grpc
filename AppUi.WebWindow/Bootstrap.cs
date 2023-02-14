@@ -30,6 +30,7 @@ using App.DML;
 using BarEntity = App.DAL.Db.Model.Bar;
 using FooEntity = App.DAL.Db.Model.Foo;
 using System.Collections.Generic;
+using App.Catalog.Db;
 using App.CommunicationServices.Utils.Comparers;
 using App.DAL.Revit.Converters.Common;
 
@@ -82,9 +83,18 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<RevitDataService>();
 
             serviceCollection.AddTransient<ProjectsDbInitializer>();
+            serviceCollection.AddTransient<CatalogDbInitializer>();
+            //serviceCollection.AddDbContext<CatalogDbContext>(builder =>
+            //{
+            //    builder.UseSqlite(configuration.GetConnectionString("CatalogDbConnection"));
+            //});
             serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
             {
-                builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+                builder.UseSqlite(configuration.GetConnectionString("ProjectsDbConnection"));
+            });
+            serviceCollection.AddDbContextFactory<CatalogDbContext>(builder =>
+            {
+                builder.UseSqlite(configuration.GetConnectionString("CatalogDbConnection"));
             });
 
             serviceCollection.AddFactoryFacility();
@@ -95,6 +105,8 @@ namespace AppUi.WebWindow
         {
             try
             {
+                serviceProvider.GetService<CatalogDbInitializer>()?.InitDataBase();
+
                 var mode =
                     serviceProvider.GetService<IOptions<ApplicationSettings>>()?.Value.ApplicationMode;
 

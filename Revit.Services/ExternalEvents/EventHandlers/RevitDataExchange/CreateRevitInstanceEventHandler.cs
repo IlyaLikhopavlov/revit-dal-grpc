@@ -23,11 +23,8 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
             int? result;
             try
             {
-                var documentScope = _scopeFactory?.CreateScope(document);
-                var revitDataContext = documentScope?
-                    .ServiceProvider
-                    .GetService<IFactory<Document, RevitDataContext>>()?
-                    .New(document);
+                var revitDataContext =
+                    _scopeFactory?.GetScopedService<RevitDataContext>(document);
 
                 result = revitDataContext?.CreateRevitElement(Request.Type);
             }

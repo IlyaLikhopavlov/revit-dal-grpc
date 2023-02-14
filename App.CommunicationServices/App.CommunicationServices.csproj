@@ -13,8 +13,4 @@
     <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ScopedServicesFunctionality\" />
-  </ItemGroup>
-
 </Project>

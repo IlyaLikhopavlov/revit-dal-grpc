@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Revit.Converters.Common;
 using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
@@ -17,16 +18,18 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 
         private readonly RevitInstanceConverter<TModelElement> _converter;
 
-        protected DocumentDescriptor DocumentDescriptor;
+        private readonly DocumentDescriptor _documentDescriptor;
 
         protected RevitSet(
-            DocumentDescriptor documentDescriptor,
-            IFactory<DocumentDescriptor, RevitInstanceConverter<TModelElement>> converterFactory)
+            IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory,
+            DocumentDescriptor documentDescriptor)
         {
-            DocumentDescriptor = documentDescriptor;
-            _converter = converterFactory.New(DocumentDescriptor);
+            _documentDescriptor = documentDescriptor;
+            _converter = documentDescriptorServiceScopeFactory.GetScopedService<RevitInstanceConverter<TModelElement>>();
         }
-        
+
+        public DocumentDescriptor DocumentDescriptor => new(_documentDescriptor);
+
         public Type InternalEntityType => typeof(TModelElement);
 
         public IEnumerable<object> Entities => Entries.Select(x => x.Entity)!;

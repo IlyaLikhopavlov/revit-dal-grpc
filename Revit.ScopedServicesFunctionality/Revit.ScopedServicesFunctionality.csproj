@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bimdance.Framework\Bimdance.Framework.csproj" />
+    <ProjectReference Include="..\Bimdance.Revit.Framework\Bimdance.Revit.Framework.csproj" />
+    <ProjectReference Include="..\Revit.GrpcServer\Revit.Grpc.Bundle.csproj" />
   </ItemGroup>
 
 </Project>

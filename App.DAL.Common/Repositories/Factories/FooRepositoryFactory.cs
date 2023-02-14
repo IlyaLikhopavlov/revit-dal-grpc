@@ -18,14 +18,12 @@ namespace App.DAL.Common.Repositories.Factories
 
         protected override IFooRepository CreateRevitRepository()
         {
-            return (FooRevitRepository)DocumentDescriptorServiceScopeFactory
-                .GetScopedService(typeof(FooRevitRepository));
+            return CreateRepository<FooRevitRepository>();
         }
 
         protected override IFooRepository CreateDbRepository()
         {
-            return (FooDbRepository)DocumentDescriptorServiceScopeFactory
-                .GetScopedService(typeof(FooDbRepository));
+            return CreateRepository<FooDbRepository>();
         }
     }
 }

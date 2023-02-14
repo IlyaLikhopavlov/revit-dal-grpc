@@ -22,12 +22,7 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
             int[] itemsId;
             try
             {
-                var documentScope = _scopeFactory?.CreateScope(document);
-                var allocationService = documentScope?
-                    .ServiceProvider
-                    .GetService<IFactory<Document, ModelItemsAllocationService>>()
-                    ?.New(document);
-
+                var allocationService = _scopeFactory.GetScopedService<ModelItemsAllocationService>(document);
                 itemsId = allocationService?.AllocateInstance(Request.AllocationType);
             }
             catch (Exception ex)

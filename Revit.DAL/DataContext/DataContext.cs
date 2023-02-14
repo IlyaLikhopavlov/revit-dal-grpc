@@ -1,4 +1,5 @@
-﻿using App.DAL.Revit.DataContext.DataInfrastructure;
+﻿using App.CommunicationServices.ScopedServicesFunctionality;
+using App.DAL.Revit.DataContext.DataInfrastructure;
 using App.DAL.Revit.DataContext.RevitSets;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 
@@ -7,13 +8,12 @@ namespace App.DAL.Revit.DataContext
     public class DataContext : DocumentContext, IDataContext
     {
         public DataContext(
-            IFactory<DocumentDescriptor, FooSet> foosFactory,
-            IFactory<DocumentDescriptor, BarSet> barsFactory,
-            DocumentDescriptor documentDescriptor) : 
-            base(documentDescriptor)
+            IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory,
+            DocumentDescriptor documentDescriptor) 
+            : base(documentDescriptor)
         {
-            Foo = foosFactory.New(documentDescriptor);
-            Bar = barsFactory.New(documentDescriptor);
+            Foo = documentDescriptorServiceScopeFactory.GetScopedService<FooSet>();
+            Bar = documentDescriptorServiceScopeFactory.GetScopedService<BarSet>();
             Initialization = InitializeAsync();
         }
 

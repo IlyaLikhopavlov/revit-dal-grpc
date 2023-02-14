@@ -4,7 +4,7 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 {
     public abstract class DocumentContext : IDisposable
     {
-        protected readonly DocumentDescriptor DocumentDescriptor;
+        private readonly DocumentDescriptor _documentDescriptor;
 
         protected List<IRevitSetBase> RevitSets;
 
@@ -12,8 +12,10 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 
         protected DocumentContext(DocumentDescriptor documentDescriptor)
         {
-            DocumentDescriptor = documentDescriptor ?? throw new ArgumentException($"{nameof(documentDescriptor)} isn't initialized.");
+            _documentDescriptor = documentDescriptor;
         }
+
+        public DocumentDescriptor DocumentDescriptor => new(_documentDescriptor);
 
         protected async Task InitializeSetsAsync()
         {

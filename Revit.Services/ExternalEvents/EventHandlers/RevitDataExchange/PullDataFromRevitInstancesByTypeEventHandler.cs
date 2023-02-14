@@ -24,11 +24,8 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
             InstanceData[] result;
             try
             {
-                var documentScope = _scopeFactory?.CreateScope(document);
-                var revitDataContext = documentScope?
-                    .ServiceProvider
-                    .GetService<IFactory<Document, RevitDataContext>>()?
-                    .New(document);
+                var revitDataContext =
+                    _scopeFactory?.GetScopedService<RevitDataContext>(document);
 
                 result = revitDataContext?.PullDataFromInstancesByType(Request.Type).ToArray();
             }

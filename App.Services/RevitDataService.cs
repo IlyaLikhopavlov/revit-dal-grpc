@@ -5,6 +5,7 @@ using App.DAL.Common.Repositories.Factories.Base;
 using App.DML;
 using Bimdance.Framework.Initialization;
 using System.Linq;
+using App.DAL.Revit.DataContext.RevitSets;
 
 namespace App.Services
 {
@@ -28,9 +29,14 @@ namespace App.Services
 
         private async Task InitializeAsync()
         {
-            if (_fooRepository is IAsyncInitialization repository)
+            if (_fooRepository is IAsyncInitialization fooRepository)
             {
-                await repository.Initialization;
+                await fooRepository.Initialization;
+            }
+
+            if (_barRepository is IAsyncInitialization barRepository)
+            {
+                await barRepository.Initialization;
             }
         }
 
@@ -72,7 +78,15 @@ namespace App.Services
 
         public IEnumerable<BaseItem> GetAllBaseEntities()
         {
-            return _barRepository.GetAll().Concat(_fooRepository.GetAll().Cast<BaseItem>());
+            var foos = _fooRepository.GetAll();
+            var bars = _barRepository.GetAll();
+
+            if (foos == null || bars == null)
+            {
+                return new List<BaseItem>();
+            }
+
+            return foos.Concat(bars.Cast<BaseItem>());
         }
     }
 }

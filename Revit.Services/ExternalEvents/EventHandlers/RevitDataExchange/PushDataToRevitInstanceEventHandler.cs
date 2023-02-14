@@ -22,12 +22,9 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
         {
             try
             {
-                var documentScope = _scopeFactory?.CreateScope(document);
-                var revitDataContext = documentScope?
-                    .ServiceProvider
-                    .GetService<IFactory<Document, RevitDataContext>>()?
-                    .New(document);
-
+                var revitDataContext =
+                    _scopeFactory.GetScopedService<RevitDataContext>(document);
+                    
                 revitDataContext?.PushDataToRevitInstance(Request.InstanceData, Request.Type);
             }
             catch (Exception ex)

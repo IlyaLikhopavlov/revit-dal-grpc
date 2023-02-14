@@ -16,6 +16,7 @@ namespace Bimdance.Framework.DependencyInjection.FactoryFunctionality
         {
             _serviceProvider = serviceProvider;
             _argTypes = argTypes;
+            var implementationType = typeof(TService);
             var serviceDescriptor = serviceMap.TryGetValue(typeof(TService), out var value)
                 ? value.Single()
                 : throw new InvalidOperationException($"Unable to resolve service for type '{typeof(TService)}' while attempting to activate '{GetType().GetInterfaces().Single()}'.");

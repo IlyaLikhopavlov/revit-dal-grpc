@@ -17,7 +17,10 @@ namespace App.DAL.Common.Repositories.DbRepositories
         {
             _dbContext = dbContextFactory.CreateDbContext();
             _projectConverter = projectConverter;
+            Initialization = Task.CompletedTask;
         }
+
+        public Task Initialization { get; }
 
         public IEnumerable<Project> GetAll()
         {

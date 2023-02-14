@@ -24,6 +24,8 @@ using Revit.ScopedServicesFunctionality;
 using Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange;
 using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 using Revit.Services.ExternalEvents.Infrastructure;
+using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
+using Bimdance.Revit.Framework.RevitDocument;
 
 namespace Revit.AddIn
 {
@@ -37,6 +39,8 @@ namespace Revit.AddIn
         public Result OnStartup(UIControlledApplication application)
         {
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IEqualityComparer<Document>, DocumentEqualityComparer>();
+            serviceCollection.AddSingleton<ServiceScopeFactory<Document>>();
             serviceCollection.AddSingleton<IRevitDocumentServiceScopeFactory, RevitDocumentServiceScopeFactory>();
             serviceCollection.AddTransient<SchemaDescriptor>();
 

@@ -1,4 +1,5 @@
-﻿using App.DAL.Revit.DataContext.DataInfrastructure;
+﻿using App.CommunicationServices.ScopedServicesFunctionality;
+using App.DAL.Revit.DataContext.DataInfrastructure;
 using App.DAL.Revit.DataContext;
 using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
@@ -7,20 +8,22 @@ using Bimdance.Framework.Initialization;
 
 namespace App.DAL.Common.Repositories.RevitRepositories.Generic
 {
-    public class GenericRevitRepository<T> : IRepository<T>, IAsyncInitialization
+    public class GenericRevitRepository<T> : IRepository<T>
         where T : Element
     {
         private readonly IDataContext _context;
 
         private IRevitSet<T> _revitSet;
 
+        private readonly DocumentDescriptor _documentDescriptor;
+
         public GenericRevitRepository(
-            IFactory<DocumentDescriptor, IDataContext> dataContextFactory,
+            IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory,
             DocumentDescriptor documentDescriptor)
         {
-            _context = dataContextFactory.New(documentDescriptor);
+            _context = documentDescriptorServiceScopeFactory.GetScopedService<IDataContext>();
             Initialization = InitializeAsync();
-
+            _documentDescriptor = documentDescriptor;
         }
 
         private async Task InitializeAsync()
@@ -30,6 +33,8 @@ namespace App.DAL.Common.Repositories.RevitRepositories.Generic
         }
 
         public Task Initialization { get; }
+
+        public DocumentDescriptor DocumentDescriptor => new(_documentDescriptor);
 
         public IEnumerable<T> GetAll()
         {
@@ -71,6 +76,7 @@ namespace App.DAL.Common.Repositories.RevitRepositories.Generic
             {
                 if (disposing)
                 {
+                    //todo dispose here
                 }
             }
             _disposed = true;

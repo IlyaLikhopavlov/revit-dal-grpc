@@ -27,7 +27,10 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             _dbSet = _dbContext.Set<TDbEntity>();
             _documentDescriptor = documentDescriptor;
             _entityConverter = entityConverter;
+            Initialization = Task.CompletedTask;
         }
+
+        public Task Initialization { get; }
 
         public IEnumerable<TModelItem> GetAll()
         {

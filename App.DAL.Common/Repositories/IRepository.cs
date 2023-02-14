@@ -1,8 +1,9 @@
 ﻿using App.DML;
+using Bimdance.Framework.Initialization;
 
 namespace App.DAL.Common.Repositories
 {
-    public interface IRepository<T> : IDisposable where T : Element
+    public interface IRepository<T> : IAsyncInitialization, IDisposable where T : Element
     {
         IEnumerable<T> GetAll();
         T GetById(int elementId);

@@ -1,4 +1,5 @@
 ﻿using App.CommunicationServices.Revit;
+using App.CommunicationServices.Utils.Comparers;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,23 +8,23 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 {
     public class DocumentDescriptorServiceScopeFactory : IDocumentDescriptorServiceScopeFactory, IDisposable
     {
-        private readonly DocumentServiceScopeFactory<DocumentDescriptor> _documentServiceScopeFactory;
+        private readonly ServiceScopeFactory<DocumentDescriptor> _serviceScopeFactory;
 
         private readonly ApplicationObject _applicationObject;
 
         private bool _disposed;
 
         public DocumentDescriptorServiceScopeFactory(
-            DocumentServiceScopeFactory<DocumentDescriptor> documentServiceScopeFactory, 
+            ServiceScopeFactory<DocumentDescriptor> serviceScopeFactory, 
             ApplicationObject applicationObject)
         {
-            _documentServiceScopeFactory = documentServiceScopeFactory;
+            _serviceScopeFactory = serviceScopeFactory;
             _applicationObject = applicationObject;
         }
 
         public IServiceScope CreateScope()
         {
-            return _documentServiceScopeFactory.CreateScope(_applicationObject.ActiveDocument);
+            return _serviceScopeFactory.CreateScope(_applicationObject.ActiveDocument);
         }
 
         private void AssertDocumentIsInitialized()
@@ -34,15 +35,27 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
             }
         }
 
+        private static DocumentDescriptor GetScopeObject(IServiceScope serviceScope)
+        {
+            var scopeObject = ((Scope<DocumentDescriptor>)serviceScope).ScopeObject;
+
+            if (scopeObject is null)
+            {
+                throw new InvalidOperationException("Scope object hasn't been initialized yet.");
+            }
+
+            return scopeObject;
+        }
+
         public T GetScopedService<T>() where T : class 
         {
             AssertDocumentIsInitialized();
 
             var scope = CreateScope();
+            var scopeObject = GetScopeObject(scope);
 
-            return scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, T>>()?
-                              .New(((Scope<DocumentDescriptor>)scope).ScopeObject) 
-                          ?? throw new InvalidOperationException($"Required service {typeof(T).Name} didn't find");
+            return scope.ServiceProvider.GetService<IFactory<DocumentDescriptor, T>>()?.New(scopeObject) 
+                          ?? throw new InvalidOperationException($"Required service {typeof(T).Name} wasn't found");
         }
 
         public object GetScopedService(Type type)
@@ -56,15 +69,10 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
             if (factory is null)
             {
-                throw new InvalidOperationException($"Required service type {factoryType} didn't find.");
+                throw new InvalidOperationException($"Required service type {factoryType} wasn't found.");
             }
 
-            var scopeObject = ((Scope<DocumentDescriptor>)scope).ScopeObject;
-
-            if (scopeObject is null)
-            {
-                throw new InvalidOperationException("Scope object hasn't initialized yet.");
-            }
+            var scopeObject = GetScopeObject(scope);
 
             return
                 factory
@@ -75,7 +83,7 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
         public void RemoveScope(DocumentDescriptor documentDescriptor)
         {
-            _documentServiceScopeFactory.RemoveScope(documentDescriptor);
+            _serviceScopeFactory.RemoveScope(documentDescriptor);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -87,7 +95,7 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
             if (disposing)
             {
-                _documentServiceScopeFactory?.Dispose();
+                _serviceScopeFactory?.Dispose();
             }
 
             _disposed = true;

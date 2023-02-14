@@ -29,6 +29,9 @@ using App.DAL.Db.Mapping.Profiles;
 using App.DML;
 using BarEntity = App.DAL.Db.Model.Bar;
 using FooEntity = App.DAL.Db.Model.Foo;
+using System.Collections.Generic;
+using App.CommunicationServices.Utils.Comparers;
+using App.DAL.Revit.Converters.Common;
 
 namespace AppUi.WebWindow
 {
@@ -50,14 +53,16 @@ namespace AppUi.WebWindow
                 configuration.GetSection(nameof(ApplicationSettings)).Bind(options));
 
             serviceCollection.AddSingleton<ApplicationObject>();
+            serviceCollection.AddSingleton<IEqualityComparer<DocumentDescriptor>,
+                DocumentDescriptorEqualityComparer>();
+            serviceCollection.AddSingleton<ServiceScopeFactory<DocumentDescriptor>>();
             serviceCollection.AddSingleton<IDocumentDescriptorServiceScopeFactory,
                 DocumentDescriptorServiceScopeFactory>();
-            serviceCollection.AddSingleton<DocumentServiceScopeFactory<DocumentDescriptor>>();
             serviceCollection.AddSingleton<RevitActiveDocumentNotificationClient>();
-            serviceCollection.AddScoped<RevitExtraDataExchangeClient>();
+            serviceCollection.AddSingleton<RevitExtraDataExchangeClient>();
 
-            serviceCollection.AddScoped<BarConverter>();
-            serviceCollection.AddScoped<FooConverter>();
+            serviceCollection.AddScoped<RevitInstanceConverter<Bar>, BarConverter>();
+            serviceCollection.AddScoped<RevitInstanceConverter<Foo>, FooConverter>();
             serviceCollection.AddScoped<BarSet>();
             serviceCollection.AddScoped<FooSet>();
             serviceCollection.AddScoped<IDataContext, DataContext>();

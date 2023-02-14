@@ -24,6 +24,11 @@ namespace App.DAL.Common.Repositories.Factories.Base
 
         protected abstract T CreateDbRepository();
 
+        protected TR CreateRepository<TR>()
+        {
+            return (TR)DocumentDescriptorServiceScopeFactory.GetScopedService(typeof(TR));
+        }
+
         public T Create()
         {
             return

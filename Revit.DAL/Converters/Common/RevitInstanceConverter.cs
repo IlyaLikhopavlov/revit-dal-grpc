@@ -54,6 +54,8 @@ namespace App.DAL.Revit.Converters.Common
 
         public virtual async Task<IEnumerable<TModelElement>> PullWholeFromRevit()
         {
+            
+            
             var data = await Client.PullDataFromRevitInstancesByType(typeof(TModelElement), DocumentDescriptor);
             return data.Select(x =>
                 JsonSerializer.Deserialize<TModelElement>(x.Data, _jsonSerializerOptions)).ToArray();

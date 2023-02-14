@@ -3,17 +3,18 @@ using System.Collections.Concurrent;
 
 namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base
 {
-    public class DocumentServiceScopeFactory<T> : IDocumentServiceScopeFactory<T>
+    public class ServiceScopeFactory<T> : IServiceScopeFactory<T>
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        protected readonly ConcurrentDictionary<T, IServiceScope> ScopeDictionary = new();
+        protected readonly ConcurrentDictionary<T, IServiceScope> ScopeDictionary;
 
         private bool _disposed;
 
-        public DocumentServiceScopeFactory(IServiceScopeFactory serviceScopeFactory)
+        public ServiceScopeFactory(IServiceScopeFactory serviceScopeFactory, IEqualityComparer<T> equalityComparer)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            ScopeDictionary = new ConcurrentDictionary<T, IServiceScope>(equalityComparer);
         }
 
         public virtual IServiceScope CreateScope(T t)
@@ -27,10 +28,16 @@ namespace Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Bas
             return ScopeDictionary.TryAdd(t, newScope) ? newScope : null;
         }
 
-        public void RemoveScope(T t)
+        public bool RemoveScope(T t)
         {
-            ScopeDictionary.TryRemove(t, out var scope);
+            if (!ScopeDictionary.TryRemove(t, out var scope))
+            {
+                return false;
+            }
+
             scope.Dispose();
+            _disposed = true;
+            return true;
         }
 
         protected virtual void Dispose(bool disposing)

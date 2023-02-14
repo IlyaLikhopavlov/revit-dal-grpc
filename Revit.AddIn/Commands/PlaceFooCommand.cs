@@ -13,17 +13,6 @@ namespace Revit.AddIn.Commands
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            var document = commandData.Application.ActiveUIDocument.Document;
-
-            using var scopeFactory = RevitDalApp.ServiceProvider.GetService<IRevitDocumentServiceScopeFactory>();
-            var documentScope = scopeFactory?.CreateScope(document);
-            var allocationService = documentScope?
-                .ServiceProvider
-                .GetService<IFactory<Document, ModelItemsAllocationService>>()
-                ?.New(document);
-
-            allocationService?.AllocateFoo();
-
             return Result.Succeeded;
         }
     }

@@ -84,7 +84,7 @@ namespace AppUi.WebWindow
             serviceCollection.AddTransient<ProjectsDbInitializer>();
             serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
             {
-                builder.UseSqlite($"Data Source={configuration.GetConnectionString("DefaultConnection")}");
+                builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
             });
 
             serviceCollection.AddFactoryFacility();

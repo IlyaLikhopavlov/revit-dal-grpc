@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Bimdance.Framework.DependencyInjection.FactoryFunctionality
+﻿namespace Bimdance.Framework.DependencyInjection.FactoryFunctionality
 {
     internal class Factory<T1, T2, T3, TService> : FactoryBase<TService>, IFactory<T1, T2, T3, TService>
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Bimdance.Framework.DependencyInjection.FactoryFunctionality
+﻿namespace Bimdance.Framework.DependencyInjection.FactoryFunctionality
 {
     public static class FactoryUtils
     {

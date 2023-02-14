@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.DML;
+﻿using App.DML;
 using AutoMapper;
 using ProjectEntity = App.DAL.Db.Model.Project;
 using BarEntity = App.DAL.Db.Model.Bar;

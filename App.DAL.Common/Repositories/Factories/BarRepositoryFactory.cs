@@ -1,9 +1,4 @@
 ﻿using App.DAL.Common.Repositories.Factories.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.Settings.Model;
 using Microsoft.Extensions.Options;

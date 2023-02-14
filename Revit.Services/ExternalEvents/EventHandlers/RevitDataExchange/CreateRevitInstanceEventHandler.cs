@@ -1,10 +1,8 @@
-﻿using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Revit.ScopedServicesFunctionality;
+﻿using Revit.ScopedServicesFunctionality;
 using Revit.Services.ExternalEvents.Infrastructure;
 using Revit.Storage.InstancesAccess;
 using Autodesk.Revit.DB;
 using Revit.Services.Grpc.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 {

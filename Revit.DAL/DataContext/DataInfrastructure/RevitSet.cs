@@ -3,7 +3,6 @@ using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Revit.Converters.Common;
 using App.DAL.Revit.DataContext.DataInfrastructure.Enums;
 using App.DML;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Framework.Exceptions;
 using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 

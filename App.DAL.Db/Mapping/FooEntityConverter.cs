@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.DAL.Db.Mapping.Abstractions;
+﻿using App.DAL.Db.Mapping.Abstractions;
 using App.DML;
 using AutoMapper;
 using FooEntity = App.DAL.Db.Model.Foo;

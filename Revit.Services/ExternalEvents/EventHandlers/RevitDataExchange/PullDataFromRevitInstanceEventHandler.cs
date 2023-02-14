@@ -1,6 +1,4 @@
 ﻿using Autodesk.Revit.DB;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
-using Microsoft.Extensions.DependencyInjection;
 using Revit.ScopedServicesFunctionality;
 using Revit.Services.ExternalEvents.Infrastructure;
 using Revit.Services.Grpc.Services;

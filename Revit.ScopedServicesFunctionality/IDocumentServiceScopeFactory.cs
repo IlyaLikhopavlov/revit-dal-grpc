@@ -1,6 +1,5 @@
 ﻿using Autodesk.Revit.DB;
 using Bimdance.Framework.DependencyInjection.ScopedServicesFunctionality.Base;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Revit.ScopedServicesFunctionality
 {

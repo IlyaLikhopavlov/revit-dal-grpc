@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\App.Catalog.Db\App.Catalog.Db.csproj" />
     <ProjectReference Include="..\Revit.DML\App.DML.csproj" />
   </ItemGroup>
 

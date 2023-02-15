@@ -1,10 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿using App.Settings.Model;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace App.Catalog.Db.Tools
 {
@@ -12,8 +9,19 @@ namespace App.Catalog.Db.Tools
     {
         public CatalogDbContext CreateDbContext(string[] args)
         {
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            var configuration = configurationBuilder.Build();
+
+            var connectionString = configuration
+                                       .GetRequiredSection(nameof(ConnectionStrings))
+                                       .Get<ConnectionStrings>()?.CatalogDbConnection ?? throw new InvalidOperationException(
+                                       "Connection string for catalog DB wasn't found.");
+
             var optionsBuilder = new DbContextOptionsBuilder<CatalogDbContext>();
-            optionsBuilder.UseSqlite("Data Source=catalog.db");
+            optionsBuilder.UseSqlite(connectionString);
 
             return new CatalogDbContext(optionsBuilder.Options);
         }

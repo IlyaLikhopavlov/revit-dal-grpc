@@ -52,6 +52,8 @@ namespace AppUi.WebWindow
             serviceCollection.AddOptions();
             serviceCollection.Configure<ApplicationSettings>(options =>
                 configuration.GetSection(nameof(ApplicationSettings)).Bind(options));
+            serviceCollection.Configure<ConnectionStrings>(options =>
+                configuration.GetSection(nameof(ConnectionStrings)).Bind(options));
 
             serviceCollection.AddSingleton<ApplicationObject>();
             serviceCollection.AddSingleton<IEqualityComparer<DocumentDescriptor>,
@@ -84,17 +86,24 @@ namespace AppUi.WebWindow
 
             serviceCollection.AddTransient<ProjectsDbInitializer>();
             serviceCollection.AddTransient<CatalogDbInitializer>();
-            //serviceCollection.AddDbContext<CatalogDbContext>(builder =>
-            //{
-            //    builder.UseSqlite(configuration.GetConnectionString("CatalogDbConnection"));
-            //});
             serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
             {
-                builder.UseSqlite(configuration.GetConnectionString("ProjectsDbConnection"));
+                var connectionString = configuration
+                                           .GetRequiredSection(nameof(ConnectionStrings))
+                                           .Get<ConnectionStrings>()?.ProjectsDbConnection 
+                                       ?? throw new InvalidOperationException(
+                                           "Connection string for projects DB wasn't found.");
+                builder.UseSqlite(connectionString);
             });
             serviceCollection.AddDbContextFactory<CatalogDbContext>(builder =>
             {
-                builder.UseSqlite(configuration.GetConnectionString("CatalogDbConnection"));
+                var connectionString = configuration
+                                           .GetRequiredSection(nameof(ConnectionStrings))
+                                           .Get<ConnectionStrings>()?.CatalogDbConnection
+                                       ?? throw new InvalidOperationException(
+                                           "Connection string for catalog DB wasn't found.");
+
+                builder.UseSqlite(connectionString);
             });
 
             serviceCollection.AddFactoryFacility();

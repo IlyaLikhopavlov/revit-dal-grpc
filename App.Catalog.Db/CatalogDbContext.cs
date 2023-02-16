@@ -17,12 +17,5 @@ namespace App.Catalog.Db
         public DbSet<FooCatalog> FooCatalog { get; set; }
 
         public DbSet<BarCatalog> BarCatalog { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            optionsBuilder.UseSqlite("Data Source=catalog.db");
-        }
     }
 }

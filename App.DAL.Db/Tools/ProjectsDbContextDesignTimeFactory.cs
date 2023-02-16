@@ -1,4 +1,5 @@
-﻿using App.Settings.Model;
+﻿using App.Settings.Constants;
+using App.Settings.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ namespace App.DAL.Db.Tools
                 "Connection string for projects DB wasn't found.");
 
             var optionsBuilder = new DbContextOptionsBuilder<ProjectsDataContext>();
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}{connectionString}");
 
             return new ProjectsDataContext(optionsBuilder.Options);
         }

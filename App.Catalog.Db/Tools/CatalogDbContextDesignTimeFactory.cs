@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using App.Settings.Constants;
 
 namespace App.Catalog.Db.Tools
 {
@@ -21,7 +22,7 @@ namespace App.Catalog.Db.Tools
                                        "Connection string for catalog DB wasn't found.");
 
             var optionsBuilder = new DbContextOptionsBuilder<CatalogDbContext>();
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}{connectionString}");
 
             return new CatalogDbContext(optionsBuilder.Options);
         }

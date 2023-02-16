@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 /AppUi.WebWindow/catalog.db
 /AppUi.WebWindow/projects.db
+/AppUi.WebWindow/catalog.db-wal
+/AppUi.WebWindow/catalog.db-shm
+/AppUi.WebWindow/projects.db-wal
+/AppUi.WebWindow/projects.db-shm

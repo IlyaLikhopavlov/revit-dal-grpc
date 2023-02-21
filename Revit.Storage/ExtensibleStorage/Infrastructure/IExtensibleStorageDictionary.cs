@@ -10,7 +10,7 @@ public interface IExtensibleStorageDictionary : IExtensibleStorage
 
     bool RemoveEntity(string key);
 
-    int GetNextId(string prefix);
+    bool Contains(string key);
 
     IEnumerable<string> GetAll<T>(string prefix);
 }

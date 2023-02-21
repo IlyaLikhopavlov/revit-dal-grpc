@@ -1,5 +1,6 @@
 ﻿using App.DAL.Db.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Contracts;
 
 namespace App.DAL.Db
 {
@@ -20,12 +21,20 @@ namespace App.DAL.Db
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<BaseEntity>()
+                .ToTable("BaseEntity")
+                .HasDiscriminator<int>("EntityType")
+                .HasValue<Foo>(1)
+                .HasValue<Bar>(2);
+
             modelBuilder.Entity<Foo>()
+                .ToTable("BaseEntity")
                 .HasOne(e => e.Project)
                 .WithMany(e => e.Foos)
                 .HasForeignKey(e => e.ProjectId);
 
             modelBuilder.Entity<Bar>()
+                .ToTable("BaseEntity")
                 .HasOne(e => e.Project)
                 .WithMany(e => e.Bars)
                 .HasForeignKey(e => e.ProjectId);

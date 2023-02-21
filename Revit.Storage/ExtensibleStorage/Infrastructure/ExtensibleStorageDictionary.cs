@@ -21,7 +21,9 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
                 Pull();
             }
 
-            return Storage.TryGetValue(key, out var resultString) ? resultString : null;
+            return Storage.TryGetValue(key, out var resultString) 
+                ? resultString 
+                : throw new ArgumentException($"Dictionary element with key {key} wasn't founded.");
         }
 
         public void AddEntity(string key, string entity)
@@ -35,6 +37,8 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
             {
                 Storage.Add(key, entity);
             }
+            
+            Save();
         }
 
         public void UpdateEntity(string key, string entity)
@@ -50,6 +54,8 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
             }
 
             Storage[key] = entity;
+
+            Save();
         }
 
         public bool RemoveEntity(string key)
@@ -59,29 +65,33 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
                 Pull();
             }
 
-            return Storage.Remove(key);
+            var result = Storage.Remove(key);
+            Save();
+
+            return result;
         }
 
-        public int GetNextId(string prefix)
+        public bool Contains(string key)
         {
-            if (string.IsNullOrEmpty(prefix))
-                throw new ArgumentNullException(nameof(prefix));
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
 
             if (Storage == null)
             {
                 Pull();
             }
 
-            var keys = Storage.Keys.Where(k => k.StartsWith(prefix)).ToList();
-            return !keys.Any() ? 1 : keys.Max(k => GetId(k, prefix)) + 1;
+            return Storage.Keys.Any(x => x == key);
         }
-
-        public static int GetId(string keyId, string prefix) => int.Parse(keyId.Replace(prefix + "|", string.Empty));
 
         public IEnumerable<string> GetAll<T>(string prefix)
         {
             if (string.IsNullOrEmpty(prefix))
+            {
                 throw new ArgumentNullException(nameof(prefix));
+            }
 
             if (Storage == null)
             {

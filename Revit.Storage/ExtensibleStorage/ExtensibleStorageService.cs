@@ -63,17 +63,20 @@ namespace Revit.Storage.ExtensibleStorage
 
         public IExtensibleStorageDataSchema GetDataSchemaStorage(DomainModelTypesEnum entityType)
         {
-            return this[entityType.ToString()] is not IExtensibleStorageDataSchema result ? null : result;
+            return this[entityType.ToString()] as IExtensibleStorageDataSchema
+                ?? throw new ArgumentException($"Storage with provided entity type {entityType} wasn't founded.");
         }
 
         public IExtensibleStorageDictionary GetDictionaryStorage(string entityName)
         {
-            return this[entityName] is not IExtensibleStorageDictionary result ? null : result;
+            return this[entityName] as IExtensibleStorageDictionary 
+                   ?? throw new ArgumentException($"Storage with provided entity name {entityName} wasn't founded.");
         }
 
         public IIntIdGenerator GetIdGenerator(string entityName)
         {
-            return this[entityName] is not IIntIdGenerator result ? null : result;
+            return this[entityName] as IIntIdGenerator 
+                   ?? throw new ArgumentException($"Storage with provided entity name {entityName} wasn't founded.");
         }
 
         public IExtensibleStorage this[string entityName]

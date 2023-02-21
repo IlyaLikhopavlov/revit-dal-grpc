@@ -8,6 +8,8 @@
 
         public const string SettingsExtensibleStorageSchemaGuid = @"3003AFD3-87E4-4424-A315-1312AA8C9A4E";
 
+        public const string CatalogExtensibleStorageSchemaGuid = @"2A8BC7EA-A5FF-433D-A819-5914542B1B9C";
+
         public const string IdStorageSchemaGuid = @"6D90F8EE-1752-4BAE-BD34-215CDB31DA06";
 
         public const string SaveChangesTransactionName = @"Save Changes";
@@ -24,6 +26,13 @@
             public const string SchemaName = @"IdListSchema";
 
             public const string FieldName = @"IdList";
+        }
+
+        public static class Catalog
+        {
+            public const string SchemaName = @"CatalogSchema";
+
+            public const string FieldName = @"CatalogDictionary";
         }
     }
 }

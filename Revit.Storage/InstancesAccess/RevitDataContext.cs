@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.DB;
 using Revit.Storage.ExtensibleStorage.Constants;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
+using Bimdance.Revit.Framework.RevitDocument;
 using Revit.Storage.ExtensibleStorage;
 using Revit.Services.Grpc.Services;
 using Revit.Storage.ExtensibleStorage.Schemas;
@@ -24,7 +25,7 @@ namespace Revit.Storage.InstancesAccess
             var element = _document.GetElement(new ElementId(data.InstanceId));
             var storage = _storageService.GetDataSchemaStorage(entityType);
 
-            SaveChanges(() =>
+            _document.SaveChanges(() =>
             {
                 storage.UpdateEntity(element, 
                     new DataSchema
@@ -53,7 +54,7 @@ namespace Revit.Storage.InstancesAccess
 
             var elements = _document.GetInstancesByIdList(dataList.Select(x => x.InstanceId));
 
-            SaveChanges(() =>
+            _document.SaveChanges(() =>
             {
                 var elementsWithData = dataList.Join(
                     elements,
@@ -96,63 +97,12 @@ namespace Revit.Storage.InstancesAccess
             }
 
             var deletedIds = Array.Empty<ElementId>();
-            SaveChanges(() =>
+            _document.SaveChanges(() =>
             {
                 deletedIds = _document.Delete(requiredId).ToArray();
             });
             
             return deletedIds.Any(x => x.Equals(requiredId));
-        }
-
-        public void SaveChanges(Action sync, bool isInSubTransaction = false)
-        {
-            if (_document.IsReadOnly)
-            {
-                throw new InvalidOperationException($"Document {_document.Title} is read only. Changes can't be saved.");
-            }
-
-            if (!_document.IsModifiable && !isInSubTransaction)
-            {
-                using var transaction = new Transaction(_document, RevitStorage.SaveChangesTransactionName);
-                try
-                {
-                    if (transaction.Start() == TransactionStatus.Started)
-                    {
-                        sync.Invoke();
-                    }
-
-                    if (TransactionStatus.Committed != transaction.Commit())
-                    {
-                        transaction.RollBack();
-                    }
-                }
-                catch (Exception)
-                {
-                    transaction.RollBack();
-                    throw;
-                }
-            }
-            else
-            {
-                using var subTransaction = new SubTransaction(_document);
-                try
-                {
-                    if (subTransaction.Start() == TransactionStatus.Started)
-                    {
-                        sync.Invoke();
-                    }
-
-                    if (TransactionStatus.Committed != subTransaction.Commit())
-                    {
-                        subTransaction.RollBack();
-                    }
-                }
-                catch (Exception)
-                {
-                    subTransaction.RollBack();
-                    throw;
-                }
-            }
         }
     }
 }

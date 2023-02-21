@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.DAL.Db.Migrations
 {
     [DbContext(typeof(ProjectsDataContext))]
-    [Migration("20230129070912_InitialCreate")]
+    [Migration("20230217065405_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,15 +20,14 @@ namespace App.DAL.Db.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
 
-            modelBuilder.Entity("App.DAL.Db.Model.Bar", b =>
+            modelBuilder.Entity("App.DAL.Db.Model.BaseEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Description");
+                    b.Property<int>("EntityType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
@@ -41,35 +40,11 @@ namespace App.DAL.Db.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.ToTable("BaseEntity", (string)null);
 
-                    b.ToTable("Bars");
-                });
+                    b.HasDiscriminator<int>("EntityType");
 
-            modelBuilder.Entity("App.DAL.Db.Model.Foo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Description");
-
-                    b.Property<Guid>("Guid")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Foos");
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("App.DAL.Db.Model.Project", b =>
@@ -87,6 +62,38 @@ namespace App.DAL.Db.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("App.DAL.Db.Model.Bar", b =>
+                {
+                    b.HasBaseType("App.DAL.Db.Model.BaseEntity");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("BaseEntity", (string)null);
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("App.DAL.Db.Model.Foo", b =>
+                {
+                    b.HasBaseType("App.DAL.Db.Model.BaseEntity");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("BaseEntity", null, t =>
+                        {
+                            t.Property("Description")
+                                .HasColumnName("Foo_Description");
+                        });
+
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("App.DAL.Db.Model.Bar", b =>

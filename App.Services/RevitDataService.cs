@@ -92,7 +92,7 @@ namespace App.Services
             {
                 Name = "BarNew",
                 Description = "Weee",
-                Guid = new Guid(),
+                Guid = Guid.NewGuid()
             };
 
             var category = new Category

@@ -17,17 +17,17 @@ namespace App.DAL.Db.Mapping.Abstractions
             _mapper = mapper;
         }
 
-        public TModel ConvertToModel(TEntity entity)
+        public virtual TModel ConvertToModel(TEntity entity)
         {
             return _mapper.Map<TModel>(entity);
         }
 
-        public TEntity ConvertToEntity(TModel element)
+        public virtual TEntity ConvertToEntity(TModel element)
         {
             return _mapper.Map<TEntity>(element);
         }
 
-        public void UpdateEntity(TModel model, ref TEntity entity)
+        public virtual void UpdateEntity(TModel model, ref TEntity entity)
         {
             _mapper.Map(model, entity);
         }

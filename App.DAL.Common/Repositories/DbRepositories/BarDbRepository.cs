@@ -26,19 +26,27 @@ namespace App.DAL.Common.Repositories.DbRepositories
 
         public void Insert(Bar bar, Category obtainedCategory)
         {
+            Insert(bar);
+
+            var addedBar = DbContext
+                .ChangeTracker
+                .Entries<BarEntity>()
+                .First(x => x.State == EntityState.Added && x.Entity.Guid == bar.Guid);
+
             var categoryEntity = DbContext.Categories.FirstOrDefault(x => x.Name == obtainedCategory.Name);
 
             if (categoryEntity is not null)
             {
-                var converter = _serviceProvider.GetRequiredService<IEntityConverter<Category, CategoryEntity>>();
-                bar.Category = converter.ConvertToModel(categoryEntity);
+                addedBar.Entity.Category = categoryEntity;
             }
             else
             {
-                bar.Category = obtainedCategory;
+                var categoryConverter = 
+                    _serviceProvider.GetRequiredService<IEntityConverter<Category, CategoryEntity>>();
+                categoryEntity = categoryConverter.ConvertToEntity(obtainedCategory);
+                addedBar.Entity.Category = categoryEntity;
+                DbContext.Categories.Add(categoryEntity);
             }
-
-            Insert(bar);
         }
     }
 }

@@ -74,6 +74,8 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
 
         public virtual void Insert(TModelItem element)
         {
+            element.Id = 0;
+
             var project = DbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
 
             var entity = _entityConverter.ConvertToEntity(element);

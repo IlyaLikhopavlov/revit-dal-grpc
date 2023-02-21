@@ -2,6 +2,5 @@
 {
     public class Foo : BaseEntity
     {
-        public string Description { get; set; }
     }
 }

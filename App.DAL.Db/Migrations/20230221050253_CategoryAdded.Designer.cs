@@ -3,6 +3,7 @@ using System;
 using App.DAL.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.DAL.Db.Migrations
 {
     [DbContext(typeof(ProjectsDataContext))]
-    partial class ProjectsDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230221050253_CategoryAdded")]
+    partial class CategoryAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
@@ -22,9 +25,6 @@ namespace App.DAL.Db.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("EntityType")
                         .HasColumnType("INTEGER");
@@ -88,6 +88,9 @@ namespace App.DAL.Db.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ProjectId");
@@ -101,9 +104,16 @@ namespace App.DAL.Db.Migrations
                 {
                     b.HasBaseType("App.DAL.Db.Model.BaseEntity");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("BaseEntity", (string)null);
+                    b.ToTable("BaseEntity", null, t =>
+                        {
+                            t.Property("Description")
+                                .HasColumnName("Foo_Description");
+                        });
 
                     b.HasDiscriminator().HasValue(1);
                 });

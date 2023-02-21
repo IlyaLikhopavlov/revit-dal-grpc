@@ -1,5 +1,6 @@
 ﻿@using global::App.CommunicationServices.Revit
 @using global::App.CommunicationServices.Revit.EventArgs
+@using global::App.DML
 @using global::App.Services
 @inject ApplicationObject ApplicationObject
 @inject RevitDataService RevitDataService
@@ -13,7 +14,8 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th></th>
+            <th>Type</th>
+            <th>Category</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +30,9 @@
             </td>
             <td>
                 @(item.TypeName ?? @"unknown")
+            </td>
+            <td>
+                @((item as Bar)?.Category?.Name ?? @"no category")
             </td>
         </tr>
     }

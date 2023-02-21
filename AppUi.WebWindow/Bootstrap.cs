@@ -29,6 +29,8 @@ using App.DAL.Db.Mapping.Profiles;
 using App.DML;
 using BarEntity = App.DAL.Db.Model.Bar;
 using FooEntity = App.DAL.Db.Model.Foo;
+using ProjectEntity = App.DAL.Db.Model.Project;
+using CategoryEntity = App.DAL.Db.Model.Category;
 using System.Collections.Generic;
 using App.Catalog.Db;
 using App.CommunicationServices.Utils.Comparers;
@@ -90,9 +92,10 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, FooRepositoryFactory>();
             serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
 
-            serviceCollection.AddSingleton<IProjectConverter, ProjectEntityConverter>();
+            serviceCollection.AddSingleton<IEntityConverter<Project, ProjectEntity>, ProjectEntityConverter>();
             serviceCollection.AddSingleton<IEntityConverter<Foo, FooEntity>, FooEntityConverter>();
             serviceCollection.AddSingleton<IEntityConverter<Bar, BarEntity>, BarEntityConverter>();
+            serviceCollection.AddSingleton<IEntityConverter<Category, CategoryEntity>, CategoryEntityConverter>();
 
             serviceCollection.AddSingleton<RevitDataService>();
 

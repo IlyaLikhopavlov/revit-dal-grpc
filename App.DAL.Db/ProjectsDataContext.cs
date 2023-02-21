@@ -1,6 +1,5 @@
 ﻿using App.DAL.Db.Model;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Contracts;
 
 namespace App.DAL.Db
 {
@@ -14,6 +13,8 @@ namespace App.DAL.Db
         public DbSet<Foo> Foos { get; set; }
 
         public DbSet<Bar> Bars { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
 
         public DbSet<Project> Projects { get; set; }
 
@@ -38,6 +39,11 @@ namespace App.DAL.Db
                 .HasOne(e => e.Project)
                 .WithMany(e => e.Bars)
                 .HasForeignKey(e => e.ProjectId);
+
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Bars)
+                .WithOne(b => b.Category)
+                .HasForeignKey(b => b.CategoryId);
 
         }
     }

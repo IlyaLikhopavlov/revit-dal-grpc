@@ -30,28 +30,48 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             Initialization = Task.CompletedTask;
         }
 
+        protected virtual IQueryable<TDbEntity> Query(bool eager = false)
+        {
+            var query = _dbSet.AsQueryable();
+            
+            if (!eager)
+            {
+                return query;
+            }
+
+            var navigationProperties = _dbContext.Model.FindEntityType(typeof(TDbEntity))?
+                .GetDerivedTypesInclusive()
+                .SelectMany(type => type.GetNavigations())
+                .Distinct();
+
+            return navigationProperties?
+                .Aggregate(query, (current, property) => 
+                    current.Include(property.Name));
+        }
+
         public Task Initialization { get; }
 
-        public IEnumerable<TModelItem> GetAll()
+        public virtual IEnumerable<TModelItem> GetAll()
         {
-            return
-                _dbSet
+            var result = Query(true)
                     .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                     .Select(x => _entityConverter.ConvertToModel(x))
                     .ToList();
+
+            return result;
         }
 
-        public TModelItem GetById(int elementId)
+        public virtual TModelItem GetById(int elementId)
         {
             var entity =
-                _dbSet
+                Query(true)
                     .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                     .First(x => x.Id == elementId);
 
             return _entityConverter.ConvertToModel(entity);
         }
 
-        public void Insert(TModelItem element)
+        public virtual void Insert(TModelItem element)
         {
             var project = _dbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
 
@@ -61,7 +81,7 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             _dbSet.Add(entity);
         }
 
-        public void Remove(int elementId)
+        public virtual void Remove(int elementId)
         {
             var entity = 
                 _dbSet
@@ -71,7 +91,7 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             _dbSet.Remove(entity);
         }
 
-        public void Update(TModelItem element)
+        public virtual void Update(TModelItem element)
         {
             var entity = _dbSet
                 .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
@@ -82,7 +102,7 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             _dbSet.Update(entity);
         }
 
-        public async Task SaveAsync()
+        public virtual async Task SaveAsync()
         {
             _ = await _dbContext.SaveChangesAsync();
         }

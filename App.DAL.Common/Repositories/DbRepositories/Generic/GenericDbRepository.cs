@@ -3,6 +3,7 @@ using App.DAL.Db.Mapping.Abstractions;
 using App.DAL.Db.Model;
 using App.DML;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace App.DAL.Common.Repositories.DbRepositories.Generic
 {
@@ -10,11 +11,11 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
         where TModelItem : Element
         where TDbEntity : BaseEntity
     {
-        private readonly ProjectsDataContext _dbContext;
+        protected readonly ProjectsDataContext DbContext;
 
         private readonly IEntityConverter<TModelItem, TDbEntity> _entityConverter;
 
-        private readonly DbSet<TDbEntity> _dbSet;
+        protected readonly DbSet<TDbEntity> DbSet;
 
         private readonly DocumentDescriptor _documentDescriptor;
 
@@ -23,68 +24,88 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             IEntityConverter<TModelItem, TDbEntity> entityConverter,
             DocumentDescriptor documentDescriptor)
         {
-            _dbContext = dbContextFactory.CreateDbContext();
-            _dbSet = _dbContext.Set<TDbEntity>();
+            DbContext = dbContextFactory.CreateDbContext();
+            DbSet = DbContext.Set<TDbEntity>();
             _documentDescriptor = documentDescriptor;
             _entityConverter = entityConverter;
             Initialization = Task.CompletedTask;
         }
 
+        protected virtual IQueryable<TDbEntity> Query(bool eager = false)
+        {
+            var query = DbSet.AsQueryable();
+            
+            if (!eager)
+            {
+                return query;
+            }
+
+            var navigationProperties = DbContext.Model.FindEntityType(typeof(TDbEntity))?
+                .GetDerivedTypesInclusive()
+                .SelectMany(type => type.GetNavigations())
+                .Distinct();
+
+            return navigationProperties?
+                .Aggregate(query, (current, property) => 
+                    current.Include(property.Name));
+        }
+
         public Task Initialization { get; }
 
-        public IEnumerable<TModelItem> GetAll()
+        public virtual IEnumerable<TModelItem> GetAll()
         {
-            return
-                _dbSet
+            var result = Query(true)
                     .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                     .Select(x => _entityConverter.ConvertToModel(x))
                     .ToList();
+
+            return result;
         }
 
-        public TModelItem GetById(int elementId)
+        public virtual TModelItem GetById(int elementId)
         {
             var entity =
-                _dbSet
+                Query(true)
                     .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                     .First(x => x.Id == elementId);
 
             return _entityConverter.ConvertToModel(entity);
         }
 
-        public void Insert(TModelItem element)
+        public virtual void Insert(TModelItem element)
         {
-            var project = _dbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
+            var project = DbContext.Projects.First(x => x.UniqueId == _documentDescriptor.Id);
 
             var entity = _entityConverter.ConvertToEntity(element);
             entity.ProjectId = project.Id;
 
-            _dbSet.Add(entity);
+            DbSet.Add(entity);
         }
 
-        public void Remove(int elementId)
+        public virtual void Remove(int elementId)
         {
             var entity = 
-                _dbSet
+                DbSet
                     .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                     .First(x => x.Id == elementId);
 
-            _dbSet.Remove(entity);
+            DbSet.Remove(entity);
         }
 
-        public void Update(TModelItem element)
+        public virtual void Update(TModelItem element)
         {
-            var entity = _dbSet
+            var entity = DbSet
                 .Where(x => x.Project.UniqueId == _documentDescriptor.Id)
                 .First(x => x.Id == element.Id);
 
             _entityConverter.UpdateEntity(element, ref entity);
 
-            _dbSet.Update(entity);
+            DbSet.Update(entity);
         }
 
-        public async Task SaveAsync()
+        public virtual async Task SaveAsync()
         {
-            _ = await _dbContext.SaveChangesAsync();
+            _ = await DbContext.SaveChangesAsync();
         }
 
         private bool _disposed;
@@ -95,7 +116,7 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             {
                 if (disposing)
                 {
-                    _dbContext.Dispose();
+                    DbContext.Dispose();
                 }
             }
             _disposed = true;

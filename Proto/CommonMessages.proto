@@ -11,6 +11,8 @@ enum ExceptionCodeEnum {
 	RequestedIdDidNotFound = 105; 
 	RequestedPartNumberDidNotFound = 106;
 	RevitDocumentIdWrong = 107;
+	CatalogRecordWasNotFound = 109;
+	CatalogRecordAlreadyExists = 110;
 
 	Exception = 201;
 	DeadlineExceeded = 202;

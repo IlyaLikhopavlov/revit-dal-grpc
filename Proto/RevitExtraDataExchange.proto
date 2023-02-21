@@ -13,6 +13,8 @@ service RevitDataExchange {
 	rpc AllocateRevitInstancesByType (.AllocateRevitInstancesByTypeRequest) returns (.AllocateRevitInstancesByTypeResponse);
 	rpc CreateRevitInstance (.CreateRevitInstanceRequest) returns (.CreateRevitInstanceResponse);
 	rpc DeleteRevitInstance (.DeleteRevitInsatnceRequest) returns (.BasicResponse);
+	rpc CreateOrUpdateCatalogRecord (.CreateOrUpdateRecordInCatalogRequest) returns (.EmptyRequest);
+	rpc ReadRecordFromCatalog (.ReadRecordFromCatalogRequest) returns (.ReadRecordFromCatalogResponse);
 }
 
 enum DomainModelTypesEnum {
@@ -22,6 +24,11 @@ enum DomainModelTypesEnum {
 
 message InstanceData {
 	int32 InstanceId = 1;
+	string Data = 2;
+}
+
+message CatalogRecordData {
+	string GuidId = 1;
 	string Data = 2;
 }
 
@@ -95,4 +102,21 @@ message CreateRevitInstanceResponse {
 message DeleteRevitInsatnceRequest {
 	string DocumentId = 1;
 	int32 InstanceId = 2;
+}
+
+//Update catalog record
+message CreateOrUpdateRecordInCatalogRequest {
+	string DocumentId = 1;
+	CatalogRecordData CatalogRecordData = 2;
+}
+
+//Read catalog record
+message ReadRecordFromCatalogRequest {
+	string DocumentId = 1;
+	string GuidId = 2;
+}
+
+message ReadRecordFromCatalogResponse {
+	ErrorInfo ErrorInfo = 1;
+	CatalogRecordData CatalogRecordData = 2;
 }

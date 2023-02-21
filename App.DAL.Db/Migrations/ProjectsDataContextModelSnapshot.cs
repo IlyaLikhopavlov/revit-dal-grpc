@@ -17,15 +17,17 @@ namespace App.DAL.Db.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
 
-            modelBuilder.Entity("App.DAL.Db.Model.Bar", b =>
+            modelBuilder.Entity("App.DAL.Db.Model.BaseEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Description");
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
@@ -38,35 +40,28 @@ namespace App.DAL.Db.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
+                    b.ToTable("BaseEntity", (string)null);
 
-                    b.ToTable("Bars");
+                    b.HasDiscriminator<int>("EntityType");
+
+                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("App.DAL.Db.Model.Foo", b =>
+            modelBuilder.Entity("App.DAL.Db.Model.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Description");
-
-                    b.Property<Guid>("Guid")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Foos");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("App.DAL.Db.Model.Project", b =>
@@ -88,9 +83,44 @@ namespace App.DAL.Db.Migrations
 
             modelBuilder.Entity("App.DAL.Db.Model.Bar", b =>
                 {
+                    b.HasBaseType("App.DAL.Db.Model.BaseEntity");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("BaseEntity", (string)null);
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("App.DAL.Db.Model.Foo", b =>
+                {
+                    b.HasBaseType("App.DAL.Db.Model.BaseEntity");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("BaseEntity", (string)null);
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("App.DAL.Db.Model.Bar", b =>
+                {
+                    b.HasOne("App.DAL.Db.Model.Category", "Category")
+                        .WithMany("Bars")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("App.DAL.Db.Model.Project", "Project")
                         .WithMany("Bars")
                         .HasForeignKey("ProjectId");
+
+                    b.Navigation("Category");
 
                     b.Navigation("Project");
                 });
@@ -102,6 +132,11 @@ namespace App.DAL.Db.Migrations
                         .HasForeignKey("ProjectId");
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("App.DAL.Db.Model.Category", b =>
+                {
+                    b.Navigation("Bars");
                 });
 
             modelBuilder.Entity("App.DAL.Db.Model.Project", b =>

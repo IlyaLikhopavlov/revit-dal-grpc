@@ -29,16 +29,31 @@ using App.DAL.Db.Mapping.Profiles;
 using App.DML;
 using BarEntity = App.DAL.Db.Model.Bar;
 using FooEntity = App.DAL.Db.Model.Foo;
+using ProjectEntity = App.DAL.Db.Model.Project;
+using CategoryEntity = App.DAL.Db.Model.Category;
 using System.Collections.Generic;
+using App.Catalog.Db;
 using App.CommunicationServices.Utils.Comparers;
 using App.DAL.Revit.Converters.Common;
+using App.Settings.Constants;
 
 namespace AppUi.WebWindow
 {
     public static class Bootstrap
     {
+        public static string GetContentPath()
+        {
+            var result = Path.GetFullPath(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", ".."));
+
+            return result;
+        }
+
         public static void Load(this IServiceCollection serviceCollection)
         {
+            var contentPath = GetContentPath();
+            
+            
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
@@ -51,6 +66,8 @@ namespace AppUi.WebWindow
             serviceCollection.AddOptions();
             serviceCollection.Configure<ApplicationSettings>(options =>
                 configuration.GetSection(nameof(ApplicationSettings)).Bind(options));
+            serviceCollection.Configure<ConnectionStrings>(options =>
+                configuration.GetSection(nameof(ConnectionStrings)).Bind(options));
 
             serviceCollection.AddSingleton<ApplicationObject>();
             serviceCollection.AddSingleton<IEqualityComparer<DocumentDescriptor>,
@@ -75,16 +92,34 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, FooRepositoryFactory>();
             serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
 
-            serviceCollection.AddSingleton<IProjectConverter, ProjectEntityConverter>();
+            serviceCollection.AddSingleton<IEntityConverter<Project, ProjectEntity>, ProjectEntityConverter>();
             serviceCollection.AddSingleton<IEntityConverter<Foo, FooEntity>, FooEntityConverter>();
             serviceCollection.AddSingleton<IEntityConverter<Bar, BarEntity>, BarEntityConverter>();
+            serviceCollection.AddSingleton<IEntityConverter<Category, CategoryEntity>, CategoryEntityConverter>();
 
             serviceCollection.AddSingleton<RevitDataService>();
 
             serviceCollection.AddTransient<ProjectsDbInitializer>();
+            serviceCollection.AddTransient<CatalogDbInitializer>();
             serviceCollection.AddDbContextFactory<ProjectsDataContext>(builder =>
             {
-                builder.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+                var connectionString = configuration
+                                           .GetRequiredSection(nameof(ConnectionStrings))
+                                           .Get<ConnectionStrings>()?.ProjectsDbConnection 
+                                       ?? throw new InvalidOperationException(
+                                           "Connection string for projects DB wasn't found.");
+                builder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}" +
+                                  $"{Path.Combine(contentPath, connectionString)}");
+            });
+            serviceCollection.AddDbContextFactory<CatalogDbContext>(builder =>
+            {
+                var connectionString = configuration
+                                           .GetRequiredSection(nameof(ConnectionStrings))
+                                           .Get<ConnectionStrings>()?.CatalogDbConnection
+                                       ?? throw new InvalidOperationException(
+                                           "Connection string for catalog DB wasn't found.");
+                builder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}" +
+                                  $"{Path.Combine(contentPath, connectionString)}");
             });
 
             serviceCollection.AddFactoryFacility();
@@ -95,6 +130,8 @@ namespace AppUi.WebWindow
         {
             try
             {
+                serviceProvider.GetService<CatalogDbInitializer>()?.InitDataBase();
+
                 var mode =
                     serviceProvider.GetService<IOptions<ApplicationSettings>>()?.Value.ApplicationMode;
 

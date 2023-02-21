@@ -85,5 +85,25 @@ namespace App.Services
 
             return foos.Concat(bars.Cast<BaseItem>());
         }
+
+        public async Task AddNewBarAsync()
+        {
+            var bar = new Bar
+            {
+                Name = "BarNew",
+                Description = "Weee",
+                Guid = new Guid(),
+            };
+
+            var category = new Category
+            {
+                Name = @"Third",
+                Description = @"Third"
+            };
+
+            _barRepository.Insert(bar, category);
+
+            await _barRepository.SaveAsync();
+        }
     }
 }

@@ -12,5 +12,11 @@ namespace App.DAL.Common.Repositories.RevitRepositories
             : base(documentDescriptorServiceScopeFactory, documentDescriptor)
         {
         }
+
+        public void Insert(Bar bar, Category obtainedCategory)
+        {
+            bar.Category = obtainedCategory;
+            Insert(bar);
+        }
     }
 }

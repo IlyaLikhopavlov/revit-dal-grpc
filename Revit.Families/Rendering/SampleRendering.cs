@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using Bimdance.Revit.Framework.RevitDocument;
 using Revit.Families.Common;
 using Revit.Services.Grpc.Services;
 
@@ -46,11 +47,11 @@ namespace Revit.Families.Rendering
             var tempFileName = $"{Path.GetTempFileName()}{FamilyExtension}";
             File.WriteAllBytes(tempFileName, familyData!);
 
-            _document.ExecuteTransaction(() =>
+            _document.SaveChanges(() =>
             {
                 _document.LoadFamily(tempFileName, new FamilyLoadOptions(), out var family);
                 family.Name = name.Family;
-            }, "Rename family");
+            });
             File.Delete(tempFileName);
 
             return _document.GetFamilySymbols(name.Family).FirstOrDefault();

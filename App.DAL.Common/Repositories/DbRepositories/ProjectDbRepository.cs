@@ -2,6 +2,7 @@
 using App.DAL.Db.Mapping.Abstractions;
 using App.DML;
 using Microsoft.EntityFrameworkCore;
+using ProjectEntity = App.DAL.Db.Model.Project;
 
 namespace App.DAL.Common.Repositories.DbRepositories
 {
@@ -9,10 +10,10 @@ namespace App.DAL.Common.Repositories.DbRepositories
     {
         private readonly ProjectsDataContext _dbContext;
 
-        private readonly IProjectConverter _projectConverter;
+        private readonly IEntityConverter<Project, ProjectEntity> _projectConverter;
 
         public ProjectDbRepository(
-            IProjectConverter projectConverter,
+            IEntityConverter<Project, ProjectEntity> projectConverter,
             IDbContextFactory<ProjectsDataContext> dbContextFactory)
         {
             _dbContext = dbContextFactory.CreateDbContext();

@@ -26,55 +26,31 @@ namespace App.DAL.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bars",
+                name: "BaseEntity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Guid = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ProjectId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: true),
+                    EntityType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    FooDescription = table.Column<string>(name: "Foo_Description", type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bars", x => x.Id);
+                    table.PrimaryKey("PK_BaseEntity", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bars_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Foos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Guid = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ProjectId = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Foos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Foos_Projects_ProjectId",
+                        name: "FK_BaseEntity_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bars_ProjectId",
-                table: "Bars",
-                column: "ProjectId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Foos_ProjectId",
-                table: "Foos",
+                name: "IX_BaseEntity_ProjectId",
+                table: "BaseEntity",
                 column: "ProjectId");
         }
 
@@ -82,10 +58,7 @@ namespace App.DAL.Db.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Bars");
-
-            migrationBuilder.DropTable(
-                name: "Foos");
+                name: "BaseEntity");
 
             migrationBuilder.DropTable(
                 name: "Projects");

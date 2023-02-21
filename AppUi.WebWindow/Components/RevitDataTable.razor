@@ -1,5 +1,6 @@
 ﻿@using global::App.CommunicationServices.Revit
 @using global::App.CommunicationServices.Revit.EventArgs
+@using global::App.DML
 @using global::App.Services
 @inject ApplicationObject ApplicationObject
 @inject RevitDataService RevitDataService
@@ -13,7 +14,8 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th></th>
+            <th>Type</th>
+            <th>Category</th>
         </tr>
     </thead>
     <tbody>
@@ -29,13 +31,17 @@
             <td>
                 @(item.TypeName ?? @"unknown")
             </td>
+            <td>
+                @((item as Bar)?.Category?.Name ?? @"no category")
+            </td>
         </tr>
     }
     </tbody>
 </table>
 
-<button class="btn btn-primary" @onclick="AllocateFoos">Allocate Foos</button>
-<button class="btn btn-primary" @onclick="AllocateBars">Allocate Bars</button>
+<button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
+<button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
+<button class="btn btn-primary" @onclick="AddNewBarAsync">Add Bar</button>
 
 @code {
     protected override async Task OnInitializedAsync()
@@ -68,18 +74,24 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private void AllocateFoos()
+    private async Task AllocateFoosAsync()
     {
-        RevitDataService?.AllocateFoosAsync();
+        await RevitDataService?.AllocateFoosAsync()!;
     }
 
-    private void AllocateBars()
+    private async Task AllocateBarsAsync()
     {
-        RevitDataService?.AllocateBarsAsync();
+        await RevitDataService?.AllocateBarsAsync()!;
     }
 
     public void Dispose()
     {
         ApplicationObject.DocumentDescriptorChanged -= DocumentDescriptorChanged;
     }
+
+    private async Task AddNewBarAsync()
+    {
+        await RevitDataService.AddNewBarAsync();
+    }
+
 }

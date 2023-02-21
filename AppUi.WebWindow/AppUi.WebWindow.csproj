@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\App.Catalog.Db\App.Catalog.Db.csproj" />
     <ProjectReference Include="..\App.CommunicationServices\App.CommunicationServices.csproj" />
     <ProjectReference Include="..\App.DAL.Common\App.DAL.Common.csproj" />
     <ProjectReference Include="..\App.DAL.Db\App.DAL.Db.csproj" />

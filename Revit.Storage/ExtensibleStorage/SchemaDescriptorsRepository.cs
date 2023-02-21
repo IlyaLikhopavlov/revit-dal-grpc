@@ -9,7 +9,7 @@ using Revit.Storage.ExtensibleStorage.Schemas;
 using ArgumentException = System.ArgumentException;
 using InvalidOperationException = System.InvalidOperationException;
 
-namespace Revit.Storage.ExtensibleStorage.Infrastructure
+namespace Revit.Storage.ExtensibleStorage
 {
     public class SchemaDescriptorsRepository : ISchemaDescriptorsRepository
     {
@@ -47,6 +47,17 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
                         SchemaType = typeof(IDictionary<string, string>),
                         TargetType = typeof(ProjectInfo),
                         FieldName = RevitStorage.Settings.FieldName,
+                        TargetElement = document.ProjectInformation
+                    }),
+
+                descriptorsFactory.New(
+                    new SchemaInfo
+                    {
+                        Guid = new Guid(RevitStorage.CatalogExtensibleStorageSchemaGuid),
+                        EntityName = RevitStorage.Catalog.SchemaName,
+                        SchemaType = typeof(IDictionary<string, string>),
+                        TargetType = typeof(ProjectInfo),
+                        FieldName = RevitStorage.Catalog.FieldName,
                         TargetElement = document.ProjectInformation
                     }),
 

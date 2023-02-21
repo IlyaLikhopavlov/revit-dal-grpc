@@ -31,7 +31,22 @@ namespace App.DAL.Db
 
             context.Projects.Add(project);
 
-            var foo = 
+            var specialCategory = 
+                new Category
+                {
+                    Name = "Special"
+                };
+
+            var usualCategory =
+                new Category
+                {
+                    Name = "Usual"
+                };
+
+            context.Categories.Add(specialCategory);
+            context.Categories.Add(usualCategory);
+
+            var foo1 = 
                 new Foo
                 {
                     Description = "Foo1 description from DB",
@@ -40,17 +55,39 @@ namespace App.DAL.Db
                     Project = project
                 };
 
-            var bar = 
+            var foo2 =
+                new Foo
+                {
+                    Description = "Foo2 description from DB",
+                    Guid = new Guid("7D7A0EA5-FF45-4288-BAF8-FB85D2B9EFC4"),
+                    Name = "Foo2",
+                    Project = project
+                };
+
+            var bar1 = 
                 new Bar
                 {
                     Description = "Bar1 description from DB",
                     Guid = new Guid("87548BE0-6552-4016-9F86-89EADE37390F"),
                     Name = "Bar1",
+                    Category = specialCategory,
                     Project = project
                 };
 
-            context.Bars.Add(bar);
-            context.Foos.Add(foo);
+            var bar2 =
+                new Bar
+                {
+                    Description = "Bar2 description from DB",
+                    Guid = new Guid("63282292-9329-44EA-A15B-18DA7BFE364B"),
+                    Name = "Bar2",
+                    Category = usualCategory,
+                    Project = project
+                };
+
+            context.Bars.Add(bar1);
+            context.Foos.Add(foo1);
+            context.Bars.Add(bar2);
+            context.Foos.Add(foo2);
 
             context.SaveChanges();
         }

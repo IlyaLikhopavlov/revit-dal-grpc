@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.ExtensibleStorage;
+using Bimdance.Revit.Framework.RevitDocument;
 using Revit.Families;
 
 namespace Revit.Storage.ExtensibleStorage.Infrastructure
@@ -7,8 +8,6 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
     public abstract class ExtensibleStorageCollection<TTarget, TBase> : IExtensibleStorage
         where TTarget : class, TBase, new()
     {
-        public const string TransactionNamePrefix = @"Save collection";
-
         protected readonly Guid SchemaGuid;
 
         protected readonly Schema Schema;
@@ -60,7 +59,7 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
 
         protected virtual void Pull()
         {
-            Element.Document.ExecuteTransaction(() =>
+            Element.Document.SaveChanges(() =>
             {
                 var entity = Element.GetEntity(Schema);
 
@@ -70,12 +69,12 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
                 }
 
                 Storage = entity.Get<TBase>(Schema.GetField(FieldName)) ?? new TTarget();
-            }, $"{TransactionNamePrefix} {SchemaName}");
+            });
         }
 
         public virtual void Save()
         {
-            Element.Document.ExecuteTransaction(() =>
+            Element.Document.SaveChanges(() =>
             {
                 var entity = Element.GetEntity(Schema);
 
@@ -86,7 +85,7 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
 
                 entity.Set(Schema.GetField(FieldName), Storage ?? new TTarget());
                 Element.SetEntity(entity);
-            }, $"{TransactionNamePrefix} {SchemaName}");
+            });
         }
 
         public Type Type => GetType();

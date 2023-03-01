@@ -13,7 +13,7 @@ service RevitDataExchange {
 	rpc AllocateRevitInstancesByType (.AllocateRevitInstancesByTypeRequest) returns (.AllocateRevitInstancesByTypeResponse);
 	rpc CreateRevitInstance (.CreateRevitInstanceRequest) returns (.CreateRevitInstanceResponse);
 	rpc DeleteRevitInstance (.DeleteRevitInsatnceRequest) returns (.BasicResponse);
-	rpc CreateOrUpdateCatalogRecord (.CreateOrUpdateRecordInCatalogRequest) returns (.EmptyRequest);
+	rpc CreateOrUpdateCatalogRecord (.CreateOrUpdateRecordInCatalogRequest) returns (.BasicResponse);
 	rpc ReadRecordFromCatalog (.ReadRecordFromCatalogRequest) returns (.ReadRecordFromCatalogResponse);
 }
 

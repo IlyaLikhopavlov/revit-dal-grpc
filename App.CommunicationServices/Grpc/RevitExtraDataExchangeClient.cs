@@ -137,7 +137,7 @@ namespace App.CommunicationServices.Grpc
             return response.InstanceId;
         }
 
-        public async Task<bool> DeleteRevitElement(int instanceId, DocumentDescriptor documentDescriptor)
+        public async Task DeleteRevitElement(int instanceId, DocumentDescriptor documentDescriptor)
         {
             var response = await _client.DeleteRevitInstanceAsync(
                 new DeleteRevitInsatnceRequest
@@ -146,7 +146,48 @@ namespace App.CommunicationServices.Grpc
                     InstanceId = instanceId
                 });
 
-            return response?.ErrorInfo.Code == ExceptionCodeEnum.Success;
+            if (response.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Instance with provided ID={instanceId} wasn't found.");
+            }
+        }
+
+        public async Task CreateOrUpdateCatalogRecordAsync(
+            DocumentDescriptor documentDescriptor, 
+            CatalogRecordData catalogRecordData)
+        {
+            var response = await _client.CreateOrUpdateCatalogRecordAsync(
+                new CreateOrUpdateRecordInCatalogRequest
+                {
+                    CatalogRecordData = catalogRecordData,
+                    DocumentId = documentDescriptor.Id,
+                });
+
+            if (response.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response.ErrorInfo.Code} " +
+                                                    $"Message: {response.ErrorInfo.Message}");
+            }
+        }
+
+        public async Task<CatalogRecordData> ReadRecordFromCatalogAsync(
+            DocumentDescriptor documentDescriptor,
+            Guid uniqueId)
+        {
+            var response = await _client.ReadRecordFromCatalogAsync(
+                new ReadRecordFromCatalogRequest
+                {
+                    GuidId = uniqueId.ToString(),
+                    DocumentId = documentDescriptor.Id
+                });
+
+            if (response.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response.ErrorInfo.Code} " +
+                                                    $"Message: {response.ErrorInfo.Message}");
+            }
+
+            return response.CatalogRecordData;
         }
     }
 }

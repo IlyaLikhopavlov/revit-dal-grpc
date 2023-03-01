@@ -66,9 +66,9 @@ namespace App.DAL.Revit.Converters.Common
             return await Client.CreateRevitElement(typeof(TModelElement), DocumentDescriptor);
         }
 
-        public virtual async Task<bool> DeleteRevitElement(int instanceId)
+        public virtual async Task DeleteRevitElement(int instanceId)
         {
-            return await Client.DeleteRevitElement(instanceId, DocumentDescriptor);
+            await Client.DeleteRevitElement(instanceId, DocumentDescriptor);
         }
 
         public string ModelElementName => typeof(TModelElement).Name;

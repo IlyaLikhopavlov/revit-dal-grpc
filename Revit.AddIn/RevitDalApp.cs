@@ -69,8 +69,11 @@ namespace Revit.AddIn
             serviceCollection.AddSingleton<IExternalServiceEventHandler, PullDataFromRevitInstancesByTypeEventHandler>();
             serviceCollection.AddSingleton<IExternalServiceEventHandler, CreateRevitInstanceEventHandler>();
             serviceCollection.AddSingleton<IExternalServiceEventHandler, DeleteRevitInstanceEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, CreateOrUpdateCatalogRecordEventHandler>();
+            serviceCollection.AddSingleton<IExternalServiceEventHandler, ReadRecordFromCatalogEventHandler>();
 
             serviceCollection.AddScoped<RevitDataContext>();
+            serviceCollection.AddScoped<IRevitCatalogContext, RevitCatalogContext>();
 
             serviceCollection.AddFactoryFacility();
 

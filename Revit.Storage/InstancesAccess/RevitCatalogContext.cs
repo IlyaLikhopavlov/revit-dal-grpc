@@ -12,15 +12,12 @@ using Revit.Storage.ExtensibleStorage.Constants;
 
 namespace Revit.Storage.InstancesAccess
 {
-    public class RevitCatalogContext
+    public class RevitCatalogContext : IRevitCatalogContext
     {
-        private readonly Document _document;
-
         private readonly IExtensibleStorageService _storageService;
 
         public RevitCatalogContext(IFactory<Document, IExtensibleStorageService> extensibleStorageServiceFactory, Document document)
         {
-            _document = document ?? throw new ArgumentException($"{nameof(document)} isn't initialized.");
             _storageService = extensibleStorageServiceFactory.New(document);
         }
 
@@ -43,12 +40,10 @@ namespace Revit.Storage.InstancesAccess
             var storage = _storageService.GetDictionaryStorage(RevitStorage.Catalog.SchemaName);
             var data = storage.GetEntity(guidId);
 
-
-
             return new CatalogRecordData
             {
-                //GuidId = guidId
-                //Data = data,
+                GuidId = guidId,
+                Data = data
             };
         }
     }

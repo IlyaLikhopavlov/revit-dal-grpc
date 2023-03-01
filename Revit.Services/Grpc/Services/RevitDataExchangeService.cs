@@ -48,10 +48,20 @@ namespace Revit.Services.Grpc.Services
             await _externalEventsService.Execute<CreateRevitInstanceRequest, CreateRevitInstanceResponse>(
                 nameof(CreateRevitInstanceEventHandler), request);
 
-        public override async Task<BasicResponse> DeleteRevitInstance
-            (DeleteRevitInsatnceRequest request, ServerCallContext context) =>
+        public override async Task<BasicResponse> DeleteRevitInstance(
+            DeleteRevitInsatnceRequest request, ServerCallContext context) =>
             await _externalEventsService.Execute<DeleteRevitInsatnceRequest, BasicResponse>(
                 nameof(DeleteRevitInsatnceRequest), request);
+
+        public override async Task<BasicResponse> CreateOrUpdateCatalogRecord(
+            CreateOrUpdateRecordInCatalogRequest request, ServerCallContext context) =>
+            await _externalEventsService.Execute<CreateOrUpdateRecordInCatalogRequest, BasicResponse>(
+                nameof(CreateOrUpdateCatalogRecordEventHandler), request);
+
+        public override async Task<ReadRecordFromCatalogResponse> ReadRecordFromCatalog(
+            ReadRecordFromCatalogRequest request, ServerCallContext context) =>
+            await _externalEventsService.Execute<ReadRecordFromCatalogRequest, ReadRecordFromCatalogResponse>(
+                nameof(CreateOrUpdateCatalogRecordEventHandler), request);
 
     }
 }

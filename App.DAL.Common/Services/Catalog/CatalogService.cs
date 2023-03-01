@@ -15,28 +15,61 @@ namespace App.DAL.Common.Services.Catalog
 {
     public class CatalogService
     {
-        private readonly ICatalogStorage _catalogStorage; 
+        private ICatalogStorage _revitCatalogStorage;
+
+        private ICatalogStorage _dbCatalogStorage;
+
+        private readonly ApplicationModeEnum _mode;
         
         public CatalogService(
             IOptions<ApplicationSettings> options, 
             IDocumentDescriptorServiceScopeFactory serviceScopeFactory)
         {
-            _catalogStorage = options.Value.ApplicationMode switch
+            _mode = options.Value.ApplicationMode;
+
+            switch (_mode)
             {
-                ApplicationModeEnum.Web => serviceScopeFactory.GetScopedService<DbCatalogStorage>(),
-                ApplicationModeEnum.Desktop => serviceScopeFactory.GetScopedService<RevitCatalogStorage>(),
-                _ => throw new InvalidEnumArgumentException("Required repository type didn't find")
-            };
+                case ApplicationModeEnum.Desktop:
+                    GetStoragesForDesktop(serviceScopeFactory);
+                    break;
+                case ApplicationModeEnum.Web:
+                    GetStorageForWeb(serviceScopeFactory);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void GetStorageForWeb(IDocumentDescriptorServiceScopeFactory factory)
+        {
+            _dbCatalogStorage = factory.GetScopedService<DbCatalogStorage>();
+        }
+
+        public void GetStoragesForDesktop(IDocumentDescriptorServiceScopeFactory factory)
+        {
+            _dbCatalogStorage = factory.GetScopedService<DbCatalogStorage>();
+            _revitCatalogStorage = factory.GetScopedService<RevitCatalogStorage>();
         }
 
         public async Task<T> ReadCatalogRecord<T>(Guid uniqueId) where T : BaseCatalogEntity
         {
-            return await _catalogStorage.ReadCatalogRecord<T>(uniqueId);
+            switch (_mode)
+            {
+                case ApplicationModeEnum.Web:
+                    return await _dbCatalogStorage.ReadCatalogRecord<T>(uniqueId);
+                case ApplicationModeEnum.Desktop:
+                {
+                    var recordFromDocument = _revitCatalogStorage.ReadCatalogRecord<T>(uniqueId);
+
+                    //TODO check result, if record didn't find, try to get it from DB
+                    break;
+                }
+            }
         }
 
         public async Task WriteCatalogRecord<T>(T record) where T : BaseCatalogEntity
         {
-            await _catalogStorage.WriteCatalogRecord<T>(record);
+            //TODO
         }
     }
 }

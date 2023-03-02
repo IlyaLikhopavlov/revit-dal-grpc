@@ -1,75 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.Catalog.Db.Model;
+﻿using App.Catalog.Db.Model;
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.Settings.Model;
 using App.Settings.Model.Enums;
-using Microsoft.Extensions.DependencyInjection;
+using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Services.Catalog
 {
     public class CatalogService
     {
-        private ICatalogStorage _revitCatalogStorage;
-
-        private ICatalogStorage _dbCatalogStorage;
-
+        private readonly IDocumentDescriptorServiceScopeFactory _serviceScopeFactory;
         private readonly ApplicationModeEnum _mode;
         
         public CatalogService(
             IOptions<ApplicationSettings> options, 
             IDocumentDescriptorServiceScopeFactory serviceScopeFactory)
         {
+            _serviceScopeFactory = serviceScopeFactory;
             _mode = options.Value.ApplicationMode;
+        }
 
+        public async Task<T> ReadCatalogRecordAsync<T>(Guid uniqueId) where T : BaseCatalogEntity
+        {
             switch (_mode)
             {
-                case ApplicationModeEnum.Desktop:
-                    GetStoragesForDesktop(serviceScopeFactory);
-                    break;
                 case ApplicationModeEnum.Web:
-                    GetStorageForWeb(serviceScopeFactory);
-                    break;
+                    var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
+                    return await dbCatalogStorage.ReadCatalogRecordOrDefaultAsync<T>(uniqueId);
+                case ApplicationModeEnum.Desktop:
+                {
+                    var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
+                    var record = await revitCatalogStorage.ReadCatalogRecordOrDefaultAsync<T>(uniqueId);
+                
+                    if (record is not null)
+                    {
+                        return record;
+                    }
+                    
+                    dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
+                    record = await dbCatalogStorage.ReadCatalogRecordOrDefaultAsync<T>(uniqueId);
+
+                    await revitCatalogStorage.WriteCatalogRecordAsync(record);
+
+                    return record;
+                }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        public void GetStorageForWeb(IDocumentDescriptorServiceScopeFactory factory)
-        {
-            _dbCatalogStorage = factory.GetScopedService<DbCatalogStorage>();
-        }
-
-        public void GetStoragesForDesktop(IDocumentDescriptorServiceScopeFactory factory)
-        {
-            _dbCatalogStorage = factory.GetScopedService<DbCatalogStorage>();
-            _revitCatalogStorage = factory.GetScopedService<RevitCatalogStorage>();
-        }
-
-        public async Task<T> ReadCatalogRecord<T>(Guid uniqueId) where T : BaseCatalogEntity
-        {
-            switch (_mode)
-            {
-                case ApplicationModeEnum.Web:
-                    return await _dbCatalogStorage.ReadCatalogRecord<T>(uniqueId);
-                case ApplicationModeEnum.Desktop:
-                {
-                    var recordFromDocument = _revitCatalogStorage.ReadCatalogRecord<T>(uniqueId);
-
-                    //TODO check result, if record didn't find, try to get it from DB
-                    break;
-                }
-            }
-        }
-
-        public async Task WriteCatalogRecord<T>(T record) where T : BaseCatalogEntity
-        {
-            //TODO
         }
     }
 }

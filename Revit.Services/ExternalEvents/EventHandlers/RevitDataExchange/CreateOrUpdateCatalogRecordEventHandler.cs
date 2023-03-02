@@ -22,30 +22,23 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 
         protected override BasicResponse Execute(Document document)
         {
+            var result = new BasicResponse();
             try
             {
                 var catalogContext =
                     _scopeFactory.GetScopedService<IRevitCatalogContext>(document);
 
-                    catalogContext.CreateOrUpdateRecordInCatalog(Request.CatalogRecordData);
+                catalogContext.CreateOrUpdateRecordInCatalog(Request.CatalogRecordData);
             }
             catch (Exception ex)
             {
-                return new BasicResponse
-                {
-                    ErrorInfo =
-                        new ErrorInfo
-                        {
-                            Code = ExceptionCodeEnum.Unknown,
-                            Message = ex.Message
-                        }
-                };
+                result.ErrorInfo.Code = ExceptionCodeEnum.Unknown;
+                result.ErrorInfo.Message = ex.Message;
+                return result;
             }
 
-            return new BasicResponse
-            {
-                ErrorInfo = new ErrorInfo { Code = ExceptionCodeEnum.Success },
-            };
+            result.ErrorInfo.Code = ExceptionCodeEnum.Success;
+            return result;
         }
     }
 }

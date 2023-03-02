@@ -6,6 +6,8 @@ namespace Revit.Storage.InstancesAccess
     {
         void CreateOrUpdateRecordInCatalog(CatalogRecordData data);
 
-        CatalogRecordData ReadFromCatalog(string guidId);
+        bool Contains(string uniqueId);
+
+        CatalogRecordData ReadFromCatalog(string uniqueId);
     }
 }

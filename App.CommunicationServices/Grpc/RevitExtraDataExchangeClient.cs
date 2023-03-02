@@ -181,6 +181,11 @@ namespace App.CommunicationServices.Grpc
                     DocumentId = documentDescriptor.Id
                 });
 
+            if (response.ErrorInfo.Code == ExceptionCodeEnum.CatalogRecordWasNotFound)
+            {
+                return null;
+            }
+
             if (response.ErrorInfo.Code != ExceptionCodeEnum.Success)
             {
                 throw new InvalidOperationException($"Code: {response.ErrorInfo.Code} " +

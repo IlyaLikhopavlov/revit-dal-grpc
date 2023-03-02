@@ -61,7 +61,7 @@ namespace Revit.Services.Grpc.Services
         public override async Task<ReadRecordFromCatalogResponse> ReadRecordFromCatalog(
             ReadRecordFromCatalogRequest request, ServerCallContext context) =>
             await _externalEventsService.Execute<ReadRecordFromCatalogRequest, ReadRecordFromCatalogResponse>(
-                nameof(CreateOrUpdateCatalogRecordEventHandler), request);
+                nameof(ReadRecordFromCatalogEventHandler), request);
 
     }
 }

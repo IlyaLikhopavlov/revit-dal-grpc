@@ -35,14 +35,20 @@ namespace Revit.Storage.InstancesAccess
             }
         }
 
-        public CatalogRecordData ReadFromCatalog(string guidId)
+        public bool Contains(string uniqueId)
         {
             var storage = _storageService.GetDictionaryStorage(RevitStorage.Catalog.SchemaName);
-            var data = storage.GetEntity(guidId);
+            return storage.Contains(uniqueId);
+        }
+
+        public CatalogRecordData ReadFromCatalog(string uniqueId)
+        {
+            var storage = _storageService.GetDictionaryStorage(RevitStorage.Catalog.SchemaName);
+            var data = storage.GetEntity(uniqueId);
 
             return new CatalogRecordData
             {
-                GuidId = guidId,
+                GuidId = uniqueId,
                 Data = data
             };
         }

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using App.Catalog.Db;
+﻿using App.Catalog.Db;
 using App.Catalog.Db.Model;
-using App.DAL.Db.Mapping.Abstractions;
-using App.DAL.Db;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.Common.Services.Catalog
@@ -25,14 +18,14 @@ namespace App.DAL.Common.Services.Catalog
             _documentDescriptor = documentDescriptor;
         }
 
-        public Task<T> ReadCatalogRecord<T>(Guid uniqueId) where T : BaseCatalogEntity
+        public async Task<T> ReadCatalogRecordOrDefaultAsync<T>(Guid uniqueId) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
-            var entity = set.First(x => x.IdGuid == uniqueId);
-            return Task.FromResult(entity);
+            var entity = await set.FirstOrDefaultAsync(x => x.IdGuid == uniqueId);
+            return entity;
         }
 
-        public Task WriteCatalogRecord<T>(T record) where T : BaseCatalogEntity
+        public async Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
             var entity = set.FirstOrDefault(x => x.IdGuid == record.IdGuid);
@@ -43,11 +36,11 @@ namespace App.DAL.Common.Services.Catalog
             }
             else
             {
-                //TODO Update
+                record.Id = entity.Id;
+                set.Update(record);
             }
 
-            DbContext.SaveChanges();
-            return Task.CompletedTask;
+            await DbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using Revit.Services.ExternalEvents.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Revit.Services.Grpc.Services;
 using Revit.ScopedServicesFunctionality;
@@ -22,40 +17,29 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 
         protected override ReadRecordFromCatalogResponse Execute(Document document)
         {
-            CatalogRecordData result;
+            var result = new ReadRecordFromCatalogResponse();
             try
             {
                 var revitDataContext =
-                    _scopeFactory?.GetScopedService<IRevitCatalogContext>(document);
+                    _scopeFactory.GetScopedService<IRevitCatalogContext>(document);
 
-                result = revitDataContext?.ReadFromCatalog(Request.GuidId);
+                if (revitDataContext.Contains(Request.GuidId))
+                {
+                    result.ErrorInfo.Code = ExceptionCodeEnum.CatalogRecordWasNotFound;
+                }
+
+                result.CatalogRecordData = revitDataContext.ReadFromCatalog(Request.GuidId);
             }
             catch (Exception ex)
             {
-                return new ReadRecordFromCatalogResponse
-                {
-                    ErrorInfo =
-                        new ErrorInfo
-                        {
-                            Code = ExceptionCodeEnum.Unknown,
-                            Message = ex.Message
-                        }
-                };
+                result.ErrorInfo.Code = ExceptionCodeEnum.Unknown;
+                result.ErrorInfo.Message = ex.Message;
+
+                return result;
             }
 
-            if (result is null)
-            {
-                return new ReadRecordFromCatalogResponse
-                {
-                    ErrorInfo = new ErrorInfo { Code = ExceptionCodeEnum.Unknown }
-                };
-            }
-
-            return new ReadRecordFromCatalogResponse
-            {
-                ErrorInfo = new ErrorInfo { Code = ExceptionCodeEnum.Success },
-                CatalogRecordData = result
-            };
+            result.ErrorInfo.Code = ExceptionCodeEnum.Success;
+            return result;
         }
     }
 }

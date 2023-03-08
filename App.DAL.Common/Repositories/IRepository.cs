@@ -10,6 +10,7 @@ namespace App.DAL.Common.Repositories
         void Insert(T element);
         void Remove(int elementId);
         void Update(T element);
+        bool Contains(int  elementId);
         Task SaveAsync();
 
     }

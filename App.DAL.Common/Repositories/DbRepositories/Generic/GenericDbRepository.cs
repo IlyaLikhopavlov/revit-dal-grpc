@@ -104,6 +104,11 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
             DbSet.Update(entity);
         }
 
+        public bool Contains(int elementId)
+        {
+            return DbSet.FirstOrDefault(x => x.Id == elementId) is not null;
+        }
+
         public virtual async Task SaveAsync()
         {
             _ = await DbContext.SaveChangesAsync();

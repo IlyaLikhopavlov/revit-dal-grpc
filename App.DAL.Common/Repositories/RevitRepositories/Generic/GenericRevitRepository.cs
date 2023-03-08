@@ -61,6 +61,11 @@ namespace App.DAL.Common.Repositories.RevitRepositories.Generic
             entity.EntityState = EntityState.Modified;
         }
 
+        public bool Contains(int elementId)
+        {
+            return _revitSet.Contains(elementId);
+        }
+
         public async Task SaveAsync()
         {
             await _context.SaveChanges();

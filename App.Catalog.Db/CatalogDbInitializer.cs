@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using App.Catalog.Db.Model;
+using App.Catalog.Db.Model.Enums;
 
 namespace App.Catalog.Db
 {
@@ -49,6 +50,35 @@ namespace App.Catalog.Db
 
             context.FooCatalog.Add(foo);
             context.BarCatalog.Add(bar);
+
+            var channel1 = new Channel
+            {
+                Type = ChannelTypeEnum.Temperature,
+                Name = @"Channel1"
+            };
+
+            var channel2 = new Channel
+            {
+                Type = ChannelTypeEnum.Pressure,
+                Name = @"Channel2"
+            };
+
+            context.Channel.Add(channel1);
+            context.Channel.Add(channel2);
+
+            context.FooCatalogChannel.Add(
+                new FooCatalogChannel
+                {
+                    FooCatalog = foo,
+                    Channel = channel1
+                });
+
+            context.BarCatalogChannel.Add(
+                new BarCatalogChannel
+                {
+                    BarCatalog = bar,
+                    Channel = channel2
+                });
 
             context.SaveChanges();
         }

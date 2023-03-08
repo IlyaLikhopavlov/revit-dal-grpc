@@ -105,5 +105,24 @@ namespace App.Services
 
             await _barRepository.SaveAsync();
         }
+
+        public async Task RemoveEntityAsync(int id)
+        {
+            if (_fooRepository.Contains(id))
+            {
+                _fooRepository.Remove(id);
+                await _fooRepository.SaveAsync();
+                return;
+            }
+            
+            if (_barRepository.Contains(id))
+            {
+                _barRepository.Remove(id);
+                await _barRepository.SaveAsync();
+                return;
+            }
+            
+            throw new InvalidOperationException($"Element with ID={id} wasn't found.");
+        }
     }
 }

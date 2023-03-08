@@ -34,6 +34,7 @@ using CategoryEntity = App.DAL.Db.Model.Category;
 using System.Collections.Generic;
 using App.Catalog.Db;
 using App.CommunicationServices.Utils.Comparers;
+using App.DAL.Common.Services.Catalog;
 using App.DAL.Revit.Converters.Common;
 using App.Settings.Constants;
 
@@ -91,6 +92,10 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<IProjectRepository, ProjectDbRepository>();
             serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, FooRepositoryFactory>();
             serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
+
+            serviceCollection.AddScoped<ICatalogService, CatalogService>();
+            serviceCollection.AddScoped<RevitCatalogStorage>();
+            serviceCollection.AddScoped<DbCatalogStorage>();
 
             serviceCollection.AddSingleton<IEntityConverter<Project, ProjectEntity>, ProjectEntityConverter>();
             serviceCollection.AddSingleton<IEntityConverter<Foo, FooEntity>, FooEntityConverter>();

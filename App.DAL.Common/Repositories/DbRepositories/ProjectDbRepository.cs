@@ -62,6 +62,11 @@ namespace App.DAL.Common.Repositories.DbRepositories
             _dbContext.Projects.Update(entity);
         }
 
+        public bool Contains(int elementId)
+        {
+            return _dbContext.Projects.FirstOrDefault(x => x.Id == elementId) is not null;
+        }
+
         public Project GetByUniqueId(string uniqueId)
         {
             var project = _dbContext.Projects

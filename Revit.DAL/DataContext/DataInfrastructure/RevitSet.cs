@@ -33,6 +33,11 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 
         public IEnumerable<object> Entities => Entries.Select(x => x.Entity)!;
 
+        public bool Contains(int keyValue)
+        {
+            return EntityProxiesDictionary.ContainsKey(keyValue);
+        }
+
         public IEnumerable<EntityProxy<TModelElement>> Entries => EntityProxiesDictionary.Values.Concat(_addBuffer);
 
         public virtual async Task PullRevitEntities()

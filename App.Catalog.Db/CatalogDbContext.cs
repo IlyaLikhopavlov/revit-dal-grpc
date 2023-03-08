@@ -17,5 +17,42 @@ namespace App.Catalog.Db
         public DbSet<FooCatalog> FooCatalog { get; set; }
 
         public DbSet<BarCatalog> BarCatalog { get; set; }
+
+        public DbSet<Channel> Channel { get; set; }
+
+        public DbSet<BarCatalogChannel> BarCatalogChannel { get; set; }
+
+        public DbSet<FooCatalogChannel> FooCatalogChannel { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<FooCatalogChannel>()
+                .HasKey(fc => new { fc.FooCatalogId, fc.ChannelId });
+
+            modelBuilder.Entity<BarCatalogChannel>()
+                .HasKey(bc => new { bc.BarCatalogId, bc.ChannelId });
+
+            modelBuilder.Entity<FooCatalogChannel>()
+                .HasOne(fc => fc.FooCatalog)
+                .WithMany(f => f.FooCatalogChannels)
+                .HasForeignKey(fc => fc.FooCatalogId);
+
+            modelBuilder.Entity<FooCatalogChannel>()
+                .HasOne(fc => fc.Channel)
+                .WithMany(f => f.FooCatalogChannels)
+                .HasForeignKey(fc => fc.ChannelId);
+
+            modelBuilder.Entity<BarCatalogChannel>()
+                .HasOne(bc => bc.BarCatalog)
+                .WithMany(f => f.BarCatalogChannels)
+                .HasForeignKey(bc => bc.BarCatalogId);
+
+            modelBuilder.Entity<BarCatalogChannel>()
+                .HasOne(bc => bc.Channel)
+                .WithMany(b => b.BarCatalogChannels)
+                .HasForeignKey(bc => bc.ChannelId);
+        }
     }
 }

@@ -16,6 +16,7 @@
             <th>Name</th>
             <th>Type</th>
             <th>Category</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -34,6 +35,9 @@
             <td>
                 @((item as Bar)?.Category?.Name ?? @"no category")
             </td>
+            <td>
+                <button class="btn btn-secondary" @onclick="@(async () => await RemoveAsync(item.Id))">Remove</button>
+            </td>
         </tr>
     }
     </tbody>
@@ -47,7 +51,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
+
         ApplicationObject.DocumentDescriptorChanged += DocumentDescriptorChanged;
 
         await InitRevitDataServiceAsync();
@@ -92,6 +96,11 @@
     private async Task AddNewBarAsync()
     {
         await RevitDataService.AddNewBarAsync();
+    }
+
+    private async Task RemoveAsync(int id)
+    {
+        await RevitDataService.RemoveEntityAsync(id);
     }
 
 }

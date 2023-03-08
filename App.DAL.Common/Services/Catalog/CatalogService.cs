@@ -2,12 +2,11 @@
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.Settings.Model;
 using App.Settings.Model.Enums;
-using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Services.Catalog
 {
-    public class CatalogService
+    public class CatalogService : ICatalogService
     {
         private readonly IDocumentDescriptorServiceScopeFactory _serviceScopeFactory;
         private readonly ApplicationModeEnum _mode;
@@ -43,6 +42,30 @@ namespace App.DAL.Common.Services.Catalog
                     await revitCatalogStorage.WriteCatalogRecordAsync(record);
 
                     return record;
+                }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public async Task WriteCatalogRecordAsync<T>(T t) where T : BaseCatalogEntity
+        {
+            switch (_mode)
+            {
+                case ApplicationModeEnum.Web:
+                {
+                    var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
+                    await dbCatalogStorage.WriteCatalogRecordAsync(t);
+                    break;
+                }
+                case ApplicationModeEnum.Desktop:
+                {
+                    var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
+                    var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
+                    
+                    await dbCatalogStorage.WriteCatalogRecordAsync(t);
+                    await revitCatalogStorage.WriteCatalogRecordAsync(t);
+                    break;
                 }
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -13,6 +13,8 @@ namespace App.DAL.Revit.DataContext.DataInfrastructure
 
         T Add(T entity);
 
+        bool Contains(int keyValue);
+
         IEnumerable<EntityProxy<T>> Entries { get; }
     }
 }

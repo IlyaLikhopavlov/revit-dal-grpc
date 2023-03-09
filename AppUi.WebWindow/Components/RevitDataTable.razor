@@ -46,6 +46,7 @@
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
 <button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
 <button class="btn btn-primary" @onclick="@(async () => await AddNewBarAsync())">Add Bar</button>
+<button class="btn btn-primary" @onclick="@(async () => await AddNewCatalogEntryAsync())">Add FooCatalog</button>
 
 @code {
     protected override async Task OnInitializedAsync()
@@ -101,6 +102,11 @@
     private async Task RemoveAsync(int id)
     {
         await RevitDataService.RemoveEntityAsync(id);
+    }
+
+    private async Task AddNewCatalogEntryAsync()
+    {
+        await RevitDataService.AddCatalogEntry();
     }
 
 }

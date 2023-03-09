@@ -10,13 +10,16 @@ namespace App.DAL.Common.Services.Catalog
     {
         private readonly IDocumentDescriptorServiceScopeFactory _serviceScopeFactory;
         private readonly ApplicationModeEnum _mode;
+        private readonly DocumentDescriptor _documentDescriptor;
         
         public CatalogService(
             IOptions<ApplicationSettings> options, 
-            IDocumentDescriptorServiceScopeFactory serviceScopeFactory)
+            IDocumentDescriptorServiceScopeFactory serviceScopeFactory,
+            DocumentDescriptor documentDescriptor)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _mode = options.Value.ApplicationMode;
+            _documentDescriptor = documentDescriptor;
         }
 
         public async Task<T> ReadCatalogRecordAsync<T>(Guid uniqueId) where T : BaseCatalogEntity

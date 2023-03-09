@@ -1,8 +1,13 @@
-﻿using App.CommunicationServices.Grpc;
+﻿using App.Catalog.Db.Model;
+using App.CommunicationServices.Grpc;
+using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories;
 using App.DAL.Common.Repositories.Factories.Base;
+using App.DAL.Common.Services.Catalog;
 using App.DML;
 using Bimdance.Framework.Initialization;
+using System;
+using App.Catalog.Db.Model.Enums;
 
 namespace App.Services
 {
@@ -10,15 +15,19 @@ namespace App.Services
     {
         private readonly IFooRepository _fooRepository;
         private readonly IBarRepository _barRepository;
+        private readonly ICatalogService _catalogService;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
+
 
         public RevitDataService(
             IRepositoryFactory<IFooRepository> fooRepositoryFactory,
             IRepositoryFactory<IBarRepository> barRepositoryFactory,
-            RevitExtraDataExchangeClient revitExtraDataExchangeClient)
+            RevitExtraDataExchangeClient revitExtraDataExchangeClient, 
+            IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
+            _catalogService = scopeFactory.GetScopedService<ICatalogService>();
             _fooRepository = fooRepositoryFactory.Create();
             _barRepository = barRepositoryFactory.Create();
             Initialization = InitializeAsync();
@@ -123,6 +132,29 @@ namespace App.Services
             }
             
             throw new InvalidOperationException($"Element with ID={id} wasn't found.");
+        }
+
+        public async Task AddCatalogEntry()
+        {
+            var fooCatalog = new FooCatalog
+            {
+                IdGuid = Guid.Parse("573E1D97-4C3B-4841-9BB6-28BF8CE3F07B"),
+                Description = "Some new entity",
+                ModelNumber = "12345679",
+                PartNumber = "HHHHKKKK",
+                Version = 1
+            };
+
+            fooCatalog.FooCatalogChannels.Add(new FooCatalogChannel
+            {
+                Channel = new Channel
+                {
+                    Name = "ChannelN",
+                    Type = ChannelTypeEnum.Temperature
+                }
+            });
+
+            await _catalogService.WriteCatalogRecordAsync(fooCatalog);
         }
     }
 }

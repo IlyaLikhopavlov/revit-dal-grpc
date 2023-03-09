@@ -15,8 +15,8 @@ namespace App.Catalog.Db.Model
 
         public string Name { get; set; }
 
-        public ICollection<FooCatalogChannel> FooCatalogChannels { get; set; }
+        public ICollection<FooCatalogChannel> FooCatalogChannels { get; set; } = new List<FooCatalogChannel>();
 
-        public ICollection<BarCatalogChannel> BarCatalogChannels { get; set; }
+        public ICollection<BarCatalogChannel> BarCatalogChannels { get; set; } = new List<BarCatalogChannel>();
     }
 }

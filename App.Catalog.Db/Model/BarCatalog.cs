@@ -6,6 +6,6 @@
 
         public string Description { get; set; }
 
-        public ICollection<BarCatalogChannel> BarCatalogChannels { get; set; }
+        public ICollection<BarCatalogChannel> BarCatalogChannels { get; set; } = new List<BarCatalogChannel>();
     }
 }

@@ -1,4 +1,5 @@
-﻿using App.Catalog.Db;
+﻿using System.Security.Cryptography.X509Certificates;
+using App.Catalog.Db;
 using App.Catalog.Db.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,22 +22,35 @@ namespace App.DAL.Common.Services.Catalog
         public async Task<T> ReadCatalogRecordOrDefaultAsync<T>(Guid uniqueId) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
-            var entity = await set.FirstOrDefaultAsync(x => x.IdGuid == uniqueId);
+            var entity = await set.AsNoTracking().FirstOrDefaultAsync(x => x.IdGuid == uniqueId);
             return entity;
         }
 
         public async Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
-            var entity = set.FirstOrDefault(x => x.IdGuid == record.IdGuid);
+            var existingEntity = set.AsNoTracking().FirstOrDefault(x => x.IdGuid == record.IdGuid);
+            DbContext.ChangeTracker.Clear();
 
-            if (entity is null)
+            if (existingEntity is null)
             {
+                record.Version = 1;
                 set.Add(record);
             }
             else
             {
-                record.Id = entity.Id;
+                var currentVersion = existingEntity.Version;
+
+                if (currentVersion >= long.MaxValue)
+                {
+                    record.Version = 1;
+                }
+                else
+                {
+                    record.Version = ++currentVersion;
+                }
+
+                record.Id = existingEntity.Id;
                 set.Update(record);
             }
 

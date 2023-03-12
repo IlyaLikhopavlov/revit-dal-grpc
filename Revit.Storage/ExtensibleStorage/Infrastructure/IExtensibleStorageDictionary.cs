@@ -12,5 +12,5 @@ public interface IExtensibleStorageDictionary : IExtensibleStorage
 
     bool Contains(string key);
 
-    IEnumerable<string> GetAll<T>(string prefix);
+    IDictionary<string, string> GetAll();
 }

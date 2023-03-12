@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.UI;
 using Google.Protobuf;
+using Grpc.Core;
 
 namespace Revit.Services.ExternalEvents.Infrastructure
 {

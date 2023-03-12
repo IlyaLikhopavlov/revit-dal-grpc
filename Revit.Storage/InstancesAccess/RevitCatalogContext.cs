@@ -16,14 +16,16 @@ namespace Revit.Storage.InstancesAccess
     {
         private readonly IExtensibleStorageService _storageService;
 
+        private const string SchemaName = RevitStorage.Catalog.SchemaName;
+
         public RevitCatalogContext(IFactory<Document, IExtensibleStorageService> extensibleStorageServiceFactory, Document document)
         {
             _storageService = extensibleStorageServiceFactory.New(document);
         }
 
-        public void CreateOrUpdateRecordInCatalog(CatalogRecordData data)
+        public void CreateOrUpdateRecord(CatalogRecordData data)
         {
-            var storage = _storageService.GetDictionaryStorage(RevitStorage.Catalog.SchemaName);
+            var storage = _storageService.GetDictionaryStorage(SchemaName);
 
             if (storage.Contains(data.GuidId))
             {
@@ -37,13 +39,13 @@ namespace Revit.Storage.InstancesAccess
 
         public bool Contains(string uniqueId)
         {
-            var storage = _storageService.GetDictionaryStorage(RevitStorage.Catalog.SchemaName);
+            var storage = _storageService.GetDictionaryStorage(SchemaName);
             return storage.Contains(uniqueId);
         }
 
-        public CatalogRecordData ReadFromCatalog(string uniqueId)
+        public CatalogRecordData ReadById(string uniqueId)
         {
-            var storage = _storageService.GetDictionaryStorage(RevitStorage.Catalog.SchemaName);
+            var storage = _storageService.GetDictionaryStorage(SchemaName);
             var data = storage.GetEntity(uniqueId);
 
             return new CatalogRecordData
@@ -51,6 +53,18 @@ namespace Revit.Storage.InstancesAccess
                 GuidId = uniqueId,
                 Data = data
             };
+        }
+
+        public IEnumerable<CatalogRecordData> ReadAll()
+        {
+            var storage = _storageService.GetDictionaryStorage(SchemaName);
+            return storage.GetAll()
+                .Select(x => new CatalogRecordData
+                {
+                    GuidId = x.Key,
+                    Data = x.Value
+                });
+            
         }
     }
 }

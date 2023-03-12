@@ -7,5 +7,7 @@ namespace App.DAL.Common.Services.Catalog
         Task<T> ReadCatalogRecordOrDefaultAsync<T>(Guid uniqueId) where T : BaseCatalogEntity;
 
         Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity;
+
+        Task<IEnumerable<BaseCatalogEntity>> ReadAllCatalogRecordsAsync();
     }
 }

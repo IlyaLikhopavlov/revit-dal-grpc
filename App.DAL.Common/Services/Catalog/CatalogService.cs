@@ -1,7 +1,9 @@
 ﻿using App.Catalog.Db.Model;
 using App.CommunicationServices.ScopedServicesFunctionality;
+using App.DAL.Common.Services.Catalog.Model;
 using App.Settings.Model;
 using App.Settings.Model.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Services.Catalog
@@ -73,6 +75,42 @@ namespace App.DAL.Common.Services.Catalog
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public async Task<IEnumerable<CatalogRecordComparisonResult>> CompareAll()
+        {
+            if (_mode == ApplicationModeEnum.Web)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
+            var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
+
+            var results =  (await revitCatalogStorage.ReadAllCatalogRecordsAsync())
+                .Select(r =>
+                {
+                    var dbCatalogRecord =
+                            dbCatalogStorage
+                            .GetAllEntities()
+                            .FirstOrDefault(b => r.IdGuid == b.IdGuid);
+
+                    return
+                        new CatalogRecordComparisonResult
+                        {
+                            IdGuid = r.IdGuid,
+                            DbVersion = dbCatalogRecord?.Version ?? 0,
+                            DocumentVersion = r.Version,
+                            ModelNumber = r.ModelNumber == dbCatalogRecord?.ModelNumber
+                                ? r.ModelNumber
+                                : string.Empty,
+                            PartNumber = r.PartNumber == dbCatalogRecord?.PartNumber
+                                ? r.PartNumber
+                                : string.Empty
+                        };
+                });
+
+            return results;
         }
     }
 }

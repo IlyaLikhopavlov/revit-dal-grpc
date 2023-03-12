@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using App.Catalog.Db;
 using App.Catalog.Db.Model;
+using App.Catalog.Db.Tools;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.Common.Services.Catalog
@@ -55,6 +56,26 @@ namespace App.DAL.Common.Services.Catalog
             }
 
             await DbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<BaseCatalogEntity>> ReadAllCatalogRecordsAsync()
+        {
+            var dbEntities = DbContext
+                .GetAllEntityQueries()
+                .SelectMany(x => x);
+
+            var taskSource = new TaskCompletionSource<IEnumerable<BaseCatalogEntity>>();
+            taskSource.SetResult(dbEntities);
+            return await taskSource.Task;
+        }
+
+        public IEnumerable<BaseCatalogEntity> GetAllEntities()
+        {
+            var dbEntities = DbContext
+                .GetAllEntityQueries()
+                .SelectMany(x => x);
+
+            return dbEntities;
         }
     }
 }

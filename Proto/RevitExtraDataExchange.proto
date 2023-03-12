@@ -15,6 +15,7 @@ service RevitDataExchange {
 	rpc DeleteRevitInstance (.DeleteRevitInsatnceRequest) returns (.BasicResponse);
 	rpc CreateOrUpdateCatalogRecord (.CreateOrUpdateRecordInCatalogRequest) returns (.BasicResponse);
 	rpc ReadRecordFromCatalog (.ReadRecordFromCatalogRequest) returns (.ReadRecordFromCatalogResponse);
+	rpc ReadAllRecordsFromCatalog (.ReadAllRecordsFromCatalogRequest) returns (.ReadAllRecordsFromCatalogResponse); //todo stream on the server side
 }
 
 enum DomainModelTypesEnum {
@@ -119,4 +120,14 @@ message ReadRecordFromCatalogRequest {
 message ReadRecordFromCatalogResponse {
 	ErrorInfo ErrorInfo = 1;
 	CatalogRecordData CatalogRecordData = 2;
+}
+
+//Read all catalog records
+message ReadAllRecordsFromCatalogRequest {
+	string DocumentId = 1;
+}
+
+message ReadAllRecordsFromCatalogResponse {
+	ErrorInfo ErrorInfo = 1;
+	repeated CatalogRecordData Records = 2;
 }

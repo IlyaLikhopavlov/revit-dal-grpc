@@ -1,7 +1,10 @@
-﻿namespace App.Catalog.Db.Model
+﻿using System.Text.Json.Serialization;
+
+namespace App.Catalog.Db.Model
 {
     public class BaseCatalogEntity
     {
+        [JsonIgnore]
         public int Id { get; set; }
         
         public long Version { get; set; }

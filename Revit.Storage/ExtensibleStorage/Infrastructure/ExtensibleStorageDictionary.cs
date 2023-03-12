@@ -3,7 +3,9 @@ using Revit.Storage.ExtensibleStorage.Infrastructure.Model;
 
 namespace Revit.Storage.ExtensibleStorage.Infrastructure
 {
-    public class ExtensibleStorageDictionary : ExtensibleStorageCollection<Dictionary<string, string>, IDictionary<string, string>>, IExtensibleStorageDictionary
+    public class ExtensibleStorageDictionary : 
+        ExtensibleStorageCollection<Dictionary<string, string>, IDictionary<string, string>>,
+        IExtensibleStorageDictionary
     {
         public ExtensibleStorageDictionary(SchemaDescriptor schemaDescriptor)
             : base(
@@ -86,19 +88,14 @@ namespace Revit.Storage.ExtensibleStorage.Infrastructure
             return Storage.Keys.Any(x => x == key);
         }
 
-        public IEnumerable<string> GetAll<T>(string prefix)
+        public IDictionary<string, string> GetAll()
         {
-            if (string.IsNullOrEmpty(prefix))
-            {
-                throw new ArgumentNullException(nameof(prefix));
-            }
-
             if (Storage == null)
             {
                 Pull();
             }
 
-            return Storage.Keys.Where(k => k.StartsWith(prefix)).Select(GetEntity);
+            return new Dictionary<string, string>(Storage);
         }
 
         protected override void AddField(SchemaBuilder schemaBuilder)

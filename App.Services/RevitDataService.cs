@@ -155,6 +155,8 @@ namespace App.Services
             });
 
             await _catalogService.WriteCatalogRecordAsync(fooCatalog);
+
+            var result = await _catalogService.CompareAll();
         }
     }
 }

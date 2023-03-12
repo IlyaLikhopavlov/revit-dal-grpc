@@ -4,10 +4,12 @@ namespace Revit.Storage.InstancesAccess
 {
     public interface IRevitCatalogContext
     {
-        void CreateOrUpdateRecordInCatalog(CatalogRecordData data);
+        void CreateOrUpdateRecord(CatalogRecordData data);
 
         bool Contains(string uniqueId);
 
-        CatalogRecordData ReadFromCatalog(string uniqueId);
+        CatalogRecordData ReadById(string uniqueId);
+
+        IEnumerable<CatalogRecordData> ReadAll();
     }
 }

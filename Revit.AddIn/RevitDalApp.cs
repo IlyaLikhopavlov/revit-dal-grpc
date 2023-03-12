@@ -62,15 +62,9 @@ namespace Revit.AddIn
             serviceCollection.AddSingleton<RevitDataExchangeService>();
             serviceCollection.AddSingleton<GrpcServerBootstrapper>();
 
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, AllocateRevitInstancesByTypeEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstanceEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, PullDataFromRevitInstanceEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, PushDataToRevitInstancesEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, PullDataFromRevitInstancesByTypeEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, CreateRevitInstanceEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, DeleteRevitInstanceEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, CreateOrUpdateCatalogRecordEventHandler>();
-            serviceCollection.AddSingleton<IExternalServiceEventHandler, ReadRecordFromCatalogEventHandler>();
+            //WARNING! Please note that event handler must be declared in the same assembly
+            //with IExternalServiceEventHandler. Otherwise please modify AddEventHandler logic
+            AddEventHandlers(serviceCollection);
 
             serviceCollection.AddScoped<RevitDataContext>();
             serviceCollection.AddScoped<IRevitCatalogContext, RevitCatalogContext>();
@@ -87,6 +81,20 @@ namespace Revit.AddIn
             ServiceProvider.GetService<GrpcServerBootstrapper>()?.StartServer("127.0.0.1", 5005);
 
             return Result.Succeeded;
+        }
+
+        private static void AddEventHandlers(IServiceCollection serviceCollection)
+        {
+            var type = typeof(IExternalServiceEventHandler);
+
+            var eventHandlerTypes = type.Assembly.GetTypes()
+                .Where(x => type.IsAssignableFrom(x))
+                .Where(x => !x.IsAbstract);
+
+            foreach (var eventHandlerType in eventHandlerTypes)
+            {
+                serviceCollection.AddSingleton(type, eventHandlerType);
+            }
         }
 
         private void ControlledApplicationOnDocumentCreated(object sender, DocumentCreatedEventArgs e)

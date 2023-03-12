@@ -194,5 +194,24 @@ namespace App.CommunicationServices.Grpc
 
             return response.CatalogRecordData;
         }
+
+        //todo segregate interfaces
+        public async Task<IEnumerable<CatalogRecordData>> ReadAllRecordsFromCatalogAsync(
+            DocumentDescriptor documentDescriptor)
+        {
+            var response = await _client.ReadAllRecordsFromCatalogAsync(
+                new ReadAllRecordsFromCatalogRequest
+                {
+                    DocumentId = documentDescriptor.Id
+                });
+
+            if (response.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response.ErrorInfo.Code} " +
+                                                    $"Message: {response.ErrorInfo.Message}");
+            }
+
+            return response.Records;
+        }
     }
 }

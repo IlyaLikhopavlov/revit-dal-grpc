@@ -1,24 +1,31 @@
 ﻿using Revit.Services.ExternalEvents.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using Google.Protobuf.Collections;
 using Revit.Services.Grpc.Services;
 using Revit.ScopedServicesFunctionality;
 using Revit.Storage.InstancesAccess;
+using Grpc.Core;
 
 namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 {
-    public class ReadRecordFromCatalogEventHandler : ExternalServiceEventHandler<ReadRecordFromCatalogRequest, ReadRecordFromCatalogResponse>
+    public class ReadAllRecordsFromCatalogEventHandler : ExternalServiceEventHandler<ReadAllRecordsFromCatalogRequest, ReadAllRecordsFromCatalogResponse>
     {
         private readonly IRevitDocumentServiceScopeFactory _scopeFactory;
 
-        public ReadRecordFromCatalogEventHandler(IRevitDocumentServiceScopeFactory scopeFactory)
+        public ReadAllRecordsFromCatalogEventHandler(IRevitDocumentServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
         }
 
-        protected override ReadRecordFromCatalogResponse Execute(Document document)
+        protected override ReadAllRecordsFromCatalogResponse Execute(Document document)
         {
-            var result = 
-                new ReadRecordFromCatalogResponse
+            var result =
+                new ReadAllRecordsFromCatalogResponse
                 {
                     ErrorInfo = new ErrorInfo()
                 };
@@ -27,13 +34,9 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
             {
                 var revitCatalogContext =
                     _scopeFactory.GetScopedService<IRevitCatalogContext>(document);
-
-                if (revitCatalogContext.Contains(Request.GuidId))
-                {
-                    result.ErrorInfo.Code = ExceptionCodeEnum.CatalogRecordWasNotFound;
-                }
-
-                result.CatalogRecordData = revitCatalogContext.ReadById(Request.GuidId);
+                
+                result.Records.AddRange(revitCatalogContext.ReadAll());
+                result.ErrorInfo.Code = ExceptionCodeEnum.Success;
             }
             catch (Exception ex)
             {
@@ -42,8 +45,7 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 
                 return result;
             }
-
-            result.ErrorInfo.Code = ExceptionCodeEnum.Success;
+            
             return result;
         }
     }

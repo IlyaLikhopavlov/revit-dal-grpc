@@ -3,10 +3,11 @@ using App.Catalog.Db;
 using App.Catalog.Db.Model;
 using App.Catalog.Db.Tools;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace App.DAL.Common.Services.Catalog
 {
-    public class DbCatalogStorage : ICatalogStorage
+    public class DbCatalogStorage
     {
         protected readonly CatalogDbContext DbContext;
 
@@ -20,14 +21,33 @@ namespace App.DAL.Common.Services.Catalog
             _documentDescriptor = documentDescriptor;
         }
 
-        public async Task<T> ReadCatalogRecordOrDefaultAsync<T>(Guid uniqueId) where T : BaseCatalogEntity
+        public T ReadCatalogRecordOrDefault<T>(Guid uniqueId) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
-            var entity = await set.AsNoTracking().FirstOrDefaultAsync(x => x.IdGuid == uniqueId);
+            var entity = set.AsNoTracking().FirstOrDefault(x => x.IdGuid == uniqueId);
             return entity;
         }
 
-        public async Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity
+        public BaseCatalogEntity ReadCatalogRecordOrDefault(Guid uniqueId, Type recordType)
+        {
+            return DbContext
+                .GetEntityQuery(recordType)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.IdGuid == uniqueId);
+        }
+
+        public void WriteCatalogRecord(BaseCatalogEntity record)
+        {
+            var method = typeof(DbCatalogStorage).GetMethods()
+                .Single(p =>
+                    p.Name == nameof(WriteCatalogRecord) &&
+                    p.ContainsGenericParameters);
+
+            var genericMethod = method.MakeGenericMethod(record.GetType());
+            genericMethod.Invoke(record, new object[] { record.IdGuid });
+        }
+
+        public void WriteCatalogRecord<T>(T record) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
             var existingEntity = set.AsNoTracking().FirstOrDefault(x => x.IdGuid == record.IdGuid);
@@ -55,21 +75,10 @@ namespace App.DAL.Common.Services.Catalog
                 set.Update(record);
             }
 
-            await DbContext.SaveChangesAsync();
+            DbContext.SaveChanges();
         }
 
-        public async Task<IEnumerable<BaseCatalogEntity>> ReadAllCatalogRecordsAsync()
-        {
-            var dbEntities = DbContext
-                .GetAllEntityQueries()
-                .SelectMany(x => x);
-
-            var taskSource = new TaskCompletionSource<IEnumerable<BaseCatalogEntity>>();
-            taskSource.SetResult(dbEntities);
-            return await taskSource.Task;
-        }
-
-        public IEnumerable<BaseCatalogEntity> GetAllEntities()
+        public IEnumerable<BaseCatalogEntity> ReadAllCatalogRecords()
         {
             var dbEntities = DbContext
                 .GetAllEntityQueries()

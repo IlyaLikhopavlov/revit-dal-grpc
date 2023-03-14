@@ -1,6 +1,8 @@
-﻿using App.Catalog.Db.Model;
+﻿using System.Security.Cryptography.X509Certificates;
+using App.Catalog.Db.Model;
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Services.Catalog.Model;
+using App.DAL.Common.Services.Catalog.Model.Enums;
 using App.Settings.Model;
 using App.Settings.Model.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,7 @@ namespace App.DAL.Common.Services.Catalog
             {
                 case ApplicationModeEnum.Web:
                     var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
-                    return await dbCatalogStorage.ReadCatalogRecordOrDefaultAsync<T>(uniqueId);
+                    return dbCatalogStorage.ReadCatalogRecordOrDefault<T>(uniqueId);
                 case ApplicationModeEnum.Desktop:
                 {
                     var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
@@ -42,7 +44,7 @@ namespace App.DAL.Common.Services.Catalog
                     }
                     
                     dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
-                    record = await dbCatalogStorage.ReadCatalogRecordOrDefaultAsync<T>(uniqueId);
+                    record = dbCatalogStorage.ReadCatalogRecordOrDefault<T>(uniqueId);
 
                     await revitCatalogStorage.WriteCatalogRecordAsync(record);
 
@@ -60,7 +62,7 @@ namespace App.DAL.Common.Services.Catalog
                 case ApplicationModeEnum.Web:
                 {
                     var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
-                    await dbCatalogStorage.WriteCatalogRecordAsync(t);
+                    dbCatalogStorage.WriteCatalogRecord(t);
                     break;
                 }
                 case ApplicationModeEnum.Desktop:
@@ -68,7 +70,7 @@ namespace App.DAL.Common.Services.Catalog
                     var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
                     var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
                     
-                    await dbCatalogStorage.WriteCatalogRecordAsync(t);
+                    dbCatalogStorage.WriteCatalogRecord(t);
                     await revitCatalogStorage.WriteCatalogRecordAsync(t);
                     break;
                 }
@@ -77,40 +79,82 @@ namespace App.DAL.Common.Services.Catalog
             }
         }
 
-        public async Task<IEnumerable<CatalogRecordComparisonResult>> CompareAll()
+        public async Task<IEnumerable<CatalogRecordComparisonResult>> CompareAllAsync()
         {
             if (_mode == ApplicationModeEnum.Web)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Inappropriate mode");
             }
 
             var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
             var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
 
-            var results =  (await revitCatalogStorage.ReadAllCatalogRecordsAsync())
-                .Select(r =>
-                {
-                    var dbCatalogRecord =
+            var results = 
+                (await revitCatalogStorage.ReadAllCatalogRecordsAsync())
+                    .Select(r =>
+                    {
+                        var dbCatalogRecord =
                             dbCatalogStorage
-                            .GetAllEntities()
-                            .FirstOrDefault(b => r.IdGuid == b.IdGuid);
+                                .ReadAllCatalogRecords()
+                                .FirstOrDefault(b => r.IdGuid == b.IdGuid);
 
-                    return
-                        new CatalogRecordComparisonResult
-                        {
-                            IdGuid = r.IdGuid,
-                            DbVersion = dbCatalogRecord?.Version ?? 0,
-                            DocumentVersion = r.Version,
-                            ModelNumber = r.ModelNumber == dbCatalogRecord?.ModelNumber
-                                ? r.ModelNumber
-                                : string.Empty,
-                            PartNumber = r.PartNumber == dbCatalogRecord?.PartNumber
-                                ? r.PartNumber
-                                : string.Empty
-                        };
-                });
+
+                        var dbRecordType = dbCatalogRecord?.GetType();
+
+                        return
+                            new CatalogRecordComparisonResult
+                            {
+                                IdGuid = r.IdGuid,
+                                DbVersion = dbCatalogRecord?.Version ?? 0,
+                                DocumentVersion = r.Version,
+                                ModelNumber = r.ModelNumber == dbCatalogRecord?.ModelNumber
+                                    ? r.ModelNumber
+                                    : string.Empty,
+                                PartNumber = r.PartNumber == dbCatalogRecord?.PartNumber
+                                    ? r.PartNumber
+                                    : string.Empty,
+                                Type = dbRecordType
+                            };
+                    });
 
             return results;
         }
+
+        public async Task SynchronizeAsync(IEnumerable<CatalogRecordComparisonResult> comparisonResults)
+        {
+            if (comparisonResults is null)
+            {
+                return;
+            }
+
+            var requiredResults = comparisonResults
+                .Where(x => !x.IsIgnored 
+                            && x.Resolution != ResolutionEnum.NothingToDo)
+                .ToList();
+
+            if (!requiredResults.Any())
+            {
+                return;
+            }
+
+            var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
+            var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
+
+            foreach (var result in requiredResults)
+            {
+                if (result.Resolution == ResolutionEnum.UpdateInDocument)
+                {
+                    var record = 
+                        dbCatalogStorage.ReadCatalogRecordOrDefault(result.IdGuid, result.Type);
+                    await revitCatalogStorage.WriteCatalogRecordAsync(record, result.Type);
+                }
+                else
+                {
+                    var record = 
+                        await revitCatalogStorage.ReadCatalogRecordOrDefaultAsync(result.IdGuid, result.Type);
+                    dbCatalogStorage.WriteCatalogRecord(record);
+                }
+            }
+        } 
     }
 }

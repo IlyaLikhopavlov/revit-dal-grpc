@@ -7,7 +7,7 @@ using Revit.Services.Grpc.Services;
 
 namespace App.DAL.Common.Services.Catalog
 {
-    public class RevitCatalogStorage : ICatalogStorage
+    public class RevitCatalogStorage
     {
         private readonly RevitExtraDataExchangeClient _client;
 
@@ -28,20 +28,41 @@ namespace App.DAL.Common.Services.Catalog
         public async Task<T> ReadCatalogRecordOrDefaultAsync<T>(Guid uniqueId) where T : BaseCatalogEntity
         {
             var readRecord = await _client.ReadRecordFromCatalogAsync(_documentDescriptor, uniqueId);
-
+            
             return readRecord is null ? null : JsonSerializer.Deserialize<T>(readRecord.Data);
+        }
+
+        public async Task<BaseCatalogEntity> ReadCatalogRecordOrDefaultAsync(Guid uniqueId, Type recordType)
+        {
+            var readRecord = await _client.ReadRecordFromCatalogAsync(_documentDescriptor, uniqueId);
+
+            return readRecord is null
+                ? null 
+                : (BaseCatalogEntity)JsonSerializer.Deserialize(readRecord.Data, recordType);
+        }
+
+        private async Task SendDataToRevit(string serializedRecord, string uniqueId)
+        {
+            await _client.CreateOrUpdateCatalogRecordAsync(_documentDescriptor,
+                new CatalogRecordData
+                {
+                    Data = serializedRecord,
+                    GuidId = uniqueId
+                });
+        }
+
+        public async Task WriteCatalogRecordAsync(BaseCatalogEntity record, Type recordType)
+        {
+            var serializedRecord = JsonSerializer.Serialize(record, recordType, _serializerOptions);
+
+            await SendDataToRevit(serializedRecord, record.IdGuid.ToString());
         }
 
         public async Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity
         {
             var serializedRecord = JsonSerializer.Serialize(record, _serializerOptions);
 
-            await _client.CreateOrUpdateCatalogRecordAsync(_documentDescriptor,
-                new CatalogRecordData
-                {
-                    Data = serializedRecord,
-                    GuidId = record.IdGuid.ToString()
-                });
+            await SendDataToRevit(serializedRecord, record.IdGuid.ToString());
         }
 
         public async Task<IEnumerable<BaseCatalogEntity>> ReadAllCatalogRecordsAsync()

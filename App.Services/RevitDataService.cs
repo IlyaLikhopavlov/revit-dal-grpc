@@ -156,7 +156,9 @@ namespace App.Services
 
             await _catalogService.WriteCatalogRecordAsync(fooCatalog);
 
-            var result = await _catalogService.CompareAll();
+            var result = await _catalogService.CompareAllAsync();
+
+            await _catalogService.SynchronizeAsync(result);
         }
     }
 }

@@ -7,5 +7,6 @@ public interface ICatalogService
 {
     Task<T> ReadCatalogRecordAsync<T>(Guid uniqueId) where T : BaseCatalogEntity;
     Task WriteCatalogRecordAsync<T>(T t) where T : BaseCatalogEntity;
-    Task<IEnumerable<CatalogRecordComparisonResult>> CompareAll();
+    Task<IEnumerable<CatalogRecordComparisonResult>> CompareAllAsync();
+    Task SynchronizeAsync(IEnumerable<CatalogRecordComparisonResult> comparisonResults);
 }

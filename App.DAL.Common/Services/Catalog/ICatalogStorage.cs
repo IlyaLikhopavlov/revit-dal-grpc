@@ -8,6 +8,6 @@ namespace App.DAL.Common.Services.Catalog
 
         Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity;
 
-        Task<IEnumerable<BaseCatalogEntity>> ReadAllCatalogRecordsAsync();
+        IEnumerable<BaseCatalogEntity> ReadAllCatalogRecords();
     }
 }

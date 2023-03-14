@@ -19,20 +19,29 @@ namespace App.DAL.Common.Services.Catalog.Model
 
         public long DocumentVersion { get; set; }
 
+        public Type Type { get; set; }
+
         public ResolutionEnum Resolution
         {
             get
             {
+                if (Type == null)
+                {
+                    return ResolutionEnum.UpdateInDb;
+                }
+                
                 if (DbVersion < 1 || DocumentVersion < 1 || DbVersion == DocumentVersion)
                 {
                     return ResolutionEnum.NothingToDo;
                 }
 
-                return 
-                    DbVersion > DocumentVersion 
-                        ? ResolutionEnum.UpdateInDocument 
+                return
+                    DbVersion > DocumentVersion
+                        ? ResolutionEnum.UpdateInDocument
                         : ResolutionEnum.UpdateInDb;
             }
         }
+
+        public bool IsIgnored { get; set; }
     }
 }

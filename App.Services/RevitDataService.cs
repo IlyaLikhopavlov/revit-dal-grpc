@@ -8,6 +8,8 @@ using App.DML;
 using Bimdance.Framework.Initialization;
 using System;
 using App.Catalog.Db.Model.Enums;
+using App.Catalog.Db;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Services
 {
@@ -16,6 +18,7 @@ namespace App.Services
         private readonly IFooRepository _fooRepository;
         private readonly IBarRepository _barRepository;
         private readonly ICatalogService _catalogService;
+        private readonly RevitCatalogStorage _revitCatalogStorage;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
 
@@ -23,10 +26,11 @@ namespace App.Services
         public RevitDataService(
             IRepositoryFactory<IFooRepository> fooRepositoryFactory,
             IRepositoryFactory<IBarRepository> barRepositoryFactory,
-            RevitExtraDataExchangeClient revitExtraDataExchangeClient, 
+            RevitExtraDataExchangeClient revitExtraDataExchangeClient,
             IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
+            _revitCatalogStorage = scopeFactory.GetScopedService<RevitCatalogStorage>();
             _catalogService = scopeFactory.GetScopedService<ICatalogService>();
             _fooRepository = fooRepositoryFactory.Create();
             _barRepository = barRepositoryFactory.Create();
@@ -136,25 +140,18 @@ namespace App.Services
 
         public async Task AddCatalogEntry()
         {
-            var fooCatalog = new FooCatalog
-            {
-                IdGuid = Guid.Parse("573E1D97-4C3B-4841-9BB6-28BF8CE3F07B"),
-                Description = "Some new entity",
-                ModelNumber = "12345679",
-                PartNumber = "HHHHKKKK",
-                Version = 1
-            };
 
-            fooCatalog.FooCatalogChannels.Add(new FooCatalogChannel
-            {
-                Channel = new Channel
-                {
-                    Name = "ChannelN",
-                    Type = ChannelTypeEnum.Temperature
-                }
-            });
+            //var fooCatalog = await _catalogService.ReadCatalogRecordAsync<FooCatalog>(
+            //    Guid.Parse("0117C24B-B01E-4D07-9FCC-654BA92E50CC"),
+            //    p => p
+            //        .Include(c => c.FooCatalogChannels)
+            //        .ThenInclude(c => c.Channel));
 
-            await _catalogService.WriteCatalogRecordAsync(fooCatalog);
+            //var barCatalog = await _catalogService.ReadCatalogRecordAsync<BarCatalog>(
+            //    Guid.Parse("5B480CB6-7CE1-4BE1-BA42-854111F17244"),
+            //    p => p
+            //        .Include(c => c.BarCatalogChannels)
+            //        .ThenInclude(c => c.Channel));
 
             var result = await _catalogService.CompareAllAsync();
 

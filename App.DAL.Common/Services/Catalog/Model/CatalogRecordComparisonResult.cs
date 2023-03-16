@@ -25,12 +25,7 @@ namespace App.DAL.Common.Services.Catalog.Model
         {
             get
             {
-                if (Type == null)
-                {
-                    return ResolutionEnum.UpdateInDb;
-                }
-                
-                if (DbVersion < 1 || DocumentVersion < 1 || DbVersion == DocumentVersion)
+                if (DbVersion == DocumentVersion)
                 {
                     return ResolutionEnum.NothingToDo;
                 }

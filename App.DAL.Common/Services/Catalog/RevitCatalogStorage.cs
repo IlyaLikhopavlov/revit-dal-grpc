@@ -60,7 +60,7 @@ namespace App.DAL.Common.Services.Catalog
 
         public async Task WriteCatalogRecordAsync<T>(T record) where T : BaseCatalogEntity
         {
-            var serializedRecord = JsonSerializer.Serialize(record, _serializerOptions);
+            var serializedRecord = JsonSerializer.Serialize<BaseCatalogEntity>(record, _serializerOptions);
 
             await SendDataToRevit(serializedRecord, record.IdGuid.ToString());
         }

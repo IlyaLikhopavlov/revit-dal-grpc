@@ -1,11 +1,10 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using App.Catalog.Db.Model;
+﻿using App.Catalog.Db.Model;
 using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Services.Catalog.Model;
 using App.DAL.Common.Services.Catalog.Model.Enums;
 using App.Settings.Model;
 using App.Settings.Model.Enums;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Options;
 
 namespace App.DAL.Common.Services.Catalog
@@ -26,13 +25,15 @@ namespace App.DAL.Common.Services.Catalog
             _documentDescriptor = documentDescriptor;
         }
 
-        public async Task<T> ReadCatalogRecordAsync<T>(Guid uniqueId) where T : BaseCatalogEntity
+        public async Task<T> ReadCatalogRecordAsync<T>(
+            Guid uniqueId,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null) where T : BaseCatalogEntity
         {
             switch (_mode)
             {
                 case ApplicationModeEnum.Web:
                     var dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
-                    return dbCatalogStorage.ReadCatalogRecordOrDefault<T>(uniqueId);
+                    return dbCatalogStorage.ReadCatalogRecordOrDefault(uniqueId, include);
                 case ApplicationModeEnum.Desktop:
                 {
                     var revitCatalogStorage = _serviceScopeFactory.GetScopedService<RevitCatalogStorage>();
@@ -44,7 +45,7 @@ namespace App.DAL.Common.Services.Catalog
                     }
                     
                     dbCatalogStorage = _serviceScopeFactory.GetScopedService<DbCatalogStorage>();
-                    record = dbCatalogStorage.ReadCatalogRecordOrDefault<T>(uniqueId);
+                    record = dbCatalogStorage.ReadCatalogRecordOrDefault(uniqueId, include);
 
                     await revitCatalogStorage.WriteCatalogRecordAsync(record);
 
@@ -98,8 +99,7 @@ namespace App.DAL.Common.Services.Catalog
                                 .ReadAllCatalogRecords()
                                 .FirstOrDefault(b => r.IdGuid == b.IdGuid);
 
-
-                        var dbRecordType = dbCatalogRecord?.GetType();
+                        var dbRecordType = dbCatalogRecord?.GetType() ?? r.GetType();
 
                         return
                             new CatalogRecordComparisonResult

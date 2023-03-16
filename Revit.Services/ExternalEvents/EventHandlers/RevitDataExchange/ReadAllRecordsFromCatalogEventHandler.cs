@@ -24,29 +24,34 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 
         protected override ReadAllRecordsFromCatalogResponse Execute(Document document)
         {
-            var result =
-                new ReadAllRecordsFromCatalogResponse
-                {
-                    ErrorInfo = new ErrorInfo()
-                };
-
             try
             {
                 var revitCatalogContext =
                     _scopeFactory.GetScopedService<IRevitCatalogContext>(document);
                 
+                var result = 
+                    new ReadAllRecordsFromCatalogResponse
+                    {
+                        ErrorInfo = new ErrorInfo
+                        {
+                            Code = ExceptionCodeEnum.Success
+                        }
+                    };
+
                 result.Records.AddRange(revitCatalogContext.ReadAll());
-                result.ErrorInfo.Code = ExceptionCodeEnum.Success;
+                return result;
             }
             catch (Exception ex)
             {
-                result.ErrorInfo.Code = ExceptionCodeEnum.Unknown;
-                result.ErrorInfo.Message = ex.Message;
-
-                return result;
+                return new ReadAllRecordsFromCatalogResponse
+                {
+                    ErrorInfo = new ErrorInfo
+                    {
+                        Code = ExceptionCodeEnum.Unknown,
+                        Message = ex.Message
+                    }
+                };
             }
-            
-            return result;
         }
     }
 }

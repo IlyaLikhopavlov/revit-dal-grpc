@@ -17,34 +17,43 @@ namespace Revit.Services.ExternalEvents.EventHandlers.RevitDataExchange
 
         protected override ReadRecordFromCatalogResponse Execute(Document document)
         {
-            var result = 
-                new ReadRecordFromCatalogResponse
-                {
-                    ErrorInfo = new ErrorInfo()
-                };
-
             try
             {
                 var revitCatalogContext =
                     _scopeFactory.GetScopedService<IRevitCatalogContext>(document);
 
-                if (revitCatalogContext.Contains(Request.GuidId))
+                if (!revitCatalogContext.Contains(Request.GuidId))
                 {
-                    result.ErrorInfo.Code = ExceptionCodeEnum.CatalogRecordWasNotFound;
+                    return new ReadRecordFromCatalogResponse
+                    {
+                        ErrorInfo = new ErrorInfo
+                        {
+                            Code = ExceptionCodeEnum.CatalogRecordWasNotFound
+                        }
+                    };
                 }
 
-                result.CatalogRecordData = revitCatalogContext.ReadById(Request.GuidId);
+                return new ReadRecordFromCatalogResponse
+                {
+                    CatalogRecordData = revitCatalogContext.ReadById(Request.GuidId),
+                    ErrorInfo = new ErrorInfo
+                    {
+                        Code = ExceptionCodeEnum.Success
+                    }
+                };
+                    
             }
             catch (Exception ex)
             {
-                result.ErrorInfo.Code = ExceptionCodeEnum.Unknown;
-                result.ErrorInfo.Message = ex.Message;
-
-                return result;
+                return new ReadRecordFromCatalogResponse
+                {
+                    ErrorInfo = new ErrorInfo
+                    {
+                        Code = ExceptionCodeEnum.Unknown,
+                        Message = ex.Message
+                    }
+                };
             }
-
-            result.ErrorInfo.Code = ExceptionCodeEnum.Success;
-            return result;
         }
     }
 }

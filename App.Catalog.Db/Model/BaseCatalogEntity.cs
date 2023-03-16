@@ -2,6 +2,9 @@
 
 namespace App.Catalog.Db.Model
 {
+    [JsonDerivedType(typeof(BaseCatalogEntity), typeDiscriminator: "base")]
+    [JsonDerivedType(typeof(FooCatalog), typeDiscriminator: "fooCatalog")]
+    [JsonDerivedType(typeof(BarCatalog), typeDiscriminator: "barCatalog")]
     public class BaseCatalogEntity
     {
         [JsonIgnore]

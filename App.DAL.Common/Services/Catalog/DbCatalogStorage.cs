@@ -1,9 +1,10 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using App.Catalog.Db;
 using App.Catalog.Db.Model;
 using App.Catalog.Db.Tools;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace App.DAL.Common.Services.Catalog
 {
@@ -21,11 +22,27 @@ namespace App.DAL.Common.Services.Catalog
             _documentDescriptor = documentDescriptor;
         }
 
-        public T ReadCatalogRecordOrDefault<T>(Guid uniqueId) where T : BaseCatalogEntity
+        private IQueryable<T> Include<T>(params Expression<Func<T, object>>[] includeProperties) 
+            where T : BaseCatalogEntity
         {
-            var set = DbContext.Set<T>();
-            var entity = set.AsNoTracking().FirstOrDefault(x => x.IdGuid == uniqueId);
-            return entity;
+            var query = DbContext.Set<T>().AsNoTracking();
+            return includeProperties
+                .Aggregate(query, 
+                    (current, includeProperty) => current.Include(includeProperty));
+        }
+
+        public T ReadCatalogRecordOrDefault<T>(
+            Guid uniqueId,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null) where T : BaseCatalogEntity
+        {
+            var query = DbContext.Set<T>().AsNoTracking();
+
+            if (include is not null)
+            {
+                query = include(query);
+            }
+
+            return query.FirstOrDefault(x => x.IdGuid == uniqueId);
         }
 
         public BaseCatalogEntity ReadCatalogRecordOrDefault(Guid uniqueId, Type recordType)
@@ -44,13 +61,13 @@ namespace App.DAL.Common.Services.Catalog
                     p.ContainsGenericParameters);
 
             var genericMethod = method.MakeGenericMethod(record.GetType());
-            genericMethod.Invoke(record, new object[] { record.IdGuid });
+            genericMethod.Invoke(this, new object[] { record });
         }
 
         public void WriteCatalogRecord<T>(T record) where T : BaseCatalogEntity
         {
             var set = DbContext.Set<T>();
-            var existingEntity = set.AsNoTracking().FirstOrDefault(x => x.IdGuid == record.IdGuid);
+            var existingEntity = set.FirstOrDefault(x => x.IdGuid == record.IdGuid);
             DbContext.ChangeTracker.Clear();
 
             if (existingEntity is null)
@@ -71,8 +88,10 @@ namespace App.DAL.Common.Services.Catalog
                     record.Version = ++currentVersion;
                 }
 
-                record.Id = existingEntity.Id;
-                set.Update(record);
+                set.Remove(existingEntity);
+                DbContext.SaveChanges();
+
+                set.Add(record);
             }
 
             DbContext.SaveChanges();

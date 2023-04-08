@@ -12,6 +12,8 @@
 
         public int? ProjectId { get; set; }
 
+        public string CatalogId { get; set; }
+
         public virtual Project Project { get; set; }
     }
 }

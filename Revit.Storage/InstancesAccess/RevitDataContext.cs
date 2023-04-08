@@ -52,7 +52,8 @@ namespace Revit.Storage.InstancesAccess
             var storage = _storageService.GetDataSchemaStorage(entityType);
             var dataList = data.ToList();
 
-            var elements = _document.GetInstancesByIdList(dataList.Select(x => x.InstanceId));
+            var elements = _document.GetInstancesByIdList(
+                dataList.Select(x => x.InstanceId));
 
             _document.SaveChanges(() =>
             {

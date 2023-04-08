@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.AspNetCore.Components.WebView.Wpf;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AppUi.WebWindow
@@ -12,19 +13,21 @@ namespace AppUi.WebWindow
         public MainWindow()
         {
             InitializeComponent();
+            //BlazorWebView.Services = App.AppHost.Services;
 
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.Load();
-            
-            Resources.Add("services", serviceCollection.BuildServiceProvider());
 
-            if (Resources["services"] is not IServiceProvider serviceProvider)
-            {
-                MessageBox.Show("Service provider didn't find.");
-                return;
-            }
+            //var serviceCollection = new ServiceCollection();
+            //serviceCollection.Load();
 
-            serviceProvider.InitializeServices();
+            //Resources.Add("services", serviceCollection.BuildServiceProvider());
+
+            //if (Resources["services"] is not IServiceProvider serviceProvider)
+            //{
+            //    MessageBox.Show("Service provider didn't find.");
+            //    return;
+            //}
+
+            //serviceProvider.InitializeServices();
         }
     }
 }

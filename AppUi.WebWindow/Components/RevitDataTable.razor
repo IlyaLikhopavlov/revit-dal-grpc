@@ -45,8 +45,8 @@
 
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
 <button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
-<button class="btn btn-primary" @onclick="@(async () => await AddNewBarAsync())">Add Bar</button>
-<button class="btn btn-primary" @onclick="@(async () => await AddNewCatalogEntryAsync())">Add FooCatalog</button>
+@*<button class="btn btn-primary" @onclick="@(async () => await AddNewBarAsync())">Add Bar</button>
+<button class="btn btn-primary" @onclick="@(async () => await AddNewCatalogEntryAsync())">Add FooCatalog</button>*@
 
 @code {
     protected override async Task OnInitializedAsync()

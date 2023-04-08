@@ -46,7 +46,15 @@ namespace App.DAL.Common.Repositories.RevitRepositories.Generic
 
         public void Insert(T element)
         {
-            _revitSet.Add(element);
+            if (element.Id > 0)
+            {
+                _revitSet.Attach(element);
+            }
+            else
+            {
+                _revitSet.Add(element);
+            }
+            
         }
 
         public void Remove(int elementId)

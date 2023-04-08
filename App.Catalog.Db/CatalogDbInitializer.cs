@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using App.Catalog.Db.Model;
 using App.Catalog.Db.Model.Enums;
 
@@ -17,7 +12,7 @@ namespace App.Catalog.Db
         {
             _dbContextFactory = dbContextFactory;
         }
-
+        
         public void InitDataBase()
         {
             using var context = _dbContextFactory.CreateDbContext();
@@ -28,6 +23,20 @@ namespace App.Catalog.Db
                 return;
             }
 
+            var powerPlus24Vdc = new PowerType
+            {
+                Type = PowerTypeEnum.PowerPlus24Vdc,
+                Name = @"+24VDC"
+            };
+
+            var powerPlus12Vdc = new PowerType
+            {
+                Type = PowerTypeEnum.PowerPlus12Vdc,
+                Name = @"+12VDC"
+            };
+
+            context.PowerTypes.AddRange(powerPlus24Vdc, powerPlus12Vdc);
+
             var foo =
                 new FooCatalog
                 {
@@ -36,6 +45,7 @@ namespace App.Catalog.Db
                     IdGuid = new Guid("0117C24B-B01E-4D07-9FCC-654BA92E50CC"),
                     Version = 1,
                     FooFeature = "Feature Value 1",
+                    PowerType = powerPlus12Vdc
                 };
 
             var bar =
@@ -46,6 +56,7 @@ namespace App.Catalog.Db
                     IdGuid = new Guid("5B480CB6-7CE1-4BE1-BA42-854111F17244"),
                     Version = 1,
                     BarFeature = "Feature Value 1",
+                    PowerType = powerPlus24Vdc
                 };
 
             context.FooCatalog.Add(foo);

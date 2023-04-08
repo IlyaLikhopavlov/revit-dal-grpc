@@ -6,9 +6,6 @@ using App.DAL.Common.Repositories.Factories.Base;
 using App.DAL.Common.Services.Catalog;
 using App.DML;
 using Bimdance.Framework.Initialization;
-using System;
-using App.Catalog.Db.Model.Enums;
-using App.Catalog.Db;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Services
@@ -18,7 +15,7 @@ namespace App.Services
         private readonly IFooRepository _fooRepository;
         private readonly IBarRepository _barRepository;
         private readonly ICatalogService _catalogService;
-        private readonly RevitCatalogStorage _revitCatalogStorage;
+        //private readonly RevitCatalogStorage _revitCatalogStorage;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
 
@@ -30,7 +27,7 @@ namespace App.Services
             IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
-            _revitCatalogStorage = scopeFactory.GetScopedService<RevitCatalogStorage>();
+            //_revitCatalogStorage = scopeFactory.GetScopedService<RevitCatalogStorage>();
             _catalogService = scopeFactory.GetScopedService<ICatalogService>();
             _fooRepository = fooRepositoryFactory.Create();
             _barRepository = barRepositoryFactory.Create();
@@ -55,10 +52,24 @@ namespace App.Services
         public async Task AllocateFoosAsync()
         {
             var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Foo))!;
+            
+            var fooCatalog = await _catalogService.ReadCatalogRecordAsync<FooCatalog>(
+                Guid.Parse("0117C24B-B01E-4D07-9FCC-654BA92E50CC"),
+                p => p
+                    .Include(c => c.PowerType)
+                    .Include(c => c.FooCatalogChannels)
+                    .ThenInclude(c => c.Channel));
 
             foreach (var id in allocated)
             {
-                _fooRepository.Insert(new Foo { Id = id, Name = $@"Foo {id}", Description = @"description" });
+                _fooRepository.Insert(
+                    new Foo
+                    {
+                        Id = id, 
+                        Name = $@"Foo {id}", 
+                        Description = @"description",
+                        CatalogId = fooCatalog.IdGuid.ToString()
+                    });
             }
 
             await _fooRepository?.SaveAsync()!;
@@ -68,9 +79,24 @@ namespace App.Services
         {
             var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Bar))!;
 
+            var barCatalog = await _catalogService.ReadCatalogRecordAsync<BarCatalog>(
+                Guid.Parse("5B480CB6-7CE1-4BE1-BA42-854111F17244"),
+                p => p
+                    .Include(c => c.PowerType)
+                    .Include(c => c.BarCatalogChannels)
+                    .ThenInclude(c => c.Channel));
+
             foreach (var id in allocated)
             {
-                _barRepository.Insert(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
+                _barRepository.Insert(
+                    new Bar
+                    {
+                        Id = id, 
+                        Name = $@"Bar {id}", 
+                        Description = @"description",
+                        CatalogId = barCatalog.IdGuid.ToString()
+                    });
+                
             }
 
             await _barRepository?.SaveAsync()!;

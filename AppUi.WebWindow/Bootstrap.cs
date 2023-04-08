@@ -54,12 +54,13 @@ namespace AppUi.WebWindow
         {
             var contentPath = GetContentPath();
             
-            
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             var configuration = configurationBuilder.Build();
+
+            serviceCollection.AddSingleton<MainWindow>();
 
             serviceCollection.AddWpfBlazorWebView();
 

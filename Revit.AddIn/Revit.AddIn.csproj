@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="taskkill /f /fi &quot;imagename eq Revit.exe&quot;" />
+    <Exec Command="pre-build.bat" />
   </Target>
 
 </Project>

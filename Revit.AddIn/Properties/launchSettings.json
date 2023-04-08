@@ -5,7 +5,8 @@
     },
     "Run In Revit": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2019\\Revit.exe"
+      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2019\\Revit.exe",
+      "commandLineArgs": "C:\\Users\\Ilya Likhopavlov\\Documents\\FooBar_test.rvt"
     }
   }
 }

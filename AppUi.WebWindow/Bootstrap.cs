@@ -61,6 +61,8 @@ namespace AppUi.WebWindow
 
             var configuration = configurationBuilder.Build();
 
+            serviceCollection.AddSingleton<MainWindow>();
+
             serviceCollection.AddWpfBlazorWebView();
 
             serviceCollection.AddSingleton<IConfiguration>(configuration);

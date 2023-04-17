@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
+using AppUi.WebWindow.Utils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -11,6 +14,8 @@ namespace AppUi.WebWindow
 
         public App()
         {
+            RevitRunner.DisableBimCd();
+            
             AppHost = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
@@ -20,19 +25,15 @@ namespace AppUi.WebWindow
 
             Resources.Add("services", AppHost.Services);
 
-            if (Resources["services"] is not IServiceProvider serviceProvider)
-            {
-                MessageBox.Show("Service provider didn't find.");
-                return;
-            }
-
-            serviceProvider.InitializeServices();
+            AppHost.Services.InitializeServices();
         }
 
         protected override async void OnExit(ExitEventArgs e)
         {
             await AppHost.StopAsync();
             
+            RevitRunner.EnableBimCd();
+
             base.OnExit(e);
         }
 

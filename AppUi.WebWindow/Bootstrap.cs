@@ -37,6 +37,7 @@ using App.CommunicationServices.Utils.Comparers;
 using App.DAL.Common.Services.Catalog;
 using App.DAL.Revit.Converters.Common;
 using App.Settings.Constants;
+using AppUi.WebWindow.Utils;
 
 namespace AppUi.WebWindow
 {
@@ -53,13 +54,14 @@ namespace AppUi.WebWindow
         public static void Load(this IServiceCollection serviceCollection)
         {
             var contentPath = GetContentPath();
-            
+
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             var configuration = configurationBuilder.Build();
 
+            serviceCollection.AddSingleton<RevitRunner>();
             serviceCollection.AddSingleton<MainWindow>();
 
             serviceCollection.AddWpfBlazorWebView();
@@ -146,6 +148,9 @@ namespace AppUi.WebWindow
                     case null:
                         throw new InvalidOperationException("Configuration isn't available or incorrect.");
                     case ApplicationModeEnum.Desktop:
+                        var revitRunner = serviceProvider.GetRequiredService<RevitRunner>();
+                        //revitRunner!.KillRevit();
+                        //revitRunner.RunRevit();
                         RunForRevit(serviceProvider);
                         break;
                     case ApplicationModeEnum.Web:

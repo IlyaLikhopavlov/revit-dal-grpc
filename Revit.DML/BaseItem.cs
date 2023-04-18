@@ -7,5 +7,7 @@
         }
 
         public string TypeName => GetType().FullName;
+
+        public string CatalogId { get; set; }
     }
 }

@@ -5,6 +5,9 @@ using Bimdance.Revit.Framework.RevitDocument;
 using Revit.Storage.ExtensibleStorage;
 using Revit.Services.Grpc.Services;
 using Revit.Storage.ExtensibleStorage.Schemas;
+using GrpcLevel = Revit.Services.Grpc.Services.Level;
+using GrpcRoom = Revit.Services.Grpc.Services.Room;
+using Revit.Storage.RevitUtils;
 
 namespace Revit.Storage.InstancesAccess
 {
@@ -45,6 +48,22 @@ namespace Revit.Storage.InstancesAccess
                 InstanceId = element.Id.IntegerValue,
                 Data = storage.GetEntity(element)?.Data
             };
+        }
+
+        public IEnumerable<GrpcLevel> GetLevelsFromRevit()
+        {
+            var revitLevels  = _document.GetLevels();
+
+            var grpsLevels = revitLevels.Select(x => new GrpcLevel
+            {
+                Value = x.Name,
+                Rooms = {_document.GetLevelRooms(x).Select(r=> new GrpcRoom
+                {
+                    Number = r.Number
+                })}
+            });
+
+            return grpsLevels;
         }
 
         public void PushDataIntoInstancesById(IEnumerable<InstanceData> data, DomainModelTypesEnum entityType)

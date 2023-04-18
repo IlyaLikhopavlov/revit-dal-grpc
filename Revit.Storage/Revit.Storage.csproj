@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Revit.GrpcServer\Revit.Grpc.Bundle.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="RevitUtils\" />
+  </ItemGroup>
+
 </Project>

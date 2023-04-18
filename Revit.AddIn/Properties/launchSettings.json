@@ -1,11 +1,10 @@
 {
   "profiles": {
-    "Revit.AddIn": {
-      "commandName": "Project"
-    },
     "Run In Revit": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2019\\Revit.exe"
+      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2019\\Revit.exe",
+      "commandLineArgs": "/language ENG",
+      "workingDirectory": "G:\\Program\\ComfortLab\\gRPC\\revit-dal-grpc\\Revit.AddIn\\bin\\Debug\\net48\\"
     }
   }
 }

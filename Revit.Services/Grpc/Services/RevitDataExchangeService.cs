@@ -18,6 +18,11 @@ namespace Revit.Services.Grpc.Services
             return base.PullDataFromRevitInstances(request, context);
         }
 
+        public override async Task<GetLevelsFromRevitResponse> GetLevelsFromRevit(GetLevelsFromRevitRequest request,
+            ServerCallContext context) =>
+            await _externalEventsService.Execute<GetLevelsFromRevitRequest, GetLevelsFromRevitResponse>(
+                nameof(GetLevelsFromRevitEventHandler), request);
+
         public override async Task<PullDataFromRevitInstancesResponse> PullDataFromRevitInstancesByType(
             PullDataFromRevitInstancesByTypeRequest request, ServerCallContext context) =>
             await _externalEventsService.Execute<PullDataFromRevitInstancesByTypeRequest, PullDataFromRevitInstancesResponse>(

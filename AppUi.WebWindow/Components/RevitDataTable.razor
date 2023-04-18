@@ -45,6 +45,7 @@
 
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
 <button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
+<button class="btn btn-primary" @onclick="GetRevitLevelsAsync">Get Levels</button>
 <button class="btn btn-primary" @onclick="@(async () => await AddNewBarAsync())">Add Bar</button>
 <button class="btn btn-primary" @onclick="@(async () => await AddNewCatalogEntryAsync())">Add FooCatalog</button>
 
@@ -87,6 +88,11 @@
     private async Task AllocateBarsAsync()
     {
         await RevitDataService?.AllocateBarsAsync()!;
+    }
+    
+    private async Task GetRevitLevelsAsync()
+    {
+        // await RevitDataService?.GetRevitLevelsAsync()!;
     }
 
     public void Dispose()

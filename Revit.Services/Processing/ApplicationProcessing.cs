@@ -3,7 +3,7 @@ using Autodesk.Revit.UI;
 
 namespace Revit.Services.Processing
 {
-    public class ApplicationProcessing
+    public class ApplicationProcessing : IDisposable
     {
 
         public ApplicationProcessing(UIControlledApplication application)
@@ -43,5 +43,10 @@ namespace Revit.Services.Processing
         public EventHandler<EventArgs.DocumentChangedEventArgs> DocumentChanged { get; set; }
 
         public EventHandler<EventArgs.DocumentClosingEventArgs> DocumentClosing { get; set; }
+
+        public void Dispose()
+        {
+            _uiApplication?.Dispose();
+        }
     }
 }

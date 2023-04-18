@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using App.Catalog.Db;
 using App.CommunicationServices.Utils.Comparers;
 using App.DAL.Common.Services.Catalog;
+using App.DAL.Common.Services.RevitEntities;
 using App.DAL.Revit.Converters.Common;
 using App.Settings.Constants;
 
@@ -53,8 +54,8 @@ namespace AppUi.WebWindow
         public static void Load(this IServiceCollection serviceCollection)
         {
             var contentPath = GetContentPath();
-            
-            
+
+
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
@@ -84,7 +85,7 @@ namespace AppUi.WebWindow
             serviceCollection.AddScoped<BarSet>();
             serviceCollection.AddScoped<FooSet>();
             serviceCollection.AddScoped<IDataContext, DataContext>();
-            
+
             serviceCollection.AddScoped<FooRevitRepository>();
             serviceCollection.AddScoped<BarRevitRepository>();
             serviceCollection.AddScoped<FooDbRepository>();
@@ -94,6 +95,7 @@ namespace AppUi.WebWindow
             serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
 
             serviceCollection.AddScoped<ICatalogService, CatalogService>();
+            serviceCollection.AddScoped<LevelsRoomsService>();
             serviceCollection.AddScoped<RevitCatalogStorage>();
             serviceCollection.AddScoped<DbCatalogStorage>();
 
@@ -110,7 +112,7 @@ namespace AppUi.WebWindow
             {
                 var connectionString = configuration
                                            .GetRequiredSection(nameof(ConnectionStrings))
-                                           .Get<ConnectionStrings>()?.ProjectsDbConnection 
+                                           .Get<ConnectionStrings>()?.ProjectsDbConnection
                                        ?? throw new InvalidOperationException(
                                            "Connection string for projects DB wasn't found.");
                 builder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}" +
@@ -156,9 +158,9 @@ namespace AppUi.WebWindow
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    ex.ToString(), 
-                    "Error", 
-                    MessageBoxButton.OK, 
+                    ex.ToString(),
+                    "Error",
+                    MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
         }
@@ -182,7 +184,7 @@ namespace AppUi.WebWindow
             }
 
             //stub for one document
-            applicationObject.ActiveDocument = 
+            applicationObject.ActiveDocument =
                 new DocumentDescriptor
                 {
                     Id = project.UniqueId,

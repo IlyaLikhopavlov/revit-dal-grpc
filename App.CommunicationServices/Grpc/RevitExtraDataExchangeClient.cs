@@ -9,7 +9,8 @@ namespace App.CommunicationServices.Grpc
         private static readonly Dictionary<Type, DomainModelTypesEnum> TypesMapping = new()
         {
             { typeof(Foo), DomainModelTypesEnum.Foo },
-            { typeof(Bar), DomainModelTypesEnum.Bar }
+            { typeof(Bar), DomainModelTypesEnum.Bar },
+            { typeof(BcLevel), DomainModelTypesEnum.Bar }
         };
 
         private readonly RevitDataExchange.RevitDataExchangeClient _client;
@@ -61,6 +62,22 @@ namespace App.CommunicationServices.Grpc
             }
 
             return response.InstancesData.ToArray();
+        }
+
+        public async Task<Level[]> GetLevelsFromRevit(DocumentDescriptor documentDescriptor)
+        {
+            var response = await _client.GetLevelsFromRevitAsync(
+                new GetLevelsFromRevitRequest
+                {
+                    DocumentId = documentDescriptor.Id
+                });
+        
+            if (response?.ErrorInfo.Code != ExceptionCodeEnum.Success)
+            {
+                throw new InvalidOperationException($"Code: {response?.ErrorInfo.Code} Message: {response?.ErrorInfo.Message}");
+            }
+        
+            return response.Levels.ToArray();
         }
 
         public async Task<string> PullDataFromRevitInstance(Type type, DocumentDescriptor documentDescriptor, int instanceId)

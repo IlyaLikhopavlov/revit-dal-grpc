@@ -16,11 +16,13 @@ service RevitDataExchange {
 	rpc CreateOrUpdateCatalogRecord (.CreateOrUpdateRecordInCatalogRequest) returns (.BasicResponse);
 	rpc ReadRecordFromCatalog (.ReadRecordFromCatalogRequest) returns (.ReadRecordFromCatalogResponse);
 	rpc ReadAllRecordsFromCatalog (.ReadAllRecordsFromCatalogRequest) returns (.ReadAllRecordsFromCatalogResponse); //todo stream on the server side
+	rpc GetLevelsFromRevit(.GetLevelsFromRevitRequest) returns(.GetLevelsFromRevitResponse);
 }
 
 enum DomainModelTypesEnum {
 	Foo = 0;
 	Bar = 1;
+	BcLevel = 3;
 }
 
 message InstanceData {
@@ -130,4 +132,22 @@ message ReadAllRecordsFromCatalogRequest {
 message ReadAllRecordsFromCatalogResponse {
 	ErrorInfo ErrorInfo = 1;
 	repeated CatalogRecordData Records = 2;
+}
+
+message GetLevelsFromRevitRequest{
+	string DocumentId = 1;
+}
+
+message GetLevelsFromRevitResponse{
+	ErrorInfo ErrorInfo = 1;
+	repeated Level Levels = 2;
+}
+
+message Level{
+	string Value = 1; 
+	repeated Room Rooms = 2;
+} 
+
+message Room {
+	string Number = 1;
 }

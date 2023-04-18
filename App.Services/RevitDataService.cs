@@ -9,7 +9,9 @@ using Bimdance.Framework.Initialization;
 using System;
 using App.Catalog.Db.Model.Enums;
 using App.Catalog.Db;
+using App.DAL.Common.Services.RevitEntities;
 using Microsoft.EntityFrameworkCore;
+using Revit.Services.Grpc.Services;
 
 namespace App.Services
 {
@@ -21,6 +23,7 @@ namespace App.Services
         private readonly RevitCatalogStorage _revitCatalogStorage;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
+        private readonly LevelsRoomsService _levelsRoomsService;
 
 
         public RevitDataService(
@@ -30,6 +33,7 @@ namespace App.Services
             IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
+            _levelsRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
             _revitCatalogStorage = scopeFactory.GetScopedService<RevitCatalogStorage>();
             _catalogService = scopeFactory.GetScopedService<ICatalogService>();
             _fooRepository = fooRepositoryFactory.Create();
@@ -74,6 +78,13 @@ namespace App.Services
             }
 
             await _barRepository?.SaveAsync()!;
+        }
+
+        public async Task<Level[]> GetRevitLevelsAsync()
+        {
+            var levels = await _revitExtraDataExchangeClient?.GetLevelsFromRevit(_levelsRoomsService.DocumentDescriptor);
+            
+            return levels;
         }
 
         public IEnumerable<Foo> GetFoos()

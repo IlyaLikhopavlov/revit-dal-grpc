@@ -29,6 +29,7 @@ namespace App.DAL.Revit.DataContext
 
         protected override void ResolveForeignRelations()
         {
+
         }
     }
 }

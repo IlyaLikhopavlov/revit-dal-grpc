@@ -29,11 +29,15 @@ namespace Revit.AddIn.RibbonPanels
             var barButtonCommand =
                 new PushButtonData(@"Bar", @"Bar", path, typeof(PlaceBarCommand).FullName);
 
+            var levelsButtonCommand =
+                new PushButtonData(@"Levels", @"Levels", path, typeof(GetLevelsCommand).FullName);
+
             var readDataCommand =
                 new PushButtonData(@"Read", @"Read", path, typeof(ReadDataCommand).FullName);
 
             revitPanel.AddItem(fooButtonCommon);
             revitPanel.AddItem(barButtonCommand);
+            revitPanel.AddItem(levelsButtonCommand);
             revitPanel.AddItem(readDataCommand);
         }
     }

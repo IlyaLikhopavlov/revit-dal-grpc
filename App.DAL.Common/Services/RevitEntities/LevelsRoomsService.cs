@@ -29,7 +29,7 @@ public class LevelsRoomsService
     private List<BcLevel> MapGrpcLevelsToBcLevels(Level[] levels)
     {
         var config = new MapperConfiguration(mc => mc.CreateMap<Level, BcLevel>()
-            .ForMember(val => val.Description, act => act.MapFrom(src => src.Value))
+            .ForMember(val => val.Elevation, act => act.MapFrom(src => src.Value))
             .ForMember(rooms => rooms.Rooms, act => act.MapFrom(src => src.Rooms)));
 
         var mapper = new Mapper(config);

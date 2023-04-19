@@ -12,14 +12,14 @@ namespace App.DML
         {
         }
 
-        public BcLevel(List<string> rooms, string description, string name) : base(name)
+        public BcLevel(List<string> rooms, string elevation, string name) : base(name)
         {
             Rooms = rooms;
-            Description = description;
+            Elevation = elevation;
         }
 
         public List<string> Rooms { get; set; }
 
-        public string Description { get; set; }
+        public string Elevation { get; set; }
     }
 }

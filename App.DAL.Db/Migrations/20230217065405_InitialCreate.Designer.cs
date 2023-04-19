@@ -68,7 +68,7 @@ namespace App.DAL.Db.Migrations
                 {
                     b.HasBaseType("App.DAL.Db.Model.BaseEntity");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.HasIndex("ProjectId");
@@ -82,14 +82,14 @@ namespace App.DAL.Db.Migrations
                 {
                     b.HasBaseType("App.DAL.Db.Model.BaseEntity");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BaseEntity", null, t =>
                         {
-                            t.Property("Description")
+                            t.Property("Elevation")
                                 .HasColumnName("Foo_Description");
                         });
 

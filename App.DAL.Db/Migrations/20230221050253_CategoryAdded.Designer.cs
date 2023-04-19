@@ -53,7 +53,7 @@ namespace App.DAL.Db.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -88,7 +88,7 @@ namespace App.DAL.Db.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.HasIndex("CategoryId");
@@ -104,14 +104,14 @@ namespace App.DAL.Db.Migrations
                 {
                     b.HasBaseType("App.DAL.Db.Model.BaseEntity");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.HasIndex("ProjectId");
 
                     b.ToTable("BaseEntity", null, t =>
                         {
-                            t.Property("Description")
+                            t.Property("Elevation")
                                 .HasColumnName("Foo_Description");
                         });
 

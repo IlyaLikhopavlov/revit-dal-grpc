@@ -23,7 +23,7 @@ namespace App.DAL.Db.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("EntityType")
@@ -53,7 +53,7 @@ namespace App.DAL.Db.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Elevation")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")

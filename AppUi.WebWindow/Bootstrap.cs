@@ -100,6 +100,7 @@ namespace AppUi.WebWindow
             serviceCollection.AddScoped<LevelsRoomsService>();
             serviceCollection.AddScoped<RevitCatalogStorage>();
             serviceCollection.AddScoped<DbCatalogStorage>();
+            serviceCollection.AddSingleton<RevitEntitiesService>();
 
             serviceCollection.AddSingleton<IEntityConverter<Project, ProjectEntity>, ProjectEntityConverter>();
             serviceCollection.AddSingleton<IEntityConverter<Foo, FooEntity>, FooEntityConverter>();

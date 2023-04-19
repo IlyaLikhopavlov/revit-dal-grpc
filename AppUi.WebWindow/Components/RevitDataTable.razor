@@ -1,9 +1,11 @@
 ﻿@using global::App.CommunicationServices.Revit
 @using global::App.CommunicationServices.Revit.EventArgs
+@using global::App.DAL.Common.Services.RevitEntities
 @using global::App.DML
 @using global::App.Services
 @inject ApplicationObject ApplicationObject
 @inject RevitDataService RevitDataService
+@inject RevitEntitiesService RevitEntitiesService
 
 <h1>RevitDataTable</h1>
 
@@ -92,7 +94,7 @@
     
     private async Task GetRevitLevelsAsync()
     {
-        await RevitDataService?.GetRevitLevelsAsync()!;
+        await RevitEntitiesService?.GetRevitLevelsAsync()!;
     }
 
     public void Dispose()

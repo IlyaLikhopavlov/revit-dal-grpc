@@ -1,4 +1,5 @@
-﻿using Autodesk.Revit.DB;
+﻿using System.Globalization;
+using Autodesk.Revit.DB;
 using Revit.Storage.ExtensibleStorage.Constants;
 using Bimdance.Framework.DependencyInjection.FactoryFunctionality;
 using Bimdance.Revit.Framework.RevitDocument;
@@ -56,7 +57,7 @@ namespace Revit.Storage.InstancesAccess
 
             var grpsLevels = revitLevels.Select(x => new GrpcLevel
             {
-                Value = x.Name,
+                Value = x.Elevation.ToString(CultureInfo.InvariantCulture),
                 Rooms = {_document.GetLevelRooms(x).Select(r=> new GrpcRoom
                 {
                     Number = r.Number

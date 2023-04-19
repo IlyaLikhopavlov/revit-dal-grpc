@@ -23,7 +23,6 @@ namespace App.Services
         private readonly RevitCatalogStorage _revitCatalogStorage;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
-        private readonly LevelsRoomsService _levelsRoomsService;
 
 
         public RevitDataService(
@@ -33,7 +32,6 @@ namespace App.Services
             IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
-            _levelsRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
             _revitCatalogStorage = scopeFactory.GetScopedService<RevitCatalogStorage>();
             _catalogService = scopeFactory.GetScopedService<ICatalogService>();
             _fooRepository = fooRepositoryFactory.Create();
@@ -80,12 +78,12 @@ namespace App.Services
             await _barRepository?.SaveAsync()!;
         }
 
-        public async Task<Level[]> GetRevitLevelsAsync()
-        {
-            var levels = await _revitExtraDataExchangeClient?.GetLevelsFromRevit(_levelsRoomsService.DocumentDescriptor);
-            
-            return levels;
-        }
+        // public async Task<Level[]> GetRevitLevelsAsync()
+        // {
+        //     var levels = await _revitExtraDataExchangeClient?.GetLevelsFromRevit(_levelsRoomsService.DocumentDescriptor);
+        //     
+        //     return levels;
+        // }
 
         public IEnumerable<Foo> GetFoos()
         {

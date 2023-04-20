@@ -15,11 +15,11 @@ namespace App.DAL.Common.Repositories.DbRepositories
         private readonly IServiceProvider _serviceProvider;
 
         public BarDbRepository(
-            IDbContextFactory<ProjectsDataContext> dbContextFactory, 
             IEntityConverter<Bar, BarEntity> entityConverter,
             IServiceProvider serviceProvider,
+            ProjectsDataContext dbContextFactory,
             DocumentDescriptor documentDescriptor) 
-            : base(dbContextFactory, entityConverter, documentDescriptor)
+            : base(entityConverter, dbContextFactory, documentDescriptor)
         {
             _serviceProvider = serviceProvider;
         }

@@ -19,11 +19,11 @@ namespace App.DAL.Common.Repositories.DbRepositories.Generic
         private readonly DocumentDescriptor _documentDescriptor;
 
         public GenericDbRepository(
-            IDbContextFactory<ProjectsDataContext> dbContextFactory,
             IEntityConverter<TModelItem, TDbEntity> entityConverter,
+            ProjectsDataContext dbContext,
             DocumentDescriptor documentDescriptor)
         {
-            DbContext = dbContextFactory.CreateDbContext();
+            DbContext = dbContext;
             DbSet = DbContext.Set<TDbEntity>();
             _documentDescriptor = documentDescriptor;
             _entityConverter = entityConverter;

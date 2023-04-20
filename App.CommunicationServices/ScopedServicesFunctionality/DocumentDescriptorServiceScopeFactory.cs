@@ -57,13 +57,13 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
                           ?? throw new InvalidOperationException($"Required service {typeof(T).Name} wasn't found");
         }
 
-        public object GetScopedService(Type type)
+        public object GetScopedService(Type serviceType)
         {
             AssertDocumentIsInitialized();
 
             var scope = CreateScope();
 
-            var factoryType = FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), type);
+            var factoryType = FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), serviceType);
             var factory = scope.ServiceProvider.GetService(factoryType);
 
             if (factory is null)

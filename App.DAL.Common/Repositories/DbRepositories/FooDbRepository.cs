@@ -10,10 +10,10 @@ namespace App.DAL.Common.Repositories.DbRepositories
     public class FooDbRepository : GenericDbRepository<Foo, FooEntity>, IFooRepository
     {
         public FooDbRepository(
-            IDbContextFactory<ProjectsDataContext> dbContextFactory, 
-            IEntityConverter<Foo, FooEntity> entityConverter, 
+            IEntityConverter<Foo, FooEntity> entityConverter,
+            ProjectsDataContext projectsDataContext,
             DocumentDescriptor documentDescriptor) : 
-                base(dbContextFactory, entityConverter, documentDescriptor)
+                base(entityConverter, projectsDataContext, documentDescriptor)
         {
         }
     }

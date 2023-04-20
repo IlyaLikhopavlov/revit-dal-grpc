@@ -14,9 +14,9 @@ namespace App.DAL.Common.Repositories.DbRepositories
 
         public ProjectDbRepository(
             IEntityConverter<Project, ProjectEntity> projectConverter,
-            IDbContextFactory<ProjectsDataContext> dbContextFactory)
+            ProjectsDataContext dbContext)
         {
-            _dbContext = dbContextFactory.CreateDbContext();
+            _dbContext = dbContext;
             _projectConverter = projectConverter;
             Initialization = Task.CompletedTask;
         }

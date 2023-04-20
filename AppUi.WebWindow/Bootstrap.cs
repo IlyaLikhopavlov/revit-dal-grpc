@@ -92,8 +92,8 @@ namespace AppUi.WebWindow
             serviceCollection.AddScoped<FooDbRepository>();
             serviceCollection.AddScoped<BarDbRepository>();
             serviceCollection.AddSingleton<IProjectRepository, ProjectDbRepository>();
-            serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, FooRepositoryFactory>();
-            serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, BarRepositoryFactory>();
+            serviceCollection.AddSingleton<IRepositoryFactory<IFooRepository>, RepositoryFactory<IFooRepository>>();
+            serviceCollection.AddSingleton<IRepositoryFactory<IBarRepository>, RepositoryFactory<IBarRepository>>();
 
             serviceCollection.AddScoped<ICatalogService, CatalogService>();
             serviceCollection.AddScoped<RevitCatalogStorage>();

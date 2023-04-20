@@ -8,7 +8,7 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
         T GetScopedService<T>() where T : class;
 
-        object GetScopedService(Type type);
+        object GetScopedService(Type serviceType);
 
         void RemoveScope(DocumentDescriptor documentDescriptor);
     }

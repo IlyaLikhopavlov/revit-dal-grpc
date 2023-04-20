@@ -3,9 +3,10 @@
 @using global::App.DAL.Common.Services.RevitEntities
 @using global::App.DML
 @using global::App.Services
+@using global::App.CommunicationServices.ScopedServicesFunctionality
 @inject ApplicationObject ApplicationObject
 @inject RevitDataService RevitDataService
-@inject RevitEntitiesService RevitEntitiesService
+@inject IDocumentDescriptorServiceScopeFactory scopeFactory
 
 <h1>RevitDataTable</h1>
 
@@ -91,10 +92,12 @@
     {
         await RevitDataService?.AllocateBarsAsync()!;
     }
-    
+
     private async Task GetRevitLevelsAsync()
     {
-        await RevitEntitiesService?.GetRevitLevelsAsync()!;
+        var levelRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
+
+        await levelRoomsService?.GetRevitLevelsAsync()!;
     }
 
     public void Dispose()

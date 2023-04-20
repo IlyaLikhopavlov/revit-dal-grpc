@@ -78,13 +78,6 @@ namespace App.Services
             await _barRepository?.SaveAsync()!;
         }
 
-        // public async Task<Level[]> GetRevitLevelsAsync()
-        // {
-        //     var levels = await _revitExtraDataExchangeClient?.GetLevelsFromRevit(_levelsRoomsService.DocumentDescriptor);
-        //     
-        //     return levels;
-        // }
-
         public IEnumerable<Foo> GetFoos()
         {
             return _fooRepository.GetAll();
@@ -136,14 +129,14 @@ namespace App.Services
                 await _fooRepository.SaveAsync();
                 return;
             }
-            
+
             if (_barRepository.Contains(id))
             {
                 _barRepository.Remove(id);
                 await _barRepository.SaveAsync();
                 return;
             }
-            
+
             throw new InvalidOperationException($"Element with ID={id} wasn't found.");
         }
 

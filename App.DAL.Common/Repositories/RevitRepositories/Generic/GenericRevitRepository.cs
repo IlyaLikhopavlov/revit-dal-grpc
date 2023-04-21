@@ -32,8 +32,6 @@ namespace App.DAL.Common.Repositories.RevitRepositories.Generic
 
         public Task Initialization { get; }
 
-        public DocumentDescriptor DocumentDescriptor => new(_documentDescriptor);
-
         public IEnumerable<T> GetAll()
         {
             return _revitSet;

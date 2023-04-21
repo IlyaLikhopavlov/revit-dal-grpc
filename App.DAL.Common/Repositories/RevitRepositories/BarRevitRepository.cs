@@ -1,5 +1,6 @@
 ﻿using App.CommunicationServices.ScopedServicesFunctionality;
 using App.DAL.Common.Repositories.RevitRepositories.Generic;
+using App.DAL.Revit.DataContext;
 using App.DML;
 
 namespace App.DAL.Common.Repositories.RevitRepositories
@@ -8,7 +9,7 @@ namespace App.DAL.Common.Repositories.RevitRepositories
     {
         public BarRevitRepository(
             IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory, 
-            DocumentDescriptor documentDescriptor) 
+            DocumentDescriptor documentDescriptor)
             : base(documentDescriptorServiceScopeFactory, documentDescriptor)
         {
         }

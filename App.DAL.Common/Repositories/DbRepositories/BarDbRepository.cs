@@ -17,9 +17,9 @@ namespace App.DAL.Common.Repositories.DbRepositories
         public BarDbRepository(
             IEntityConverter<Bar, BarEntity> entityConverter,
             IServiceProvider serviceProvider,
-            ProjectsDataContext dbContextFactory,
+            ProjectsDataContext dbContext,
             DocumentDescriptor documentDescriptor) 
-            : base(entityConverter, dbContextFactory, documentDescriptor)
+            : base(entityConverter, dbContext, documentDescriptor)
         {
             _serviceProvider = serviceProvider;
         }

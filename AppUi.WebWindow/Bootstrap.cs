@@ -112,7 +112,7 @@ namespace AppUi.WebWindow
             {
                 var connectionString = configuration
                                            .GetRequiredSection(nameof(ConnectionStrings))
-                                           .Get<ConnectionStrings>()?.ProjectsDbConnection 
+                                           .Get<ConnectionStrings>()?.ProjectsDbConnection
                                        ?? throw new InvalidOperationException(
                                            "Connection string for projects DB wasn't found.");
                 builder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}" +

@@ -11,9 +11,9 @@ namespace App.DAL.Common.Repositories.DbRepositories
     {
         public FooDbRepository(
             IEntityConverter<Foo, FooEntity> entityConverter,
-            ProjectsDataContext projectsDataContext,
+            ProjectsDataContext dbContext,
             DocumentDescriptor documentDescriptor) : 
-                base(entityConverter, projectsDataContext, documentDescriptor)
+                base(entityConverter, dbContext, documentDescriptor)
         {
         }
     }

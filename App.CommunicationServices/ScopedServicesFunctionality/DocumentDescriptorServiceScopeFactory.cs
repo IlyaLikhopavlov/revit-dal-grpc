@@ -57,13 +57,16 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
                           ?? throw new InvalidOperationException($"Required service {typeof(T).Name} wasn't found");
         }
 
-        public object GetScopedService(Type serviceType)
+        public object GetScopedService(Type serviceType, object constructorArg = null)
         {
             AssertDocumentIsInitialized();
 
             var scope = CreateScope();
 
-            var factoryType = FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), serviceType);
+            var factoryType = constructorArg == null 
+                ? FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), serviceType) 
+                : FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), constructorArg.GetType(), serviceType);
+            
             var factory = scope.ServiceProvider.GetService(factoryType);
 
             if (factory is null)
@@ -73,11 +76,15 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
             var scopeObject = GetScopeObject(scope);
 
-            return
-                factory
-                    .GetType()
-                    .GetMethod("New")
-                    ?.Invoke(factory, new object[] { scopeObject });
+            return constructorArg == null 
+                    ? factory
+                        .GetType()
+                        .GetMethod("New")
+                        ?.Invoke(factory, new object[] { scopeObject })
+                    : factory
+                        .GetType()
+                        .GetMethod("New")
+                        ?.Invoke(factory, new [] { scopeObject, constructorArg });
         }
 
         public void RemoveScope(DocumentDescriptor documentDescriptor)

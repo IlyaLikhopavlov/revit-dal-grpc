@@ -1,7 +1,6 @@
 ﻿using App.DAL.Db;
 using App.DAL.Db.Mapping.Abstractions;
 using App.DML;
-using Microsoft.EntityFrameworkCore;
 using ProjectEntity = App.DAL.Db.Model.Project;
 
 namespace App.DAL.Common.Repositories.DbRepositories

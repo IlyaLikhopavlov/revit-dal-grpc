@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using App.CommunicationServices.ScopedServicesFunctionality;
+using App.DAL.Common.Repositories;
 using App.DAL.Common.Repositories.DbRepositories;
+using App.DAL.Common.Repositories.Factories.Base;
 using App.DAL.Db;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,23 +16,27 @@ namespace App.DAL.Common.UnitOfWork
     {
         private readonly ProjectsDataContext _dbContext;
         
-        private readonly IDocumentDescriptorServiceScopeFactory _descriptorServiceScopeFactory;
-
         private BarDbRepository _barDbRepository;
 
         private FooDbRepository _fooDbRepository;
 
+        private IRepositoryFactory<IFooRepository> _fooRepositoryFactory;
+
+        private IRepositoryFactory<IBarRepository> _barRepositoryFactory;
+
         public ProjectsUnitOfWork(
             IDbContextFactory<ProjectsDataContext> projectsDbFactory, 
-            IDocumentDescriptorServiceScopeFactory documentDescriptorServiceScopeFactory)
+            IRepositoryFactory<IFooRepository> fooRepositoryFactory,
+            IRepositoryFactory<IBarRepository> barRepositoryFactory)
         {
             _dbContext = projectsDbFactory.CreateDbContext();
-            _descriptorServiceScopeFactory = documentDescriptorServiceScopeFactory;
+            _fooRepositoryFactory = fooRepositoryFactory;
+            _barRepositoryFactory = barRepositoryFactory;
         }
 
         public BarDbRepository BarDbRepository =>
             _barDbRepository ??= 
-                (BarDbRepository)_descriptorServiceScopeFactory.GetScopedService(typeof(BarDbRepository), _dbContext);
+                _fooRepositoryFactory.Create();
 
         public FooDbRepository FooDbRepository =>
             _fooDbRepository ??=

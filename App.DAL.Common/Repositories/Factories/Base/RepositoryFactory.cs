@@ -5,6 +5,7 @@ using App.Settings.Model.Enums;
 using System.ComponentModel;
 using App.DAL.Common.Repositories.DbRepositories;
 using App.DAL.Common.Repositories.RevitRepositories;
+using App.DAL.Db;
 
 namespace App.DAL.Common.Repositories.Factories.Base
 {
@@ -29,7 +30,7 @@ namespace App.DAL.Common.Repositories.Factories.Base
             DocumentDescriptorServiceScopeFactory = documentDescriptorServiceScopeFactory;
         }
         
-        public T Create()
+        public T Create(ProjectsDataContext projectsDataContext)
         {
             if (!_repositoriesDictionary.TryGetValue(typeof(T), out var repositories))
             {

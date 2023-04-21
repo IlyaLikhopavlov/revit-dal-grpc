@@ -23,28 +23,40 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in RevitDataService?.GetAllBaseEntities()!)
-    {
-        <tr>
-            <td>
-                @item.Id
-            </td>
-            <td>
-                @item.Name
-            </td>
-            <td>
-                @(item.TypeName ?? @"unknown")
-            </td>
-            <td>
-                @((item as Bar)?.Category?.Name ?? @"no category")
-            </td>
-            <td>
-                <button class="btn btn-secondary" @onclick="@(async () => await RemoveAsync(item.Id))">Remove</button>
-            </td>
-        </tr>
-    }
+        @foreach (var item in RevitDataService?.GetAllBaseEntities()!)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @(item.TypeName ?? @"unknown")
+                </td>
+                <td>
+                    @((item as Bar)?.Category?.Name ?? @"no category")
+                </td>
+                <td>
+                    <button class="btn btn-secondary" @onclick="@(async () => await RemoveAsync(item.Id))">Remove</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@foreach (var level in RevitLevels)
+{
+    <select title="@level.Elevation">
+        @foreach (var room in level.Rooms)
+        {
+            <option>@room</option>
+        }
+    </select>
+    <br/>
+    <br/>
+}
 
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
 <button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
@@ -60,7 +72,11 @@
         ApplicationObject.DocumentDescriptorChanged += DocumentDescriptorChanged;
 
         await InitRevitDataServiceAsync();
+
+        RevitLevels = await GetRevitLevelsAsync();
     }
+
+    List<BcLevel> RevitLevels { get; set; }
 
     private async Task InitRevitDataServiceAsync()
     {
@@ -79,7 +95,7 @@
 
     private async void DocumentDescriptorChanged(object sender, DocumentDescriptorChangedEventArgs e)
     {
-        await InitRevitDataServiceAsync();        
+        await InitRevitDataServiceAsync();
         await InvokeAsync(StateHasChanged);
     }
 
@@ -93,11 +109,11 @@
         await RevitDataService?.AllocateBarsAsync()!;
     }
 
-    private async Task GetRevitLevelsAsync()
+    private async Task<List<BcLevel>> GetRevitLevelsAsync()
     {
-        // var levelRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
-        //
-        // await levelRoomsService?.GetRevitLevelsAsync()!;
+        var levelRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
+
+        return await levelRoomsService?.GetRevitLevelsAsync()!;
     }
 
     public void Dispose()

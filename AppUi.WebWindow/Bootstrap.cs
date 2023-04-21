@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using App.Catalog.Db;
 using App.CommunicationServices.Utils.Comparers;
 using App.DAL.Common.Services.Catalog;
+using App.DAL.Common.UnitOfWork;
 using App.DAL.Revit.Converters.Common;
 using App.Settings.Constants;
 
@@ -128,6 +129,8 @@ namespace AppUi.WebWindow
                 builder.UseSqlite($"{DbConstants.SqLite.DataSourceParameterName}" +
                                   $"{Path.Combine(contentPath, connectionString)}");
             });
+
+            serviceCollection.AddTransient<ProjectsUnitOfWork>();
 
             serviceCollection.AddFactoryFacility();
             serviceCollection.AddAutoMapper(typeof(DbToDomainMappingProfile));

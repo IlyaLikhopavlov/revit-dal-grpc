@@ -9,45 +9,44 @@ using Bimdance.Framework.Initialization;
 using System;
 using App.Catalog.Db.Model.Enums;
 using App.Catalog.Db;
+using App.DAL.Common.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Services
 {
     public class RevitDataService : IAsyncInitialization
     {
-        private readonly IFooRepository _fooRepository;
-        private readonly IBarRepository _barRepository;
         private readonly ICatalogService _catalogService;
         private readonly RevitCatalogStorage _revitCatalogStorage;
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly RevitExtraDataExchangeClient _revitExtraDataExchangeClient;
 
 
         public RevitDataService(
-            IRepositoryFactory<IFooRepository> fooRepositoryFactory,
-            IRepositoryFactory<IBarRepository> barRepositoryFactory,
+            IServiceProvider serviceProvider,
             RevitExtraDataExchangeClient revitExtraDataExchangeClient,
             IDocumentDescriptorServiceScopeFactory scopeFactory)
         {
             _revitExtraDataExchangeClient = revitExtraDataExchangeClient;
             _revitCatalogStorage = scopeFactory.GetScopedService<RevitCatalogStorage>();
             _catalogService = scopeFactory.GetScopedService<ICatalogService>();
-            _fooRepository = fooRepositoryFactory.Create();
-            _barRepository = barRepositoryFactory.Create();
+            _serviceProvider = serviceProvider;
             Initialization = InitializeAsync();
         }
 
         private async Task InitializeAsync()
         {
-            if (_fooRepository is IAsyncInitialization fooRepository)
-            {
-                await fooRepository.Initialization;
-            }
+            //if (_fooRepository is IAsyncInitialization fooRepository)
+            //{
+            //    await fooRepository.Initialization;
+            //}
 
-            if (_barRepository is IAsyncInitialization barRepository)
-            {
-                await barRepository.Initialization;
-            }
+            //if (_barRepository is IAsyncInitialization barRepository)
+            //{
+            //    await barRepository.Initialization;
+            //}
         }
 
         public Task Initialization { get; }
@@ -55,41 +54,46 @@ namespace App.Services
         public async Task AllocateFoosAsync()
         {
             var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Foo))!;
+            using var uow = _serviceProvider.GetRequiredService<ProjectsUnitOfWork>();
 
             foreach (var id in allocated)
             {
-                _fooRepository.Insert(new Foo { Id = id, Name = $@"Foo {id}", Description = @"description" });
+                uow.FooRepository.Insert(new Foo { Id = id, Name = $@"Foo {id}", Description = @"description" });
             }
 
-            await _fooRepository?.SaveAsync()!;
+            await uow.FooRepository?.SaveAsync()!;
         }
 
         public async Task AllocateBarsAsync()
         {
             var allocated = await _revitExtraDataExchangeClient?.Allocate(typeof(Bar))!;
+            using var uow = _serviceProvider.GetRequiredService<ProjectsUnitOfWork>();
 
             foreach (var id in allocated)
             {
-                _barRepository.Insert(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
+                uow.BarRepository.Insert(new Bar { Id = id, Name = $@"Bar {id}", Description = @"description" });
             }
 
-            await _barRepository?.SaveAsync()!;
+            await uow.BarRepository?.SaveAsync()!;
         }
 
         public IEnumerable<Foo> GetFoos()
         {
-            return _fooRepository.GetAll();
+            using var uow = _serviceProvider.GetRequiredService<ProjectsUnitOfWork>();
+            return uow.FooRepository.GetAll();
         }
 
         public IEnumerable<Bar> GetBars()
         {
-            return _barRepository.GetAll();
+            using var uow = _serviceProvider.GetRequiredService<ProjectsUnitOfWork>();
+            return uow.BarRepository.GetAll();
         }
 
         public IEnumerable<BaseItem> GetAllBaseEntities()
         {
-            var foos = _fooRepository.GetAll();
-            var bars = _barRepository.GetAll();
+            using var uow = _serviceProvider.GetRequiredService<ProjectsUnitOfWork>();
+            var foos = uow.FooRepository.GetAll();
+            var bars = uow.BarRepository.GetAll();
 
             if (foos == null || bars == null)
             {
@@ -99,39 +103,40 @@ namespace App.Services
             return foos.Concat(bars.Cast<BaseItem>());
         }
 
-        public async Task AddNewBarAsync()
-        {
-            var bar = new Bar
-            {
-                Name = "BarNew",
-                Description = "Weee",
-                Guid = Guid.NewGuid()
-            };
+        //public async Task AddNewBarAsync()
+        //{
+        //    var bar = new Bar
+        //    {
+        //        Name = "BarNew",
+        //        Description = "Weee",
+        //        Guid = Guid.NewGuid()
+        //    };
 
-            var category = new Category
-            {
-                Name = @"Third",
-                Description = @"Third"
-            };
+        //    var category = new Category
+        //    {
+        //        Name = @"Third",
+        //        Description = @"Third"
+        //    };
 
-            _barRepository.Insert(bar, category);
+        //    _barRepository.Insert(bar, category);
 
-            await _barRepository.SaveAsync();
-        }
+        //    await _barRepository.SaveAsync();
+        //}
 
         public async Task RemoveEntityAsync(int id)
         {
-            if (_fooRepository.Contains(id))
+            using var uow = _serviceProvider.GetRequiredService<ProjectsUnitOfWork>();
+            if (uow.FooRepository.Contains(id))
             {
-                _fooRepository.Remove(id);
-                await _fooRepository.SaveAsync();
+                uow.FooRepository.Remove(id);
+                await uow.FooRepository.SaveAsync();
                 return;
             }
             
-            if (_barRepository.Contains(id))
+            if (uow.BarRepository.Contains(id))
             {
-                _barRepository.Remove(id);
-                await _barRepository.SaveAsync();
+                uow.BarRepository.Remove(id);
+                await uow.BarRepository.SaveAsync();
                 return;
             }
             

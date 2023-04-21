@@ -16,13 +16,13 @@ namespace App.DAL.Common.UnitOfWork
     {
         private readonly ProjectsDataContext _dbContext;
         
-        private BarDbRepository _barDbRepository;
+        private IBarRepository _barDbRepository;
 
-        private FooDbRepository _fooDbRepository;
+        private IFooRepository _fooDbRepository;
 
-        private IRepositoryFactory<IFooRepository> _fooRepositoryFactory;
+        private readonly IRepositoryFactory<IFooRepository> _fooRepositoryFactory;
 
-        private IRepositoryFactory<IBarRepository> _barRepositoryFactory;
+        private readonly IRepositoryFactory<IBarRepository> _barRepositoryFactory;
 
         public ProjectsUnitOfWork(
             IDbContextFactory<ProjectsDataContext> projectsDbFactory, 
@@ -34,13 +34,13 @@ namespace App.DAL.Common.UnitOfWork
             _barRepositoryFactory = barRepositoryFactory;
         }
 
-        public BarDbRepository BarDbRepository =>
+        public IBarRepository BarRepository =>
             _barDbRepository ??= 
-                _fooRepositoryFactory.Create();
+                _barRepositoryFactory.Create(_dbContext);
 
-        public FooDbRepository FooDbRepository =>
+        public IFooRepository FooRepository =>
             _fooDbRepository ??=
-                (FooDbRepository)_descriptorServiceScopeFactory.GetScopedService(typeof(FooDbRepository), _dbContext);
+                _fooRepositoryFactory.Create(_dbContext);
 
         private bool _disposed;
 
@@ -50,6 +50,8 @@ namespace App.DAL.Common.UnitOfWork
             {
                 if (disposing)
                 {
+                    _fooDbRepository.Dispose();
+                    _barDbRepository.Dispose();
                     _dbContext.Dispose();
                 }
             }

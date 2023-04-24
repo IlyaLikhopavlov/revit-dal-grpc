@@ -1,5 +1,39 @@
-﻿<h3>RevitLevelsTable</h3>
+﻿@using global::AppUi.WebWindow.Components
+@using global::App.CommunicationServices.ScopedServicesFunctionality
+@using global::App.CommunicationServices.Revit
+@using global::App.DAL.Common.Services.RevitEntities
+@using global::App.DML
+@inject IDocumentDescriptorServiceScopeFactory scopeFactory
+
+<h3>RevitLevelsTable</h3>
+
+@foreach (var level in RevitLevels)
+{
+    <div>Level @(level.Elevation)</div>
+    <select title="@level.Elevation">
+        @foreach (var room in level.Rooms)
+        {
+            <option>Room @room.Number</option>
+        }
+    </select>
+    <br/>
+    <br/>
+}
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
 
+        RevitLevels = await GetRevitLevelsAsync();
+    }
+
+    List<BuildingLevel> RevitLevels { get; set; } = new();
+
+    private async Task<List<BuildingLevel>> GetRevitLevelsAsync()
+    {
+        var levelRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
+
+        return await levelRoomsService?.GetRevitLevelsAsync()!;
+    }
 }

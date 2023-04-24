@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace App.DML
 {
-    public class BcLevel : BaseItem
+    public class BuildingLevel : BaseItem
     {
-        public BcLevel(List<string> rooms) : this(rooms, null, null)
+        public BuildingLevel(List<Room> rooms) : this(rooms, null, null)
         {
         }
 
-        public BcLevel(List<string> rooms, string elevation, string name) : base(name)
+        public BuildingLevel(List<Room> rooms, string elevation, string name) : base(name)
         {
             Rooms = rooms;
             Elevation = elevation;
         }
 
-        public List<string> Rooms { get; set; }
+        public List<Room> Rooms { get; set; }
 
         public string Elevation { get; set; }
     }

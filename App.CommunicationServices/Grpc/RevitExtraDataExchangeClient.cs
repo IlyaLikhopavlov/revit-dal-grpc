@@ -10,7 +10,7 @@ namespace App.CommunicationServices.Grpc
         {
             { typeof(Foo), DomainModelTypesEnum.Foo },
             { typeof(Bar), DomainModelTypesEnum.Bar },
-            { typeof(BcLevel), DomainModelTypesEnum.Bar }
+            { typeof(BuildingLevel), DomainModelTypesEnum.Bar }
         };
 
         private readonly RevitDataExchange.RevitDataExchangeClient _client;

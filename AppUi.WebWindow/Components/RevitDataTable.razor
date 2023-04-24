@@ -8,6 +8,8 @@
 @inject RevitDataService RevitDataService
 @inject IDocumentDescriptorServiceScopeFactory scopeFactory
 
+@page "/RevitDataTable"
+
 <h1>RevitDataTable</h1>
 
 <p>Document file name: @ApplicationObject?.ActiveDocument?.Title</p>
@@ -48,14 +50,15 @@
 
 @foreach (var level in RevitLevels)
 {
+    <div>Level @(level.Elevation)</div>
     <select title="@level.Elevation">
         @foreach (var room in level.Rooms)
         {
-            <option>@room</option>
+            <option>Room @room.Number</option>
         }
     </select>
-    <br/>
-    <br/>
+    <br />
+    <br />
 }
 
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
@@ -76,7 +79,7 @@
         RevitLevels = await GetRevitLevelsAsync();
     }
 
-    List<BcLevel> RevitLevels { get; set; }
+    List<BuildingLevel> RevitLevels { get; set; } = new();
 
     private async Task InitRevitDataServiceAsync()
     {
@@ -109,7 +112,7 @@
         await RevitDataService?.AllocateBarsAsync()!;
     }
 
-    private async Task<List<BcLevel>> GetRevitLevelsAsync()
+    private async Task<List<BuildingLevel>> GetRevitLevelsAsync()
     {
         var levelRoomsService = scopeFactory.GetScopedService<LevelsRoomsService>();
 

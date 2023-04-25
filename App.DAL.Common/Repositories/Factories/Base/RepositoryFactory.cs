@@ -19,7 +19,7 @@ namespace App.DAL.Common.Repositories.Factories.Base
             new()
             {
                 { typeof(IFooRepository), (typeof(FooDbRepository), typeof(FooRevitRepository)) },
-                { typeof(IBarRepository), (typeof(BarDbRepository), typeof(BarRevitRepository)) },
+                { typeof(IBarRepository), (typeof(BarDbRepository), typeof(BarRevitRepository)) }
             };
 
         public RepositoryFactory(
@@ -40,7 +40,7 @@ namespace App.DAL.Common.Repositories.Factories.Base
             return
                 _options.Value.ApplicationMode switch
                 {
-                    ApplicationModeEnum.Web => DocumentDescriptorServiceScopeFactory.GetScopedService(repositories.Db) as T,
+                    ApplicationModeEnum.Web => DocumentDescriptorServiceScopeFactory.GetScopedService(repositories.Db, projectsDataContext) as T,
                     ApplicationModeEnum.Desktop => DocumentDescriptorServiceScopeFactory.GetScopedService(repositories.RevitStorage) as T,
                     _ => throw new InvalidEnumArgumentException("Required repository type didn't find")
                 };

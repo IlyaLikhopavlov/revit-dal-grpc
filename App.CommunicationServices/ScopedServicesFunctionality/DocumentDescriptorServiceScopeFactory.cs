@@ -65,7 +65,7 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
             var factoryType = constructorArg == null 
                 ? FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), serviceType) 
-                : FactoryUtils.ConstructGenericFactoryType(typeof(DocumentDescriptor), constructorArg.GetType(), serviceType);
+                : FactoryUtils.ConstructGenericFactoryType(constructorArg.GetType(), typeof(DocumentDescriptor), serviceType);
             
             var factory = scope.ServiceProvider.GetService(factoryType);
 
@@ -76,7 +76,7 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
 
             var scopeObject = GetScopeObject(scope);
 
-            return constructorArg == null 
+            return constructorArg == null
                     ? factory
                         .GetType()
                         .GetMethod("New")
@@ -84,7 +84,7 @@ namespace App.CommunicationServices.ScopedServicesFunctionality
                     : factory
                         .GetType()
                         .GetMethod("New")
-                        ?.Invoke(factory, new [] { scopeObject, constructorArg });
+                        ?.Invoke(factory, new[] { constructorArg, scopeObject });
         }
 
         public void RemoveScope(DocumentDescriptor documentDescriptor)

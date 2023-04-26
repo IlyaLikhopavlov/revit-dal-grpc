@@ -7,6 +7,9 @@
 @inject ApplicationObject ApplicationObject
 @inject RevitDataService RevitDataService
 @inject IDocumentDescriptorServiceScopeFactory scopeFactory
+@inject NavigationManager UriHelper
+
+@inherits LayoutComponentBase
 
 @page "/RevitDataTable"
 
@@ -48,18 +51,22 @@
     </tbody>
 </table>
 
-@foreach (var level in RevitLevels)
-{
-    <div>Level @(level.Elevation)</div>
-    <select title="@level.Elevation">
-        @foreach (var room in level.Rooms)
-        {
-            <option>Room @room.Number</option>
-        }
-    </select>
-    <br />
-    <br />
-}
+Navigate to other component <a href="" @onclick="NavigatetoNextComponent">Click here</a>
+
+@* @Body  *@
+
+@* @foreach (var level in RevitLevels) *@
+@* { *@
+@*     <div>Level @(level.Elevation)</div> *@
+@*     <select title="@level.Elevation"> *@
+@*         @foreach (var room in level.Rooms) *@
+@*         { *@
+@*             <option>Room @room.Number</option> *@
+@*         } *@
+@*     </select> *@
+@*     <br /> *@
+@*     <br /> *@
+@* } *@
 
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
 <button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
@@ -80,6 +87,11 @@
     }
 
     List<BuildingLevel> RevitLevels { get; set; } = new();
+
+    void NavigatetoNextComponent()
+    {
+        UriHelper.NavigateTo("RevitLevelsTable");
+    }
 
     private async Task InitRevitDataServiceAsync()
     {

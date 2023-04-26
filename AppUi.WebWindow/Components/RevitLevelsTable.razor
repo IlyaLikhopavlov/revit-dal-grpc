@@ -5,7 +5,10 @@
 @using global::App.DML
 @inject IDocumentDescriptorServiceScopeFactory scopeFactory
 
-<h3>RevitLevelsTable</h3>
+@page "/RevitLevelsTable"
+@layout RevitDataTable
+
+<h2>RevitLevelsTable</h2>
 
 @foreach (var level in RevitLevels)
 {

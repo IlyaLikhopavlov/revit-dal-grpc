@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Catalog.Db", "App.Catal
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SandBox", "SandBox", "{6FF96D2D-91BE-4BCE-84A2-7ECDABCF5695}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrickSchema.Source", "BrickSchema.Source\BrickSchema.Source.csproj", "{94828C14-BFFE-404C-B355-0E4F2C9934C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrickSchema.Source", "BrickSchema.Source\BrickSchema.Source.csproj", "{94828C14-BFFE-404C-B355-0E4F2C9934C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

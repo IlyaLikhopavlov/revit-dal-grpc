@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AppUi.WebWindow
@@ -12,6 +13,16 @@ namespace AppUi.WebWindow
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Handle_UrlLoading(object sender,
+            UrlLoadingEventArgs urlLoadingEventArgs)
+        {
+            if (urlLoadingEventArgs.Url.Host != "0.0.0.0")
+            {
+                urlLoadingEventArgs.UrlLoadingStrategy =
+                    UrlLoadingStrategy.OpenInWebView;
+            }
         }
     }
 }

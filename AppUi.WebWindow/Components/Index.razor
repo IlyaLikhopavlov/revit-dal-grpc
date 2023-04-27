@@ -1,9 +1,13 @@
-﻿@using global::App.CommunicationServices.Revit
+﻿@page "/"
+
+@using global::App.CommunicationServices.Revit
 @using global::App.CommunicationServices.Revit.EventArgs
 @using global::App.DML
 @using global::App.Services
 @inject ApplicationObject ApplicationObject
 @inject RevitDataService RevitDataService
+
+<PageTitle>Index</PageTitle>
 
 <h1>RevitDataTable</h1>
 
@@ -45,7 +49,6 @@
 
 <button class="btn btn-primary" @onclick="AllocateFoosAsync">Allocate Foos</button>
 <button class="btn btn-primary" @onclick="AllocateBarsAsync">Allocate Bars</button>
-@*<button class="btn btn-primary" @onclick="@(async () => await AddNewBarAsync())">Add Bar</button>*@
 <button class="btn btn-primary" @onclick="@(async () => await AddNewCatalogEntryAsync())">Add FooCatalog</button>
 
 @code {
@@ -72,7 +75,7 @@
             await initTask;
         }
     }
-
+    
     private async void DocumentDescriptorChanged(object sender, DocumentDescriptorChangedEventArgs e)
     {
         await InitRevitDataServiceAsync();        

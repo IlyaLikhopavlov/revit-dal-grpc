@@ -367,3 +367,4 @@ FodyWeavers.xsd
 /AppUi.WebWindow/catalog.db-shm
 /AppUi.WebWindow/projects.db-wal
 /AppUi.WebWindow/projects.db-shm
+/Revit.AddIn/Properties/launchSettings.json
